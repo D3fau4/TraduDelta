@@ -1,10 +1,8 @@
 ﻿using System;
-using System.IO;
-using System.Collections;
-using UndertaleModLib;
-using UndertaleModLib.Compiler;
-using UndertaleModLib.Decompiler;
 using System.Collections.Generic;
+using System.IO;
+using UndertaleModLib;
+using UndertaleModLib.Decompiler;
 
 namespace TraduDelta
 {
@@ -12,7 +10,8 @@ namespace TraduDelta
     {
         static void Main(string[] args)
         {
-            if (args[0].Contains(".win")){
+            if (args[0].Contains(".win"))
+            {
                 UndertaleData Data = null;
 
                 using (var stream = new FileStream(args[0], FileMode.Open, FileAccess.Read))
@@ -40,176 +39,108 @@ namespace TraduDelta
             if (Directory.Exists(args[0]))
             {
                 int count = 0;
-                List<string> Key = new List<string>();
-                List<string> value = new List<string>();
+                Dictionary<string, string> fullpair = new Dictionary<string, string>();
                 foreach (string file in Directory.GetFiles(args[0], "*.asm"))
                 {
-                    if (Path.GetFileName(file).Equals("gml_GlobalScript_stringsetloc.asm") || Path.GetFileName(file).Equals("gml_GlobalScript_msgsetsubloc.asm") || 
-                        Path.GetFileName(file).Equals("gml_GlobalScript_msgnextloc.asm"))
+                    Dictionary<string, string> keyValuePairs = new Dictionary<string, string>();
+                    if (Path.GetFileName(file).Equals("gml_GlobalScript_stringsetloc.asm") || Path.GetFileName(file).Equals("gml_GlobalScript_msgsetsubloc.asm") ||
+                        Path.GetFileName(file).Equals("gml_GlobalScript_msgnextloc.asm") || Path.GetFileName(file).Equals("gml_GlobalScript_msgsetloc.asm") ||
+                        Path.GetFileName(file).Equals("gml_GlobalScript_c_msgsetloc.asm") || Path.GetFileName(file).Equals("gml_Script_scr_84_get_lang_string_ch1.asm"))
                     {
                         continue;
                     }
                     Console.WriteLine(file);
-                    string []str = File.ReadAllLines(file);
+                    string[] str = File.ReadAllLines(file);
                     for (int i = 0; i < str.Length; i++)
                     {
-                        if (str[i].Contains("gml_Script_stringsetloc"))
+                        string buffervalue = "";
+                        string bufferkey = "";
+                        if (str[i].Contains("gml_Script_stringsetloc") || str[i].Contains("gml_Script_msgsetsubloc") || str[i].Contains("gml_Script_msgnextloc") ||
+                            str[i].Contains("gml_Script_msgsetloc") || str[i].Contains("gml_Script_c_msgsetloc") || str[i].Contains("gml_Script_c_msgnextloc") || 
+                            str[i].Contains("gml_Script_msgnextsubloc") || str[i].Contains("gml_Script_stringsetsubloc") || str[i].Contains("gml_Script_scr_84_get_lang_string_ch1"))
                         {
-                            count++;
-                            /* Check value */
-                            string tmp = "";
-                            str[i - 2] = str[i - 2].Replace("push.s \"", "");
-                            for (int j = 0; j < str[i - 2].Length; j++)
+                            bool flag = false;
+                            bool flag1 = false;
+                            /* Recorro hacia arriba para encontrar la string */
+                            for (int j = i; j > 0; j--)
                             {
-                                if (!str[i - 2][j].Equals('\"'))
+                                /* Busco la string */
+                                if (str[j].Contains("push.s \""))
                                 {
-                                    tmp += str[i - 2][j];
-                                }
-                                else
-                                {
-                                    if (!str[i - 2][j + 1].Equals('@'))
+                                    // elimino la función para extraer el texto
+                                    str[j] = str[j].Replace("push.s \"", "");
+                                    if (str[i].Contains("gml_Script_scr_84_get_lang_string_ch1"))
                                     {
-                                        tmp += str[i - 2][j];
+                                        flag = true;
+                                    }
+                                    if (!flag)
+                                    {
+                                        for (int k = 0; k < str[j].Length; k++)
+                                        {
+                                            if (!str[j][k].Equals('\"'))
+                                            {
+                                                buffervalue += str[j][k];
+                                            }
+                                            else if (!str[j][k + 1].Equals('@'))
+                                            {
+                                                buffervalue += str[j][k];
+                                            } else
+                                            {
+                                                flag = true;
+                                                break;
+                                            }
+                                        }
                                     }
                                     else
                                     {
-                                        break;
+                                        for (int k = 0; k < str[j].Length; k++)
+                                        {
+                                            if (!str[j][k].Equals('\"'))
+                                            {
+                                                bufferkey += str[j][k];
+                                            }
+                                            else if (!str[j][k + 1].Equals('@'))
+                                            {
+                                                bufferkey += str[j][k];
+                                            }
+                                            else
+                                            {
+                                                flag1 = true;
+                                                break;
+                                            }
+                                        }
+                                        if (flag1)
+                                            break;
                                     }
                                 }
                             }
-                                value.Add(tmp);
-                            /* END check value */
-                            /* Check key */
-                            tmp = "";
-                            str[i - 4] = str[i - 4].Replace("push.s \"", "");
-                            for (int j = 0; j < str[i - 4].Length; j++)
+                            /* Añadidos al diccionario */
+                            try
                             {
-                                if (!str[i - 4][j].Equals('\"'))
+                                if (str[i].Contains("gml_Script_scr_84_get_lang_string_ch1"))
                                 {
-                                    tmp += str[i - 4][j];
+                                    Console.WriteLine("Importando texto desde el Capítulo 1");
+                                    //Console.WriteLine(bufferkey);
+                                    buffervalue = json.getvaluefromjson("D:\\SteamLibrary\\steamapps\\common\\DELTARUNEdemo\\lang\\lang_en_ch1.json", bufferkey);
                                 }
-                                else
-                                {
-                                    if (!str[i - 4][j + 1].Equals('@'))
-                                    {
-                                        tmp += str[i - 4][j];
-                                    }
-                                    else
-                                    {
-                                        break;
-                                    }
-                                }
+                                keyValuePairs.Add(bufferkey, buffervalue);
+                                fullpair.Add(bufferkey, buffervalue);
                             }
-                                Key.Add(tmp);
-                        }
-                        if (str[i].Contains("gml_Script_msgsetsubloc"))
-                        {
-                            count++;
-                            /* Check value */
-                            string tmp = "";
-                            str[i - 3] = str[i - 3].Replace("push.s \"", "");
-                            for (int j = 0; j < str[i - 3].Length; j++)
+                            catch (Exception)
                             {
-                                if (!str[i - 3][j].Equals('\"'))
-                                {
-                                    tmp += str[i - 3][j];
-                                }
-                                else
-                                {
-                                    if (!str[i - 3][j + 1].Equals('@'))
-                                    {
-                                        tmp += str[i - 3][j];
-                                    }
-                                    else
-                                    {
-                                        break;
-                                    }
-                                }
+                                //Console.WriteLine("Clave repetida");
                             }
-                                value.Add(tmp);
-                            Console.WriteLine(tmp);
-                            /* END check value */
-                            /* Check key */
-                            tmp = "";
-                            str[i - 7] = str[i - 7].Replace("push.s \"", "");
-                            for (int j = 0; j < str[i - 7].Length; j++)
-                            {
-                                if (!str[i - 7][j].Equals('\"'))
-                                {
-                                    tmp += str[i - 7][j];
-                                }
-                                else
-                                {
-                                    if (!str[i - 7][j + 1].Equals('@'))
-                                    {
-                                        tmp += str[i - 7][j];
-                                    }
-                                    else
-                                    {
-                                        break;
-                                    }
-                                }
-                            }
-                                Key.Add(tmp);
-                            Console.WriteLine(tmp);
-                        }
-                        if (str[i].Contains("gml_Script_msgnextloc"))
-                        {
-                            count++;
-                            /* Check value */
-                            string tmp = "";
-                            
-                            str[i - 2] = str[i - 2].Replace("push.s \"", "");
-                            for (int j = 0; j < str[i - 2].Length; j++)
-                            {
-                                if (!str[i - 2][j].Equals('\"'))
-                                {
-                                    tmp += str[i - 2][j];
-                                }
-                                else
-                                {
-                                    if (!str[i - 2][j + 1].Equals('@'))
-                                    {
-                                        tmp += str[i - 2][j];
-                                    }
-                                    else
-                                    {
-                                        break;
-                                    }
-                                }
-                            }
-                                value.Add(tmp);
-                            Console.WriteLine(tmp);
-                            /* END check value */
-                            /* Check key */
-                            tmp = "";
-                            str[i - 4] = str[i - 4].Replace("push.s \"", "");
-                            for (int j = 0; j < str[i - 4].Length; j++)
-                            {
-                                if (!str[i - 4][j].Equals('\"'))
-                                {
-                                    tmp += str[i - 4][j];
-                                }
-                                else
-                                {
-                                    if (!str[i - 4][j + 1].Equals('@'))
-                                    {
-                                        tmp += str[i - 4][j];
-                                    }
-                                    else
-                                    {
-                                        break;
-                                    }
-                                }
-                            }
-                            Console.WriteLine(tmp);
-                                Key.Add(tmp);
+                            /* Limpiamos buffer*/
+                            buffervalue = "";
+                            buffervalue = "";
                         }
                     }
+                    if (keyValuePairs.Count != 0)
+                        json.writejson(keyValuePairs, Path.GetFileName(file));
                 }
-                json.writejson(Key, value);
-                Console.WriteLine(count);
-                Console.WriteLine(value.Count);
+                /* Write lang_en.json */ 
+                json.writejson(fullpair, "lang_en.json", false);
+                json.cleanjson("lang_en.json", "D:\\SteamLibrary\\steamapps\\common\\DELTARUNEdemo\\lang\\lang_ja.json");
             }
         }
     }

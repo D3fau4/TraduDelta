@@ -1,32 +1,56 @@
-﻿using System;
-using System.Collections;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace TraduDelta
 {
     class json
     {
-        public static void writejson(List<string> key, List<string> value)
+        static string outputfolder = "Output";
+        public static void writejson(Dictionary<string, string> keyValuePairs, string path, bool outfolder = true)
         {
-            StringBuilder sb = new StringBuilder();
-            StringWriter sw = new StringWriter(sb);
-            using (JsonWriter writer = new JsonTextWriter(sw))
+            var json = JsonConvert.SerializeObject(keyValuePairs, Formatting.Indented);
+
+            if (outfolder)
             {
-                writer.Formatting = Formatting.Indented;
-                writer.WriteStartObject();
-                for (int i = 0; i < key.Count; i++)
-                {
-                    writer.WritePropertyName(key[i].ToString());
-                    writer.WriteValue(value[i].ToString());
-                }
-                writer.WriteEndObject();
+                if (!Directory.Exists(outputfolder))
+                    Directory.CreateDirectory(outputfolder);
+
+                File.WriteAllText(Path.Combine(outputfolder, path).Replace(".asm", ".json"), json);
             }
-            File.WriteAllText("meme.json", sb.ToString());
+            else
+            {
+                File.WriteAllText(path, json);
+            }
+        }
+
+        public static string getvaluefromjson(string path, string key)
+        {
+            JObject Json1 = JObject.Parse(File.ReadAllText(path));
+
+            return (string)Json1[key];
+        }
+
+        public static void cleanjson(string path1, string path2)
+        {
+            JObject Json1 = JObject.Parse(File.ReadAllText(path1));
+            JObject Json2 = JObject.Parse(File.ReadAllText(path2));
+
+            IList<string> keys1 = Json1.Properties().Select(p => p.Name).ToList();
+            IList<string> keys2 = Json2.Properties().Select(p => p.Name).ToList();
+
+            for (int i = 0; i < keys2.Count; i++)
+            {
+                if (!keys2.Contains(keys1[i]))
+                {
+                    Json1.Remove(keys1[i]);
+                }
+            }
+
+            File.WriteAllText(path1, Json1.ToString());
         }
     }
 }

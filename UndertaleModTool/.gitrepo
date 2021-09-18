@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/krzys-h/UndertaleModTool.git
+	branch = master
+	commit = ca6b007d44057dcae752d6a17b7b1ef3b7a2b5e4
+	parent = 7761466b4cf210120c115a64ee324fa72bf0cc5b
+	method = merge
+	cmdver = 0.4.3

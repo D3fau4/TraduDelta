@@ -1,6 +1,5 @@
 ﻿using Yarhl.FileFormat;
 using Yarhl.Media.Text;
-using System;
 
 namespace TraduDelta
 {
@@ -18,14 +17,6 @@ namespace TraduDelta
                 }
             };
 
-            /*var i = 0;
-            foreach (var text in source.Values)
-            {
-                po.Add(new PoEntry(text)
-                {
-                    Context = i++.ToString()
-                });
-            }*/
             for (int i = 0; i < source.Keys.Count; i++)
             {
                 if (source.Values[i] == string.Empty || source.Values[i] == null)
@@ -43,6 +34,10 @@ namespace TraduDelta
                 if (source.Values[i].Contains("\u0016"))
                 {
                     source.Values[i] = source.Values[i].Replace("\u0016", "<CONTROL>");
+                }
+                if (source.Values[i].Contains('\f'))
+                {
+                    source.Values[i] = source.Values[i].Replace("\f", "<F>");
                 }
                 po.Add(new PoEntry(source.Values[i])
                 {

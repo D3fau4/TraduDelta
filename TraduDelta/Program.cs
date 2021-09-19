@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
+using Yarhl.FileSystem;
+using Yarhl.Media.Text;
 
 namespace TraduDelta
 {
@@ -36,6 +38,21 @@ namespace TraduDelta
                     }
                 }
             }
+            if (File.Exists(args[0]))
+            {
+                var text1 = json.Gettext(args[0]);
+                Texts me = new Texts();
+
+                me.Keys = new List<string>(text1.Keys);
+                me.Values = new List<string>(text1.Values);
+                json2Po po = new json2Po();
+                var meme = po.Convert(me);
+                Po2Binary po2Binary = new Po2Binary();
+                var binary = po2Binary.Convert(meme);
+                var node1 = new Node(Path.GetFileName(args[0]), binary);
+                node1.Stream.WriteTo("meme1.po");
+            }
+
             if (Directory.Exists(args[0]))
             {
                 int count = 0;
@@ -136,11 +153,16 @@ namespace TraduDelta
                         }
                     }
                     if (keyValuePairs.Count != 0)
+                    {
                         json.writejson(keyValuePairs, Path.GetFileName(file));
+                        Powritter.write(keyValuePairs, Path.GetFileName(file));
+                    }
+                        
                 }
                 /* Write lang_en.json */ 
                 json.writejson(fullpair, "lang_en.json", false);
                 json.cleanjson("lang_en.json", "D:\\SteamLibrary\\steamapps\\common\\DELTARUNEdemo\\lang\\lang_ja.json");
+                Powritter.write(fullpair, "lang_en.po");
             }
         }
     }

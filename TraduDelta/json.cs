@@ -34,6 +34,13 @@ namespace TraduDelta
             return (string)Json1[key];
         }
 
+        public static Dictionary<string, string> Gettext(string path)
+        {
+            Dictionary<string, string> keyValuePairs;
+            keyValuePairs = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(path));
+            return keyValuePairs;
+        }
+
         public static void cleanjson(string path1, string path2)
         {
             JObject Json1 = JObject.Parse(File.ReadAllText(path1));
@@ -42,7 +49,7 @@ namespace TraduDelta
             IList<string> keys1 = Json1.Properties().Select(p => p.Name).ToList();
             IList<string> keys2 = Json2.Properties().Select(p => p.Name).ToList();
 
-            for (int i = 0; i < keys2.Count; i++)
+            for (int i = 0; i < keys1.Count; i++)
             {
                 if (!keys2.Contains(keys1[i]))
                 {

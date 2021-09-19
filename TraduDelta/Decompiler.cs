@@ -1,5 +1,5 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
 using UndertaleModLib.Models;
@@ -8,7 +8,7 @@ namespace TraduDelta
 {
     class Decompiler
     {
-        string ReplaceFirst(string text, string search, string replace)
+        static string ReplaceFirst(string text, string search, string replace)
         {
             int pos = text.IndexOf(search);
             if (pos < 0)
@@ -18,8 +18,9 @@ namespace TraduDelta
             return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
         }
 
-        void Decompile(UndertaleData Data)
+        public static Dictionary<string, string> Decompile(UndertaleData Data)
         {
+            Dictionary<string, string> fullpair = new Dictionary<string, string>();
             foreach (var code_orig in Data.Code)
             {
                 code_orig.Offset = 0;
@@ -88,7 +89,8 @@ namespace TraduDelta
                         string code_output = "";
                         if (code_orig != null)
                             code_output = code_orig.Disassemble(Data.Variables, Data.CodeLocals.For(code_orig));
-                        File.WriteAllText(str_path_to_use, code_output);
+
+                        fullpair.Add(str_path_to_use, code_output);
                     }
                     catch (Exception ex)
                     {
@@ -96,6 +98,7 @@ namespace TraduDelta
                     }
                 }
             }
+            return fullpair;
         }
     }
 }

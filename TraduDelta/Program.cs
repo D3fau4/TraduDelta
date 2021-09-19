@@ -181,6 +181,11 @@ namespace TraduDelta
                         File.Delete("lang_en.json");
                         Console.WriteLine("Cleaned!");
                         break;
+                    case "--mergetranslation":
+                        var text3 = json.Gettext(args[1]);
+                        var text4 = json.Gettext(args[2]);
+                        Powritter.write(text3, text4, Path.GetFileName(args[1].Replace(".json", ".merged.po")));
+                        break;
                     default:
                         Console.WriteLine("Invalid settings: " + args[0]);
                         printhelp();

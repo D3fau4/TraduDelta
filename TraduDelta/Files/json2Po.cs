@@ -47,5 +47,28 @@ namespace TraduDelta
 
             return po;
         }
+        public Po Convert(Texts source, Texts tradu)
+        {
+            //Read the language used by the user' OS, this way the editor can spellcheck the translation. - Thanks Liquid_S por the code
+            var currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
+            var po = new Po
+            {
+                Header = new PoHeader("Deltarune Chapter 1&2", "anyemail@D3fau4.com", currentCulture.Name)
+                {
+                    LanguageTeam = "Any"
+                }
+            };
+
+            for (int i = 0; i < source.Keys.Count; i++)
+            {
+                po.Add(new PoEntry(source.Values[i])
+                {
+                    Context = source.Keys[i],
+                    Translated = tradu.Values[i]
+                });
+            }
+
+            return po;
+        }
     }
 }

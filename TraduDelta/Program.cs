@@ -174,6 +174,12 @@ namespace TraduDelta
                         Powritter.write(fullpair, "lang_en.po");
                     }
                     break;
+                case "--clean":
+                    Directory.Delete("Output", true);
+                    Directory.Delete("OUT_PO", true);
+                    File.Delete("lang_en.json");
+                    Console.WriteLine("Cleaned!");
+                    break;
                 default:
                     Console.WriteLine("Invalid settings: " + args[0]);
                     printhelp();

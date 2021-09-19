@@ -36,6 +36,10 @@ namespace TraduDelta
                 {
                     source.Keys[i] = "<EMPTY>";
                 }
+                if (source.Values[i].Contains("&"))
+                {
+                    source.Values[i] = source.Values[i].Replace("&", "\n");
+                }
                 po.Add(new PoEntry(source.Values[i])
                 {
                     Context = source.Keys[i],

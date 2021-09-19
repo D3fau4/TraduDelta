@@ -40,6 +40,10 @@ namespace TraduDelta
                 {
                     source.Values[i] = source.Values[i].Replace("&", "\n");
                 }
+                if (source.Values[i].Contains("\u0016"))
+                {
+                    source.Values[i] = source.Values[i].Replace("\u0016", "<CONTROL>");
+                }
                 po.Add(new PoEntry(source.Values[i])
                 {
                     Context = source.Keys[i],

@@ -12,7 +12,6 @@ namespace TraduDelta
         public static void writejson(Dictionary<string, string> keyValuePairs, string path, bool outfolder = true)
         {
             var json = JsonConvert.SerializeObject(keyValuePairs, Formatting.Indented);
-            json = json.Replace("\\\\", "\\").Replace("\\\"","\"").Replace('\f', 'ç');
             if (outfolder)
             {
                 if (!Directory.Exists(outputfolder))

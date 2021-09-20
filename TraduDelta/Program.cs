@@ -215,8 +215,16 @@ namespace TraduDelta
                                                 //cmdutils.print(bufferkey);
                                                 buffervalue.Append(json.getvaluefromjson(args[2], bufferkey.ToString()));
                                             }
-                                            keyValuePairs.Add(bufferkey.ToString(), buffervalue.ToString());
-                                            fullpair.Add(bufferkey.ToString(), buffervalue.ToString());
+                                            if (buffervalue.ToString().Contains("\\\\") || buffervalue.ToString().Contains("\\\""))
+                                            {
+                                                keyValuePairs.Add(bufferkey.ToString(), buffervalue.ToString().Replace("\\\\", "\\").Replace("\\\"", "\"").Replace('\f', 'ç'));
+                                                fullpair.Add(bufferkey.ToString(), buffervalue.ToString().Replace("\\\\", "\\").Replace("\\\"", "\"").Replace('\f', 'ç'));
+                                            }
+                                            else
+                                            {
+                                                keyValuePairs.Add(bufferkey.ToString(), buffervalue.ToString());
+                                                fullpair.Add(bufferkey.ToString(), buffervalue.ToString());
+                                            }
                                         }
                                         catch (Exception)
                                         {

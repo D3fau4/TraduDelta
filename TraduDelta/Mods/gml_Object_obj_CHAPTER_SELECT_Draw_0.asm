@@ -1,13 +1,13 @@
 ﻿.localvar 2 arguments
-.localvar 99 i 6264
-.localvar 11788 filename 6265
-.localvar 14540 select_text 6270
-.localvar 14551 max_options 6274
-.localvar 5993 mycolor 6275
-.localvar 14552 heart_xpos 6276
-.localvar 14553 heart_ypos 6277
-.localvar 14561 play_color 6280
-.localvar 14562 not_color 6281
+.localvar 1 i 21862
+.localvar 2 filename 21863
+.localvar 3 select_text 21864
+.localvar 4 max_options 21865
+.localvar 5 mycolor 21866
+.localvar 6 heart_xpos 21867
+.localvar 7 heart_ypos 21868
+.localvar 8 play_color 21869
+.localvar 9 not_color 21870
 
 :[0]
 pushi.e 1
@@ -134,30 +134,24 @@ push.s "_"@10752
 add.s.v
 pop.v.v local.filename
 pushloc.v local.filename
-pushi.e 3
-conv.i.v
-call.i string(argc=1)
-add.v.v
+push.s "3"@2605
+add.s.v
 call.i gml_Script_ossafe_file_exists(argc=1)
 conv.v.b
 bt [19]
 
 :[17]
 pushloc.v local.filename
-pushi.e 4
-conv.i.v
-call.i string(argc=1)
-add.v.v
+push.s "4"@469
+add.s.v
 call.i gml_Script_ossafe_file_exists(argc=1)
 conv.v.b
 bt [19]
 
 :[18]
 pushloc.v local.filename
-pushi.e 5
-conv.i.v
-call.i string(argc=1)
-add.v.v
+push.s "5"@5171
+add.s.v
 call.i gml_Script_ossafe_file_exists(argc=1)
 conv.v.b
 b [20]
@@ -214,30 +208,24 @@ push.s "_"@10752
 add.s.v
 pop.v.v local.filename
 pushloc.v local.filename
-pushi.e 0
-conv.i.v
-call.i string(argc=1)
-add.v.v
+push.s "0"@3355
+add.s.v
 call.i gml_Script_ossafe_file_exists(argc=1)
 conv.v.b
 bt [30]
 
 :[28]
 pushloc.v local.filename
-pushi.e 1
-conv.i.v
-call.i string(argc=1)
-add.v.v
+push.s "1"@9367
+add.s.v
 call.i gml_Script_ossafe_file_exists(argc=1)
 conv.v.b
 bt [30]
 
 :[29]
 pushloc.v local.filename
-pushi.e 2
-conv.i.v
-call.i string(argc=1)
-add.v.v
+push.s "2"@4039
+add.s.v
 call.i gml_Script_ossafe_file_exists(argc=1)
 conv.v.b
 b [31]
@@ -306,7 +294,7 @@ pop.v.i self.mpos
 push.v self.con
 push.s "nofile"@14521
 cmp.s.v EQ
-bf [69]
+bf [71]
 
 :[40]
 push.v self.fade
@@ -368,6 +356,16 @@ conv.s.v
 
 :[45]
 pop.v.v self.my_stringset
+pushglb.v global.lang
+push.s "es"@58265
+cmp.s.v EQ
+bf [47]
+
+:[46]
+push.s "¿Queres empezar desde el capítulo 1?"@58268
+pop.v.s self.my_stringset
+
+:[47]
 push.v self.text_font
 call.i draw_set_font(argc=1)
 popz.v
@@ -393,22 +391,22 @@ popz.v
 push.v self.mpos
 pushi.e 0
 cmp.i.v EQ
-bf [47]
+bf [49]
 
-:[46]
+:[48]
 push.i 65535
 conv.i.v
 call.i draw_set_color(argc=1)
 popz.v
-b [48]
+b [50]
 
-:[47]
+:[49]
 push.i 16777215
 conv.i.v
 call.i draw_set_color(argc=1)
 popz.v
 
-:[48]
+:[50]
 pushi.e 0
 conv.i.v
 push.v self.scale
@@ -431,22 +429,22 @@ popz.v
 push.v self.mpos
 pushi.e 1
 cmp.i.v EQ
-bf [50]
+bf [52]
 
-:[49]
+:[51]
 push.i 65535
 conv.i.v
 call.i draw_set_color(argc=1)
 popz.v
-b [51]
+b [53]
 
-:[50]
+:[52]
 push.i 16777215
 conv.i.v
 call.i draw_set_color(argc=1)
 popz.v
 
-:[51]
+:[53]
 pushi.e 0
 conv.i.v
 push.v self.scale
@@ -468,65 +466,6 @@ call.i draw_text_transformed(argc=6)
 popz.v
 push.v self.mpos
 pushi.e 0
-cmp.i.v EQ
-bf [53]
-
-:[52]
-push.v self.fademax
-push.v self.fade
-sub.v.v
-push.v self.fademax
-div.v.v
-push.i 16777215
-conv.i.v
-pushi.e 0
-conv.i.v
-push.v self.scale
-pushi.e 2
-conv.i.d
-div.d.v
-push.v self.scale
-pushi.e 2
-conv.i.d
-div.d.v
-pushi.e 20
-push.v self.scale
-mul.v.i
-push.v self.yy
-add.v.v
-push.v self.fadescaled
-sub.v.v
-push.v self.mspace
-push.v self.mpos
-mul.v.v
-add.v.v
-pushi.e 4
-push.v self.scale
-mul.v.i
-add.v.v
-push.v self.xx
-push.v self.yes
-call.i string_width(argc=1)
-pushi.e 2
-conv.i.d
-div.d.v
-push.v self.scale
-mul.v.v
-sub.v.v
-pushi.e 13
-push.v self.scale
-mul.v.i
-sub.v.v
-pushi.e 0
-conv.i.v
-pushi.e 2527
-conv.i.v
-call.i draw_sprite_ext(argc=9)
-popz.v
-
-:[53]
-push.v self.mpos
-pushi.e 1
 cmp.i.v EQ
 bf [55]
 
@@ -564,7 +503,7 @@ push.v self.scale
 mul.v.i
 add.v.v
 push.v self.xx
-push.v self.no
+push.v self.yes
 call.i string_width(argc=1)
 pushi.e 2
 conv.i.d
@@ -584,11 +523,70 @@ call.i draw_sprite_ext(argc=9)
 popz.v
 
 :[55]
-call.i gml_Script_up_p(argc=0)
-conv.v.b
+push.v self.mpos
+pushi.e 1
+cmp.i.v EQ
 bf [57]
 
 :[56]
+push.v self.fademax
+push.v self.fade
+sub.v.v
+push.v self.fademax
+div.v.v
+push.i 16777215
+conv.i.v
+pushi.e 0
+conv.i.v
+push.v self.scale
+pushi.e 2
+conv.i.d
+div.d.v
+push.v self.scale
+pushi.e 2
+conv.i.d
+div.d.v
+pushi.e 20
+push.v self.scale
+mul.v.i
+push.v self.yy
+add.v.v
+push.v self.fadescaled
+sub.v.v
+push.v self.mspace
+push.v self.mpos
+mul.v.v
+add.v.v
+pushi.e 4
+push.v self.scale
+mul.v.i
+add.v.v
+push.v self.xx
+push.v self.no
+call.i string_width(argc=1)
+pushi.e 2
+conv.i.d
+div.d.v
+push.v self.scale
+mul.v.v
+sub.v.v
+pushi.e 13
+push.v self.scale
+mul.v.i
+sub.v.v
+pushi.e 0
+conv.i.v
+pushi.e 2527
+conv.i.v
+call.i draw_sprite_ext(argc=9)
+popz.v
+
+:[57]
+call.i gml_Script_up_p(argc=0)
+conv.v.b
+bf [59]
+
+:[58]
 push.v self.mpos
 push.e 1
 sub.i.v
@@ -596,12 +594,12 @@ pop.v.v self.mpos
 pushi.e 1
 pop.v.i self.move_noise
 
-:[57]
+:[59]
 call.i gml_Script_down_p(argc=0)
 conv.v.b
-bf [59]
+bf [61]
 
-:[58]
+:[60]
 push.v self.mpos
 push.e 1
 add.i.v
@@ -609,7 +607,7 @@ pop.v.v self.mpos
 pushi.e 1
 pop.v.i self.move_noise
 
-:[59]
+:[61]
 pushi.e 1
 conv.i.v
 pushi.e 0
@@ -619,62 +617,62 @@ call.i clamp(argc=3)
 pop.v.v self.mpos
 call.i gml_Script_button1_p(argc=0)
 conv.v.b
-bf [61]
+bf [63]
 
-:[60]
+:[62]
 push.v self.timer
 pushi.e 10
 cmp.i.v GT
-b [62]
-
-:[61]
-push.e 0
-
-:[62]
-bf [69]
+b [64]
 
 :[63]
+push.e 0
+
+:[64]
+bf [71]
+
+:[65]
 pushi.e 1
 pop.v.i self.select_noise
 push.v self.mpos
 dup.v 0
 pushi.e 0
 cmp.i.v EQ
-bt [66]
+bt [68]
 
-:[64]
+:[66]
 dup.v 0
 pushi.e 1
 cmp.i.v EQ
-bt [67]
+bt [69]
 
-:[65]
-b [68]
+:[67]
+b [70]
 
-:[66]
+:[68]
 pushi.e 1
 pop.v.i self.chaptertoload
 push.s "gameload"@14528
 pop.v.s self.con
-b [68]
+b [70]
 
-:[67]
+:[69]
 pushi.e 0
 pop.v.i self.mpos
 push.s "chapterselect"@14529
 pop.v.s self.con
-b [68]
+b [70]
 
-:[68]
+:[70]
 popz.v
 
-:[69]
+:[71]
 push.v self.con
 push.s "filefound"@14522
 cmp.s.v EQ
-bf [73]
+bf [75]
 
-:[70]
+:[72]
 push.v self.fademax
 pop.v.v self.fade
 pushi.e 0
@@ -684,41 +682,41 @@ pop.v.i self.timer
 push.v self.highestCompletedChapter
 push.v self.highestUncompletedChapter
 cmp.v.v EQ
-bf [72]
+bf [74]
 
-:[71]
+:[73]
 push.s "startNextChapter"@14530
 pop.v.s self.con
-b [73]
+b [75]
 
-:[72]
+:[74]
 push.s "continueChapter"@14531
 pop.v.s self.con
 
-:[73]
+:[75]
 push.v self.con
 push.s "startNextChapter"@14530
 cmp.s.v EQ
-bf [107]
+bf [113]
 
-:[74]
+:[76]
 push.v self.highestCompletedChapter
 push.v self.latestAvailableChapter
 cmp.v.v GTE
-bf [76]
+bf [78]
 
-:[75]
+:[77]
 push.s "chapterselect"@14529
 pop.v.s self.con
 exit.i
 
-:[76]
+:[78]
 push.v self.fade
 pushi.e 0
 cmp.i.v NEQ
-bf [78]
+bf [80]
 
-:[77]
+:[79]
 push.d 0.125
 conv.d.v
 pushi.e 0
@@ -727,7 +725,7 @@ push.v self.fade
 call.i lerp(argc=3)
 pop.v.v self.fade
 
-:[78]
+:[80]
 pushi.e 160
 push.v self.scale
 mul.v.i
@@ -773,9 +771,9 @@ pop.v.v self.stringset2
 pushglb.v global.lang
 push.s "ja"@6044
 cmp.s.v EQ
-bf [80]
+bf [82]
 
-:[79]
+:[81]
 push.s "Chapter "@14532
 push.v self.highestCompletedChapter
 call.i string(argc=1)
@@ -793,7 +791,29 @@ push.s "をプレイ"@14537
 add.s.v
 pop.v.v self.stringset2
 
-:[80]
+:[82]
+pushglb.v global.lang
+push.s "es"@58265
+cmp.s.v EQ
+bf [84]
+
+:[83]
+push.s "Capítulo "@58269
+push.v self.highestCompletedChapter
+call.i string(argc=1)
+add.v.s
+push.s " fue completado."@58270
+add.s.v
+pop.v.v self.my_stringset
+push.s "Jugar capítulo"@58271
+push.v self.highestCompletedChapter
+pushi.e 1
+add.i.v
+call.i string(argc=1)
+add.v.s
+pop.v.v self.stringset2
+
+:[84]
 push.v self.text_font
 call.i draw_set_font(argc=1)
 popz.v
@@ -819,22 +839,22 @@ popz.v
 push.v self.mpos
 pushi.e 0
 cmp.i.v EQ
-bf [82]
+bf [86]
 
-:[81]
+:[85]
 push.i 65535
 conv.i.v
 call.i draw_set_color(argc=1)
 popz.v
-b [83]
+b [87]
 
-:[82]
+:[86]
 push.i 16777215
 conv.i.v
 call.i draw_set_color(argc=1)
 popz.v
 
-:[83]
+:[87]
 pushi.e 0
 conv.i.v
 push.v self.scale
@@ -853,38 +873,48 @@ popz.v
 push.v self.mpos
 pushi.e 1
 cmp.i.v EQ
-bf [85]
+bf [89]
 
-:[84]
+:[88]
 push.i 65535
 conv.i.v
 call.i draw_set_color(argc=1)
 popz.v
-b [86]
+b [90]
 
-:[85]
+:[89]
 push.i 16777215
 conv.i.v
 call.i draw_set_color(argc=1)
 popz.v
 
-:[86]
+:[90]
 pushglb.v global.lang
 push.s "en"@9324
 cmp.s.v EQ
-bf [88]
+bf [92]
 
-:[87]
+:[91]
 push.s "Chapter Select"@14538
 conv.s.v
-b [89]
+b [93]
 
-:[88]
+:[92]
 push.s "チャプター選択"@14539
 conv.s.v
 
-:[89]
+:[93]
 pop.v.v local.select_text
+pushglb.v global.lang
+push.s "es"@58265
+cmp.s.v EQ
+bf [95]
+
+:[94]
+push.s "Selecciona un capítulo:"@58272
+pop.v.s local.select_text
+
+:[95]
 pushi.e 0
 conv.i.v
 push.v self.scale
@@ -903,9 +933,9 @@ popz.v
 push.v self.mpos
 pushi.e 0
 cmp.i.v EQ
-bf [91]
+bf [97]
 
-:[90]
+:[96]
 push.v self.fademax
 push.v self.fade
 sub.v.v
@@ -954,13 +984,13 @@ conv.i.v
 call.i draw_sprite_ext(argc=9)
 popz.v
 
-:[91]
+:[97]
 push.v self.mpos
 pushi.e 1
 cmp.i.v EQ
-bf [93]
+bf [99]
 
-:[92]
+:[98]
 push.v self.fademax
 push.v self.fade
 sub.v.v
@@ -1009,12 +1039,12 @@ conv.i.v
 call.i draw_sprite_ext(argc=9)
 popz.v
 
-:[93]
+:[99]
 call.i gml_Script_up_p(argc=0)
 conv.v.b
-bf [95]
+bf [101]
 
-:[94]
+:[100]
 push.v self.mpos
 push.e 1
 sub.i.v
@@ -1022,12 +1052,12 @@ pop.v.v self.mpos
 pushi.e 1
 pop.v.i self.move_noise
 
-:[95]
+:[101]
 call.i gml_Script_down_p(argc=0)
 conv.v.b
-bf [97]
+bf [103]
 
-:[96]
+:[102]
 push.v self.mpos
 push.e 1
 add.i.v
@@ -1035,7 +1065,7 @@ pop.v.v self.mpos
 pushi.e 1
 pop.v.i self.move_noise
 
-:[97]
+:[103]
 pushi.e 1
 conv.i.v
 pushi.e 0
@@ -1045,90 +1075,90 @@ call.i clamp(argc=3)
 pop.v.v self.mpos
 call.i gml_Script_button1_p(argc=0)
 conv.v.b
-bf [99]
+bf [105]
 
-:[98]
+:[104]
 push.v self.timer
 pushi.e 10
 cmp.i.v GT
-b [100]
+b [106]
 
-:[99]
+:[105]
 push.e 0
 
-:[100]
-bf [107]
+:[106]
+bf [113]
 
-:[101]
+:[107]
 pushi.e 1
 pop.v.i self.select_noise
 push.v self.mpos
 dup.v 0
 pushi.e 0
 cmp.i.v EQ
-bt [104]
+bt [110]
 
-:[102]
+:[108]
 dup.v 0
 pushi.e 1
 cmp.i.v EQ
-bt [105]
+bt [111]
 
-:[103]
-b [106]
+:[109]
+b [112]
 
-:[104]
+:[110]
 push.v self.highestCompletedChapter
 pushi.e 1
 add.i.v
 pop.v.v self.chaptertoload
 push.s "gameload"@14528
 pop.v.s self.con
-b [106]
+b [112]
 
-:[105]
+:[111]
 pushi.e 0
 pop.v.i self.timer
 pushi.e 0
 pop.v.i self.mpos
 push.s "chapterselect"@14529
 pop.v.s self.con
-b [106]
+b [112]
 
-:[106]
+:[112]
 popz.v
 
-:[107]
+:[113]
 push.v self.con
 push.s "continueChapter"@14531
 cmp.s.v EQ
-bf [142]
+bf [150]
 
-:[108]
+:[114]
 push.v self.highestUncompletedChapter
 pushi.e 0
 cmp.i.v EQ
-bt [111]
+bt [117]
 
-:[109]
+:[115]
 push.v self.highestUncompletedChapter
 push.v self.latestAvailableChapter
 cmp.v.v GT
-bt [111]
+bt [117]
 
-:[110]
+:[116]
 push.v self.highestCompletedChapter
 push.v self.latestAvailableChapter
 cmp.v.v GT
-b [112]
+b [118]
 
-:[111]
+:[117]
 push.e 1
 
-:[112]
-bf [114]
+:[118]
+bf [120]
 
-:[113]
+:[119]
 push.s "highestUncompletedChapter="@14541
 push.v self.highestUncompletedChapter
 call.i string(argc=1)
@@ -1145,13 +1175,13 @@ push.s "nofile"@14521
 pop.v.s self.con
 exit.i
 
-:[114]
+:[120]
 push.v self.fade
 pushi.e 0
 cmp.i.v NEQ
-bf [116]
+bf [122]
 
-:[115]
+:[121]
 push.d 0.125
 conv.d.v
 pushi.e 0
@@ -1160,7 +1190,7 @@ push.v self.fade
 call.i lerp(argc=3)
 pop.v.v self.fade
 
-:[116]
+:[122]
 pushi.e 160
 push.v self.scale
 mul.v.i
@@ -1199,9 +1229,9 @@ pop.v.v self.my_stringset
 pushglb.v global.lang
 push.s "ja"@6044
 cmp.s.v EQ
-bf [118]
+bf [124]
 
-:[117]
+:[123]
 push.s "Chapter "@14532
 push.v self.highestUncompletedChapter
 call.i string(argc=1)
@@ -1210,7 +1240,22 @@ push.s "から続けますか？"@14544
 add.s.v
 pop.v.v self.my_stringset
 
-:[118]
+:[124]
+pushglb.v global.lang
+push.s "es"@58265
+cmp.s.v EQ
+bf [126]
+
+:[125]
+push.s "¿Continuar desde capítulo"@58273
+push.v self.highestUncompletedChapter
+call.i string(argc=1)
+add.v.s
+push.s "?"@4778
+add.s.v
+pop.v.v self.my_stringset
+
+:[126]
 push.v self.text_font
 call.i draw_set_font(argc=1)
 popz.v
@@ -1236,136 +1281,136 @@ popz.v
 push.v self.mpos
 pushi.e 0
 cmp.i.v EQ
-bf [120]
-
-:[119]
-push.i 65535
-conv.i.v
-call.i draw_set_color(argc=1)
-popz.v
-b [121]
-
-:[120]
-push.i 16777215
-conv.i.v
-call.i draw_set_color(argc=1)
-popz.v
-
-:[121]
-pushi.e 0
-conv.i.v
-push.v self.scale
-push.v self.scale
-push.v self.yes
-push.v self.yy
-push.v self.fadescaled
-sub.v.v
-push.v self.mspace
-pushi.e 1
-mul.i.v
-add.v.v
-push.v self.xx
-call.i draw_text_transformed(argc=6)
-popz.v
-push.v self.mpos
-pushi.e 1
-cmp.i.v EQ
-bf [123]
-
-:[122]
-push.i 65535
-conv.i.v
-call.i draw_set_color(argc=1)
-popz.v
-b [124]
-
-:[123]
-push.i 16777215
-conv.i.v
-call.i draw_set_color(argc=1)
-popz.v
-
-:[124]
-pushi.e 0
-conv.i.v
-push.v self.scale
-push.v self.scale
-push.v self.no
-push.v self.yy
-push.v self.fadescaled
-sub.v.v
-push.v self.mspace
-pushi.e 2
-mul.i.v
-add.v.v
-push.v self.xx
-call.i draw_text_transformed(argc=6)
-popz.v
-push.v self.mpos
-pushi.e 0
-cmp.i.v EQ
-bf [126]
-
-:[125]
-push.v self.fademax
-push.v self.fade
-sub.v.v
-push.v self.fademax
-div.v.v
-push.i 16777215
-conv.i.v
-pushi.e 0
-conv.i.v
-push.v self.scale
-pushi.e 2
-conv.i.d
-div.d.v
-push.v self.scale
-pushi.e 2
-conv.i.d
-div.d.v
-push.v self.yy
-push.v self.fadescaled
-sub.v.v
-push.v self.mspace
-pushi.e 1
-mul.i.v
-add.v.v
-push.v self.mspace
-push.v self.mpos
-mul.v.v
-add.v.v
-pushi.e 4
-push.v self.scale
-mul.v.i
-add.v.v
-push.v self.xx
-push.v self.yes
-call.i string_width(argc=1)
-pushi.e 2
-conv.i.d
-div.d.v
-push.v self.scale
-mul.v.v
-sub.v.v
-pushi.e 13
-push.v self.scale
-mul.v.i
-sub.v.v
-pushi.e 0
-conv.i.v
-pushi.e 2527
-conv.i.v
-call.i draw_sprite_ext(argc=9)
-popz.v
-
-:[126]
-push.v self.mpos
-pushi.e 1
-cmp.i.v EQ
 bf [128]
 
 :[127]
+push.i 65535
+conv.i.v
+call.i draw_set_color(argc=1)
+popz.v
+b [129]
+
+:[128]
+push.i 16777215
+conv.i.v
+call.i draw_set_color(argc=1)
+popz.v
+
+:[129]
+pushi.e 0
+conv.i.v
+push.v self.scale
+push.v self.scale
+push.v self.yes
+push.v self.yy
+push.v self.fadescaled
+sub.v.v
+push.v self.mspace
+pushi.e 1
+mul.i.v
+add.v.v
+push.v self.xx
+call.i draw_text_transformed(argc=6)
+popz.v
+push.v self.mpos
+pushi.e 1
+cmp.i.v EQ
+bf [131]
+
+:[130]
+push.i 65535
+conv.i.v
+call.i draw_set_color(argc=1)
+popz.v
+b [132]
+
+:[131]
+push.i 16777215
+conv.i.v
+call.i draw_set_color(argc=1)
+popz.v
+
+:[132]
+pushi.e 0
+conv.i.v
+push.v self.scale
+push.v self.scale
+push.v self.no
+push.v self.yy
+push.v self.fadescaled
+sub.v.v
+push.v self.mspace
+pushi.e 2
+mul.i.v
+add.v.v
+push.v self.xx
+call.i draw_text_transformed(argc=6)
+popz.v
+push.v self.mpos
+pushi.e 0
+cmp.i.v EQ
+bf [134]
+
+:[133]
+push.v self.fademax
+push.v self.fade
+sub.v.v
+push.v self.fademax
+div.v.v
+push.i 16777215
+conv.i.v
+pushi.e 0
+conv.i.v
+push.v self.scale
+pushi.e 2
+conv.i.d
+div.d.v
+push.v self.scale
+pushi.e 2
+conv.i.d
+div.d.v
+push.v self.yy
+push.v self.fadescaled
+sub.v.v
+push.v self.mspace
+pushi.e 1
+mul.i.v
+add.v.v
+push.v self.mspace
+push.v self.mpos
+mul.v.v
+add.v.v
+pushi.e 4
+push.v self.scale
+mul.v.i
+add.v.v
+push.v self.xx
+push.v self.yes
+call.i string_width(argc=1)
+pushi.e 2
+conv.i.d
+div.d.v
+push.v self.scale
+mul.v.v
+sub.v.v
+pushi.e 13
+push.v self.scale
+mul.v.i
+sub.v.v
+pushi.e 0
+conv.i.v
+pushi.e 2527
+conv.i.v
+call.i draw_sprite_ext(argc=9)
+popz.v
+
+:[134]
+push.v self.mpos
+pushi.e 1
+cmp.i.v EQ
+bf [136]
+
+:[135]
 push.v self.fademax
 push.v self.fade
 sub.v.v
@@ -1418,12 +1463,12 @@ conv.i.v
 call.i draw_sprite_ext(argc=9)
 popz.v
 
-:[128]
+:[136]
 call.i gml_Script_up_p(argc=0)
 conv.v.b
-bf [130]
+bf [138]
 
-:[129]
+:[137]
 push.v self.mpos
 push.e 1
 sub.i.v
@@ -1431,12 +1476,12 @@ pop.v.v self.mpos
 pushi.e 1
 pop.v.i self.move_noise
 
-:[130]
+:[138]
 call.i gml_Script_down_p(argc=0)
 conv.v.b
-bf [132]
+bf [140]
 
-:[131]
+:[139]
 push.v self.mpos
 push.e 1
 add.i.v
@@ -1444,7 +1489,7 @@ pop.v.v self.mpos
 pushi.e 1
 pop.v.i self.move_noise
 
-:[132]
+:[140]
 pushi.e 1
 conv.i.v
 pushi.e 0
@@ -1454,21 +1499,21 @@ call.i clamp(argc=3)
 pop.v.v self.mpos
 call.i gml_Script_button1_p(argc=0)
 conv.v.b
-bf [134]
+bf [142]
 
-:[133]
+:[141]
 push.v self.timer
 pushi.e 10
 cmp.i.v GT
-b [135]
+b [143]
 
-:[134]
+:[142]
 push.e 0
 
-:[135]
-bf [142]
+:[143]
+bf [150]
 
-:[136]
+:[144]
 pushi.e 0
 pop.v.i self.timer
 pushi.e 1
@@ -1477,67 +1522,87 @@ push.v self.mpos
 dup.v 0
 pushi.e 0
 cmp.i.v EQ
-bt [139]
+bt [147]
 
-:[137]
+:[145]
 dup.v 0
 pushi.e 1
 cmp.i.v EQ
-bt [140]
+bt [148]
 
-:[138]
-b [141]
+:[146]
+b [149]
 
-:[139]
+:[147]
 push.v self.highestUncompletedChapter
 pop.v.v self.chaptertoload
 push.s "gameload"@14528
 pop.v.s self.con
-b [141]
+b [149]
 
-:[140]
+:[148]
 pushi.e 0
 pop.v.i self.timer
 pushi.e 0
 pop.v.i self.mpos
 push.s "chapterselect"@14529
 pop.v.s self.con
-b [141]
+b [149]
 
-:[141]
+:[149]
 popz.v
 
-:[142]
+:[150]
 push.v self.con
 push.s "chapterselect"@14529
 cmp.s.v EQ
-bf [187]
+bf [199]
 
-:[143]
+:[151]
 pushglb.v global.lang
 push.s "en"@9324
 cmp.s.v EQ
-bf [145]
+bf [153]
 
-:[144]
+:[152]
 push.s "Quit"@14545
 conv.s.v
-b [146]
+b [154]
 
-:[145]
+:[153]
 push.s "とじる"@14546
 conv.s.v
 
-:[146]
+:[154]
 pop.v.v self.quit
+pushglb.v global.lang
+push.s "es"@58265
+cmp.s.v EQ
+bf [156]
+
+:[155]
+push.s "Salir"@58274
+pop.v.s self.quit
+
+:[156]
 push.s "Chapter"@14548
 pop.v.s self.chapterstring
+pushglb.v global.lang
+push.s "es"@58265
+cmp.s.v EQ
+bf [158]
+
+:[157]
+push.s "Capítulo"@58275
+pop.v.s self.chapterstring
+
+:[158]
 push.v self.chapterselectinit
 pushi.e 0
 cmp.i.v EQ
-bf [149]
+bf [161]
 
-:[147]
+:[159]
 push.v self.fademax
 pop.v.v self.fade
 pushi.e 1
@@ -1551,21 +1616,21 @@ push.v self.latestAvailableChapter
 pushi.e 1
 sub.i.v
 cmp.v.v GT
-bf [149]
+bf [161]
 
-:[148]
+:[160]
 push.v self.latestAvailableChapter
 pushi.e 1
 sub.i.v
 pop.v.v self.mpos
 
-:[149]
+:[161]
 push.v self.fade
 pushi.e 0
 cmp.i.v NEQ
-bf [151]
+bf [163]
 
-:[150]
+:[162]
 push.d 0.125
 conv.d.v
 pushi.e 0
@@ -1574,7 +1639,7 @@ push.v self.fade
 call.i lerp(argc=3)
 pop.v.v self.fade
 
-:[151]
+:[163]
 push.v self.fade
 push.v self.scale
 mul.v.v
@@ -1586,13 +1651,13 @@ pop.v.v self.space
 pushi.e 0
 pop.v.i local.i
 
-:[152]
+:[164]
 pushloc.v local.i
 pushi.e 6
 cmp.i.v LT
-bf [154]
+bf [166]
 
-:[153]
+:[165]
 pushi.e 1
 push.v self.fade
 push.v self.fademax
@@ -1628,18 +1693,18 @@ push.v local.i
 push.e 1
 add.i.v
 pop.v.v local.i
-b [152]
+b [164]
 
-:[154]
+:[166]
 pushi.e 1
 conv.i.v
 call.i draw_set_halign(argc=1)
 popz.v
 call.i gml_Script_up_p(argc=0)
 conv.v.b
-bf [157]
+bf [169]
 
-:[155]
+:[167]
 pushi.e 1
 pop.v.i self.move_noise
 push.v self.mpos
@@ -1651,20 +1716,20 @@ push.v self.latestAvailableChapter
 pushi.e 1
 sub.i.v
 cmp.v.v GT
-bf [157]
+bf [169]
 
-:[156]
+:[168]
 push.v self.latestAvailableChapter
 pushi.e 1
 sub.i.v
 pop.v.v self.mpos
 
-:[157]
+:[169]
 call.i gml_Script_down_p(argc=0)
 conv.v.b
-bf [163]
+bf [175]
 
-:[158]
+:[170]
 pushi.e 1
 pop.v.i self.move_noise
 push.v self.mpos
@@ -1676,31 +1741,31 @@ push.v self.latestAvailableChapter
 pushi.e 1
 sub.i.v
 cmp.v.v GT
-bf [163]
+bf [175]
 
-:[159]
+:[171]
 pushglb.v global.is_console
 conv.v.b
-bf [161]
+bf [173]
 
-:[160]
+:[172]
 pushi.e 1
 conv.i.v
-b [162]
+b [174]
 
-:[161]
+:[173]
 pushi.e 7
 conv.i.v
 
-:[162]
+:[174]
 pop.v.v self.mpos
 
-:[163]
+:[175]
 push.v self.console
 conv.v.b
-bf [165]
+bf [177]
 
-:[164]
+:[176]
 pushi.e 6
 conv.i.v
 pushi.e 0
@@ -1708,9 +1773,9 @@ conv.i.v
 push.v self.mpos
 call.i clamp(argc=3)
 pop.v.v self.mpos
-b [166]
+b [178]
 
-:[165]
+:[177]
 pushi.e 7
 conv.i.v
 pushi.e 0
@@ -1719,7 +1784,7 @@ push.v self.mpos
 call.i clamp(argc=3)
 pop.v.v self.mpos
 
-:[166]
+:[178]
 pushi.e 35
 push.v self.scale
 mul.v.i
@@ -1737,35 +1802,35 @@ pop.v.i local.max_options
 pushi.e 0
 pop.v.i local.i
 
-:[167]
+:[179]
 pushloc.v local.i
 pushloc.v local.max_options
 cmp.v.v LT
-bf [173]
+bf [185]
 
-:[168]
+:[180]
 push.i 8421504
 pop.v.i local.mycolor
 pushloc.v local.i
 push.v self.latestAvailableChapter
 cmp.v.v LT
-bf [170]
+bf [182]
 
-:[169]
+:[181]
 push.i 16777215
 pop.v.i local.mycolor
 
-:[170]
+:[182]
 push.v self.mpos
 pushloc.v local.i
 cmp.v.v EQ
-bf [172]
+bf [184]
 
-:[171]
+:[183]
 push.i 65535
 pop.v.i local.mycolor
 
-:[172]
+:[184]
 push.v self.fade
 push.v self.fademax
 div.v.v
@@ -1888,9 +1953,9 @@ push.v local.i
 push.e 1
 add.i.v
 pop.v.v local.i
-b [167]
+b [179]
 
-:[173]
+:[185]
 push.v self.xx
 pushi.e 15
 push.v self.scale
@@ -1915,9 +1980,9 @@ pop.v.v local.heart_ypos
 push.v self.mpos
 pushi.e 7
 cmp.i.v EQ
-bf [175]
+bf [187]
 
-:[174]
+:[186]
 push.v local.heart_ypos
 pushi.e 5
 push.v self.scale
@@ -1929,7 +1994,7 @@ push.v self.scale
 mul.v.i
 pop.v.v local.heart_xpos
 
-:[175]
+:[187]
 push.v self.fademax
 push.v self.fade
 sub.v.v
@@ -1958,21 +2023,21 @@ popz.v
 push.v self.console
 conv.v.b
 not.b
-bf [179]
+bf [191]
 
-:[176]
+:[188]
 push.i 16777215
 pop.v.i local.mycolor
 push.v self.mpos
 pushi.e 7
 cmp.i.v EQ
-bf [178]
+bf [190]
 
-:[177]
+:[189]
 push.i 65535
 pop.v.i local.mycolor
 
-:[178]
+:[190]
 push.v self.fade
 push.v self.fademax
 div.v.v
@@ -2009,24 +2074,24 @@ conv.i.v
 call.i draw_set_halign(argc=1)
 popz.v
 
-:[179]
+:[191]
 call.i gml_Script_button1_p(argc=0)
 conv.v.b
-bf [181]
+bf [193]
 
-:[180]
+:[192]
 push.v self.timer
 pushi.e 12
 cmp.i.v GT
-b [182]
+b [194]
 
-:[181]
+:[193]
 push.e 0
 
-:[182]
-bf [186]
+:[194]
+bf [198]
 
-:[183]
+:[195]
 pushi.e 1
 pop.v.i self.select_noise
 pushi.e 0
@@ -2034,14 +2099,14 @@ pop.v.i self.timer
 push.v self.mpos
 pushi.e 7
 cmp.i.v EQ
-bf [185]
+bf [197]
 
-:[184]
+:[196]
 call.i game_end(argc=0)
 popz.v
-b [186]
+b [198]
 
-:[185]
+:[197]
 push.s "gameloadConfirm"@14554
 pop.v.s self.con
 pushi.e 0
@@ -2051,48 +2116,60 @@ pushi.e 1
 add.i.v
 pop.v.v self.chaptertoload
 
-:[186]
-b [250]
+:[198]
+b [261]
 
-:[187]
+:[199]
 push.v self.con
 push.s "gameloadConfirm"@14554
 cmp.s.v EQ
-bf [250]
+bf [261]
 
-:[188]
+:[200]
 pushglb.v global.lang
 push.s "en"@9324
 cmp.s.v EQ
-bf [190]
+bf [202]
 
-:[189]
+:[201]
 push.s "Play"@14555
 conv.s.v
-b [191]
+b [203]
 
-:[190]
+:[202]
 push.s "プレイする"@14556
 conv.s.v
 
-:[191]
+:[203]
 pop.v.v self.stringPlay
 pushglb.v global.lang
 push.s "en"@9324
 cmp.s.v EQ
-bf [193]
+bf [205]
 
-:[192]
+:[204]
 push.s "Do Not"@14558
 conv.s.v
-b [194]
+b [206]
 
-:[193]
+:[205]
 push.s "しない"@14559
 conv.s.v
 
-:[194]
+:[206]
 pop.v.v self.stringDoNot
+pushglb.v global.lang
+push.s "es"@58265
+cmp.s.v EQ
+bf [208]
+
+:[207]
+push.s "Jugar"@58276
+pop.v.s self.stringPlay
+push.s "No jugar"@58277
+pop.v.s self.stringDoNot
+
+:[208]
 pushi.e 30
 push.v self.scale
 mul.v.i
@@ -2100,13 +2177,13 @@ pop.v.v self.space
 pushi.e 0
 pop.v.i local.i
 
-:[195]
+:[209]
 pushloc.v local.i
 pushi.e 6
 cmp.i.v LT
-bf [197]
+bf [211]
 
-:[196]
+:[210]
 pushi.e 1
 push.v self.fade
 push.v self.fademax
@@ -2142,18 +2219,18 @@ push.v local.i
 push.e 1
 add.i.v
 pop.v.v local.i
-b [195]
+b [209]
 
-:[197]
+:[211]
 pushi.e 1
 conv.i.v
 call.i draw_set_halign(argc=1)
 popz.v
 push.v self.console
 conv.v.b
-bf [199]
+bf [213]
 
-:[198]
+:[212]
 pushi.e 6
 conv.i.v
 pushi.e 0
@@ -2161,9 +2238,9 @@ conv.i.v
 push.v self.mpos
 call.i clamp(argc=3)
 pop.v.v self.mpos
-b [200]
+b [214]
 
-:[199]
+:[213]
 pushi.e 7
 conv.i.v
 pushi.e 0
@@ -2172,7 +2249,7 @@ push.v self.mpos
 call.i clamp(argc=3)
 pop.v.v self.mpos
 
-:[200]
+:[214]
 pushi.e 35
 push.v self.scale
 mul.v.i
@@ -2187,9 +2264,9 @@ mul.v.i
 pop.v.v self.mspace
 call.i gml_Script_left_p(argc=0)
 conv.v.b
-bf [205]
+bf [216]
 
-:[201]
+:[215]
 pushi.e 1
 pop.v.i self.move_noise
 push.v self.confirm_choice_index
@@ -2197,26 +2274,14 @@ pushi.e 1
 sub.i.v
 pushi.e 0
 cmp.i.v LT
-bf [203]
+pop.v.b self.confirm_choice_index
 
-:[202]
-pushi.e 1
-conv.i.v
-b [204]
-
-:[203]
-pushi.e 0
-conv.i.v
-
-:[204]
-pop.v.v self.confirm_choice_index
-
-:[205]
+:[216]
 call.i gml_Script_right_p(argc=0)
 conv.v.b
-bf [210]
+bf [221]
 
-:[206]
+:[217]
 pushi.e 1
 pop.v.i self.move_noise
 push.v self.confirm_choice_index
@@ -2224,21 +2289,21 @@ pushi.e 1
 add.i.v
 pushi.e 1
 cmp.i.v GT
-bf [208]
+bf [219]
 
-:[207]
+:[218]
 pushi.e 0
 conv.i.v
-b [209]
+b [220]
 
-:[208]
+:[219]
 pushi.e 1
 conv.i.v
 
-:[209]
+:[220]
 pop.v.v self.confirm_choice_index
 
-:[210]
+:[221]
 pushi.e 116
 push.v self.scale
 mul.v.i
@@ -2252,9 +2317,9 @@ pop.v.v local.heart_xpos
 pushglb.v global.lang
 push.s "ja"@6044
 cmp.s.v EQ
-bf [212]
+bf [223]
 
-:[211]
+:[222]
 pushi.e 106
 push.v self.scale
 mul.v.i
@@ -2266,7 +2331,7 @@ mul.v.v
 add.v.v
 pop.v.v local.heart_xpos
 
-:[212]
+:[223]
 push.v self.yy
 pushi.e 7
 push.v self.scale
@@ -2309,35 +2374,35 @@ pop.v.i local.max_options
 pushi.e 0
 pop.v.i local.i
 
-:[213]
+:[224]
 pushloc.v local.i
 pushloc.v local.max_options
 cmp.v.v LT
-bf [234]
+bf [245]
 
-:[214]
+:[225]
 push.i 8421504
 pop.v.i local.mycolor
 pushloc.v local.i
 push.v self.latestAvailableChapter
 cmp.v.v LT
-bf [216]
+bf [227]
 
-:[215]
+:[226]
 push.i 16777215
 pop.v.i local.mycolor
 
-:[216]
+:[227]
 push.v self.mpos
 pushloc.v local.i
 cmp.v.v EQ
-bf [218]
+bf [229]
 
-:[217]
+:[228]
 push.i 65535
 pop.v.i local.mycolor
 
-:[218]
+:[229]
 push.v self.fade
 push.v self.fademax
 div.v.v
@@ -2426,34 +2491,34 @@ popz.v
 push.v self.mpos
 pushloc.v local.i
 cmp.v.v EQ
-bf [232]
+bf [243]
 
-:[219]
+:[230]
 push.v self.confirm_choice_index
 pushi.e 0
 cmp.i.v EQ
-bf [221]
+bf [232]
 
-:[220]
+:[231]
 push.i 65535
 conv.i.v
-b [222]
+b [233]
 
-:[221]
+:[232]
 push.i 16777215
 conv.i.v
 
-:[222]
+:[233]
 pop.v.v local.play_color
 pushloc.v local.play_color
 call.i draw_set_color(argc=1)
 popz.v
 pushglb.v global.lang
-push.s "en"@9324
-cmp.s.v EQ
-bf [224]
+push.s "ja"@6044
+cmp.s.v NEQ
+bf [235]
 
-:[223]
+:[234]
 pushi.e 0
 conv.i.v
 push.v self.scale
@@ -2478,9 +2543,9 @@ push.v self.scale
 mul.v.i
 call.i draw_text_transformed(argc=6)
 popz.v
-b [225]
+b [236]
 
-:[224]
+:[235]
 pushi.e 0
 conv.i.v
 push.v self.scale
@@ -2506,32 +2571,32 @@ mul.v.i
 call.i draw_text_transformed(argc=6)
 popz.v
 
-:[225]
+:[236]
 push.v self.confirm_choice_index
 pushi.e 1
 cmp.i.v EQ
-bf [227]
+bf [238]
 
-:[226]
+:[237]
 push.i 65535
 conv.i.v
-b [228]
+b [239]
 
-:[227]
+:[238]
 push.i 16777215
 conv.i.v
 
-:[228]
+:[239]
 pop.v.v local.not_color
 pushloc.v local.not_color
 call.i draw_set_color(argc=1)
 popz.v
 pushglb.v global.lang
-push.s "en"@9324
-cmp.s.v EQ
-bf [230]
+push.s "ja"@6044
+cmp.s.v NEQ
+bf [241]
 
-:[229]
+:[240]
 pushi.e 0
 conv.i.v
 push.v self.scale
@@ -2556,9 +2621,9 @@ push.v self.scale
 mul.v.i
 call.i draw_text_transformed(argc=6)
 popz.v
-b [231]
+b [242]
 
-:[230]
+:[241]
 pushi.e 0
 conv.i.v
 push.v self.scale
@@ -2584,10 +2649,10 @@ mul.v.i
 call.i draw_text_transformed(argc=6)
 popz.v
 
-:[231]
-b [233]
+:[242]
+b [244]
 
-:[232]
+:[243]
 pushi.e 0
 conv.i.v
 push.v self.scale
@@ -2616,7 +2681,7 @@ mul.v.i
 call.i draw_text_transformed(argc=6)
 popz.v
 
-:[233]
+:[244]
 pushi.e 0
 conv.i.v
 call.i draw_set_halign(argc=1)
@@ -2629,27 +2694,27 @@ push.v local.i
 push.e 1
 add.i.v
 pop.v.v local.i
-b [213]
+b [224]
 
-:[234]
+:[245]
 push.v self.console
 conv.v.b
 not.b
-bf [238]
+bf [249]
 
-:[235]
+:[246]
 push.i 16777215
 pop.v.i local.mycolor
 push.v self.mpos
 pushi.e 7
 cmp.i.v EQ
-bf [237]
+bf [248]
 
-:[236]
+:[247]
 push.i 65535
 pop.v.i local.mycolor
 
-:[237]
+:[248]
 push.v self.fade
 push.v self.fademax
 div.v.v
@@ -2688,24 +2753,24 @@ conv.i.v
 call.i draw_set_halign(argc=1)
 popz.v
 
-:[238]
+:[249]
 call.i gml_Script_button1_p(argc=0)
 conv.v.b
-bf [240]
+bf [251]
 
-:[239]
+:[250]
 push.v self.timer
 pushi.e 12
 cmp.i.v GT
-b [241]
+b [252]
 
-:[240]
+:[251]
 push.e 0
 
-:[241]
-bf [245]
+:[252]
+bf [256]
 
-:[242]
+:[253]
 pushi.e 0
 pop.v.i self.timer
 pushi.e 1
@@ -2713,35 +2778,35 @@ pop.v.i self.select_noise
 push.v self.confirm_choice_index
 pushi.e 0
 cmp.i.v EQ
-bf [244]
+bf [255]
 
-:[243]
+:[254]
 push.s "gameload"@14528
 pop.v.s self.con
-b [245]
+b [256]
 
-:[244]
+:[255]
 push.s "chapterselect"@14529
 pop.v.s self.con
 
-:[245]
+:[256]
 call.i gml_Script_button2_p(argc=0)
 conv.v.b
-bf [247]
+bf [258]
 
-:[246]
+:[257]
 push.v self.timer
 pushi.e 12
 cmp.i.v GT
-b [248]
+b [259]
 
-:[247]
+:[258]
 push.e 0
 
-:[248]
-bf [250]
+:[259]
+bf [261]
 
-:[249]
+:[260]
 pushi.e 0
 pop.v.i self.timer
 pushi.e 1
@@ -2749,19 +2814,19 @@ pop.v.i self.select_noise
 push.s "chapterselect"@14529
 pop.v.s self.con
 
-:[250]
+:[261]
 push.v self.con
 push.s "gameload"@14528
 cmp.s.v EQ
-bf [261]
+bf [272]
 
-:[251]
+:[262]
 push.v self.spr_aftereffect
 pushi.e 0
 cmp.i.v EQ
-bf [253]
+bf [264]
 
-:[252]
+:[263]
 pushi.e 0
 conv.i.v
 pushi.e 0
@@ -2770,39 +2835,39 @@ pushi.e 0
 conv.i.v
 pushi.e 0
 conv.i.v
-pushbltn.v builtin.room_height
-pushbltn.v builtin.room_width
+pushbltn.v self.room_height
+pushbltn.v self.room_width
 pushi.e 0
 conv.i.v
 pushi.e 0
 conv.i.v
-pushbltn.v builtin.application_surface
+pushbltn.v self.application_surface
 call.i sprite_create_from_surface(argc=9)
 pop.v.v self.spr_aftereffect
-pushbltn.v builtin.room_height
+pushbltn.v self.room_height
 pushi.e 2
 conv.i.d
 div.d.v
-pushbltn.v builtin.room_width
+pushbltn.v self.room_width
 pushi.e 2
 conv.i.d
 div.d.v
 push.v self.spr_aftereffect
 call.i sprite_set_offset(argc=3)
 popz.v
-pushbltn.v builtin.room_height
+pushbltn.v self.room_height
 pushi.e 2
 conv.i.d
 div.d.v
 pop.v.v self.yy
 
-:[253]
+:[264]
 push.v self.chaptertoload
 pushi.e 0
 cmp.i.v NEQ
-bf [260]
+bf [271]
 
-:[254]
+:[265]
 pushi.e 500
 conv.i.v
 pushi.e 0
@@ -2814,18 +2879,18 @@ push.v self.chaptertoload
 dup.v 0
 pushi.e 1
 cmp.i.v EQ
-bt [257]
+bt [268]
 
-:[255]
+:[266]
 dup.v 0
 pushi.e 2
 cmp.i.v EQ
-bt [258]
+bt [269]
 
-:[256]
-b [259]
+:[267]
+b [270]
 
-:[257]
+:[268]
 pushi.e 0
 conv.i.v
 pushi.e 50
@@ -2834,9 +2899,9 @@ pushi.e 254
 conv.i.v
 call.i audio_play_sound(argc=3)
 popz.v
-b [259]
+b [270]
 
-:[258]
+:[269]
 pushi.e 0
 conv.i.v
 pushi.e 50
@@ -2845,23 +2910,20 @@ pushi.e 193
 conv.i.v
 call.i audio_play_sound(argc=3)
 popz.v
-b [259]
+b [270]
 
-:[259]
+:[270]
 popz.v
 push.v self.chaptertoload
 pop.v.v self.chaptertoload_temp
 pushi.e 0
 pop.v.i self.chaptertoload
-push.i 68062
-setowner.e
 pushi.e 60
-conv.i.v
 pushi.e -1
 pushi.e 2
-pop.v.v [array]self.alarm
+pop.v.i [array]self.alarm
 
-:[260]
+:[271]
 push.v self.fadeout
 push.i 16777215
 conv.i.v
@@ -2870,7 +2932,7 @@ conv.i.v
 push.v self.yscale
 push.v self.xscale
 push.v self.yy
-pushbltn.v builtin.room_width
+pushbltn.v self.room_width
 pushi.e 2
 conv.i.d
 div.d.v
@@ -2899,12 +2961,12 @@ push.d 0.99
 mul.d.v
 pop.v.v self.yy
 
-:[261]
+:[272]
 push.v self.move_noise
 conv.v.b
-bf [263]
+bf [274]
 
-:[262]
+:[273]
 pushi.e 0
 pop.v.i self.move_noise
 pushi.e 0
@@ -2916,12 +2978,12 @@ conv.i.v
 call.i audio_play_sound(argc=3)
 popz.v
 
-:[263]
+:[274]
 push.v self.select_noise
 conv.v.b
 bf [end]
 
-:[264]
+:[275]
 pushi.e 0
 pop.v.i self.select_noise
 pushi.e 0

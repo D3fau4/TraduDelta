@@ -16,8 +16,15 @@
     <ProjectReference Include="..\UndertaleModTool\UndertaleModLib\UndertaleModLib.csproj" />
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy $(ProjectDir)\Mods\ $(ProjectDir)\$(OutDir)\Mods /E /H /C /I /Y /D /S" />
-  </Target>
+  <ItemGroup>
+    <None Update="Mods\gml_GlobalScript_scr_change_language_ch1.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
+    </None>
+    <None Update="Mods\gml_GlobalScript_scr_change_language.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
+    </None>
+  </ItemGroup>
 
 </Project>

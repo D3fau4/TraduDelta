@@ -41,7 +41,7 @@ namespace TraduDelta
                 }
                 po.Add(new PoEntry(source.Values[i])
                 {
-                    Flags = "font-family:dialog, font-size:20, max-size:216:1",
+                    //Flags = "font-family:dialog, font-size:20, max-size:216:1",
                     Context = source.Keys[i],
                 });
             }
@@ -108,7 +108,6 @@ namespace TraduDelta
 
                 po.Add(new PoEntry(source.Values[i])
                 {
-                    Flags = "font-family:dialog, font-size:20, max-size:216:1",
                     Context = source.Keys[i],
                     Translated = tradu.Values[i]
                 });

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using UndertaleModLib;
-using UndertaleModLib.Decompiler;
 using Yarhl.FileSystem;
 using Yarhl.Media.Text;
 
@@ -10,47 +9,77 @@ namespace TraduDelta
 {
     class Program
     {
-        static void print(string message, ConsoleColor color = ConsoleColor.White)
-        {
-            Console.ForegroundColor = color;
-            Console.WriteLine(message);
-            Console.ResetColor();
-        }
 
         static void Main(string[] args)
         {
 
-            print("Welcome to TraduDelta by D3fau4!", ConsoleColor.Green);
+            cmdutils.print("Welcome to TraduDelta by D3fau4!", ConsoleColor.Green);
 
             if (args.Length > 0)
             {
                 switch (args[0])
                 {
                     case "--applymods":
-                        throw new NotImplementedException();
+
+                        cmdutils.print("Write the lenguage code name: ", ConsoleColor.Cyan);
+                        var codename = Console.ReadLine();
+                        if (codename.Length > 2)
+                        {
+                            cmdutils.print("Error: the code name is bigger than 2 characters", ConsoleColor.Red);
+                            cmdutils.print("Please use a smoller lenguage code. ex: es, en, ja, etc...", ConsoleColor.Blue);
+                        }
+                        cmdutils.print("Write the lenguage what do you use: ", ConsoleColor.Cyan);
+                        var lenguage = Console.ReadLine();
                         if (args[1].Contains(".win"))
                         {
                             UndertaleData Data = null;
 
                             using (var stream = new FileStream(args[1], FileMode.Open, FileAccess.Read))
                             {
+                                cmdutils.print("Reading Data.win...", ConsoleColor.White);
                                 Data = UndertaleIO.Read(stream);
+                                cmdutils.print("Read complete!", ConsoleColor.Green);
                             }
 
                             if (Data != null)
                             {
                                 if (Data.IsGameMaker2())
                                 {
+                                    int codename_index = 0;
+                                    int Lenguage_index = 0;
+                                    int LenguageUpper_index = 0;
+                                    Data.Strings.MakeString(codename);
+                                    Data.Strings.MakeString(lenguage);
+                                    Data.Strings.MakeString(lenguage.ToUpper());
+
+                                    for (int i = 0; i < Data.Strings.Count; i++)
+                                    {
+                                        if (Data.Strings[i].Content.Equals(codename))
+                                        {
+                                            codename_index = i;
+                                        }
+                                        else if (Data.Strings[i].Content.Equals(lenguage))
+                                        {
+                                            Lenguage_index = i;
+                                        }
+                                        else if (Data.Strings[i].Content.Equals(lenguage.ToUpper()))
+                                        {
+                                            LenguageUpper_index = i;
+                                            break;
+                                        }
+                                    }
                                     foreach (string file in Directory.GetFiles("Mods", "*.asm"))
                                     {
-                                        print("Import mod: " + file);
-                                        Data.Scripts.ByName(Path.GetFileName(file))?.Code.Replace(Assembler.Assemble(@File.ReadAllText(file), Data.Functions, Data.Variables, Data.Strings));
+                                        cmdutils.print("Import mod: " + file);
+                                        string mod = File.ReadAllText(file);
+
+                                        mod = mod.Replace("{LENGUAGE}", codename).Replace("@FFFFFF", "@" + codename_index.ToString());
+                                        Importcode import = new Importcode(Data);
+                                        import.Import(Path.GetFileName(file).Replace(".asm", ""), mod, false, true);
                                     }
-                                    foreach (string file in Directory.GetFiles("Mods", "*.gml"))
-                                    {
-                                        print("Import mod: " + file);
-                                        Data.Scripts.ByName(Path.GetFileName(file))?.Code.ReplaceGML(File.ReadAllText(file), Data);
-                                    }
+
+                                    GameWin build = new GameWin(Data);
+                                    build.save(args[1]);
                                 }
                             }
                         }
@@ -74,14 +103,14 @@ namespace TraduDelta
                     case "--extracttext":
                         if (args.Length < 3)
                         {
-                            print("lang_en_ch1.json not found", ConsoleColor.Red);
-                            print("Usage: TraduDelta.exe --extracttext game.win lang_en_ch1.json");
+                            cmdutils.print("lang_en_ch1.json not found", ConsoleColor.Red);
+                            cmdutils.print("Usage: TraduDelta.exe --extracttext game.win lang_en_ch1.json");
                             break;
                         }
                         if (args.Length < 4)
                         {
-                            print("lang_ja.json not found", ConsoleColor.Red);
-                            print("Usage: TraduDelta.exe --extracttext game.win lang_en_ch1.json");
+                            cmdutils.print("lang_ja.json not found", ConsoleColor.Red);
+                            cmdutils.print("Usage: TraduDelta.exe --extracttext game.win lang_en_ch1.json");
                             break;
                         }
                         if (args[1].Contains(".win"))
@@ -90,13 +119,13 @@ namespace TraduDelta
 
                             using (var stream = new FileStream(args[1], FileMode.Open, FileAccess.Read))
                             {
-                                print("Reading Data.win...");
+                                cmdutils.print("Reading Data.win...");
                                 Data = UndertaleIO.Read(stream);
-                                print("Read complete!", ConsoleColor.Green);
+                                cmdutils.print("Read complete!", ConsoleColor.Green);
                             }
-                            print("Depcompiling game...");
+                            cmdutils.print("Depcompiling game...");
                             Dictionary<string, string> codedep = Decompiler.Decompile(Data);
-                            print("Done!", ConsoleColor.Green);
+                            cmdutils.print("Done!", ConsoleColor.Green);
                             Dictionary<string, string> fullpair = new Dictionary<string, string>();
                             foreach (var entry in codedep)
                             {
@@ -107,7 +136,7 @@ namespace TraduDelta
                                 {
                                     continue;
                                 }
-                                print(entry.Key, ConsoleColor.Magenta);
+                                cmdutils.print(entry.Key, ConsoleColor.Magenta);
                                 string[] str = entry.Value.Split("\n");
                                 for (int i = 0; i < str.Length; i++)
                                 {
@@ -178,8 +207,8 @@ namespace TraduDelta
                                         {
                                             if (str[i].Contains("gml_Script_scr_84_get_lang_string_ch1"))
                                             {
-                                                print("Importing text from Chapter 1", ConsoleColor.Gray);
-                                                //print(bufferkey);
+                                                cmdutils.print("Importing text from Chapter 1", ConsoleColor.Gray);
+                                                //cmdutils.print(bufferkey);
                                                 buffervalue = json.getvaluefromjson(args[2], bufferkey);
                                             }
                                             keyValuePairs.Add(bufferkey, buffervalue);
@@ -187,7 +216,7 @@ namespace TraduDelta
                                         }
                                         catch (Exception)
                                         {
-                                            //print("Clave repetida");
+                                            //cmdutils.print("Clave repetida");
                                         }
                                         /* Limpiamos buffer*/
                                         buffervalue = "";
@@ -204,14 +233,14 @@ namespace TraduDelta
                             json.cleanjson("lang_en.json", args[3]);
                             fullpair = json.Gettext("lang_en.json");
                             Powritter.write(fullpair, "lang_en.po");
-                            print("Done!", ConsoleColor.Green);
+                            cmdutils.print("Done!", ConsoleColor.Green);
                         }
                         break;
                     case "--clean":
                         Directory.Delete("Output", true);
                         Directory.Delete("OUT_PO", true);
                         File.Delete("lang_en.json");
-                        print("Cleaned!");
+                        cmdutils.print("Cleaned!");
                         break;
                     case "--mergetranslation":
                         var text3 = json.Gettext(args[1]);
@@ -219,7 +248,7 @@ namespace TraduDelta
                         Powritter.write(text3, text4, Path.GetFileName(args[1].Replace(".json", ".merged.po")));
                         break;
                     default:
-                        print("Invalid settings: " + args[0], ConsoleColor.Red);
+                        cmdutils.print("Invalid settings: " + args[0], ConsoleColor.Red);
                         printhelp();
                         break;
                 }
@@ -232,10 +261,10 @@ namespace TraduDelta
 
         static void printhelp()
         {
-            print("TraduDelta.exe [MODE] [FILE/DIRECTORY]\n");
-            print("--applymods                  Apply TS mods.");
-            print("--json2po                    Convert .json to .po");
-            print("--extracttext                Extract the texts from the game.win");
+            cmdutils.print("TraduDelta.exe [MODE] [FILE/DIRECTORY]\n");
+            cmdutils.print("--applymods                  Apply TS mods.");
+            cmdutils.print("--json2po                    Convert .json to .po");
+            cmdutils.print("--extracttext                Extract the texts from the game.win");
         }
     }
 }

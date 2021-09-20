@@ -1,7 +1,7 @@
 .localvar 2 arguments
 
 :[0]
-b [5]
+b [7]
 
 > gml_Script_scr_change_language (locals=0, argc=0)
 :[1]
@@ -13,13 +13,24 @@ bf [3]
 :[2]
 push.s "ja"@6044
 pop.v.s global.lang
-b [4]
+b [6]
 
 :[3]
-push.s "en"@9324
-pop.v.s global.lang
+pushglb.v global.lang
+push.s "{LENGUAGE}"@FFFFFF
+cmp.s.v EQ
+bf [5]
 
 :[4]
+push.s "en"@9324
+pop.v.s global.lang
+b [6]
+
+:[5]
+push.s "{LENGUAGE}"@FFFFFF
+pop.v.s global.lang
+
+:[6]
 push.s "true_config.ini"@11939
 conv.s.v
 call.i gml_Script_ossafe_ini_open(argc=1)
@@ -39,7 +50,7 @@ call.i gml_Script_scr_84_init_localization(argc=0)
 popz.v
 exit.i
 
-:[5]
+:[7]
 push.i gml_Script_scr_change_language
 conv.i.v
 pushi.e -1

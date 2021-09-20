@@ -11,13 +11,13 @@ cmp.s.v EQ
 bf [3]
 
 :[2]
-push.s "es"@58265
+push.s "{LENGUAGE}"@FFFFFF
 pop.v.s global.lang
 b [6]
 
 :[3]
 pushglb.v global.lang
-push.s "es"@58265
+push.s "{LENGUAGE}"@FFFFFF
 cmp.s.v EQ
 bf [5]
 

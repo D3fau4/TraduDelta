@@ -62,6 +62,7 @@ namespace TraduDelta
 
             for (int i = 0; i < source.Keys.Count; i++)
             {
+                /* clean */
                 if (source.Values[i] == string.Empty || source.Values[i] == null)
                 {
                     source.Values[i] = "<EMPTY>";
@@ -103,6 +104,8 @@ namespace TraduDelta
                 {
                     tradu.Values[i] = tradu.Values[i].Replace("\f", "<F>");
                 }
+                /* clean */
+
                 po.Add(new PoEntry(source.Values[i])
                 {
                     Flags = "font-family:dialog, font-size:20, max-size:216:1",

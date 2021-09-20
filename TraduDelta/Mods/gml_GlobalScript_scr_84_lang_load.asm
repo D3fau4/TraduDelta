@@ -1,16 +1,16 @@
 ﻿.localvar 2 arguments
-.localvar 3303 name 3643
-.localvar 11991 orig_filename 3645
-.localvar 11993 new_filename 3646
-.localvar 11788 filename 3647
-.localvar 4536 type 3648
-.localvar 11995 orig_map 3649
-.localvar 11997 new_map 3650
-.localvar 11999 new_date 3651
-.localvar 12000 orig_date 3652
+.localvar 1 name 21861
+.localvar 2 orig_filename 21862
+.localvar 3 new_filename 21863
+.localvar 4 filename 21864
+.localvar 5 type 21865
+.localvar 6 orig_map 21866
+.localvar 7 new_map 21867
+.localvar 8 new_date 21868
+.localvar 9 orig_date 21869
 
 :[0]
-b [10]
+b [12]
 
 > gml_Script_scr_84_lang_load (locals=9, argc=0)
 :[1]
@@ -43,7 +43,7 @@ pop.v.v local.orig_map
 call.i gml_Script_is_english(argc=0)
 conv.v.b
 not.b
-bf [8]
+bf [10]
 
 :[2]
 push.s "loading lang: "@11996
@@ -128,11 +128,19 @@ pop.v.v global.lang_map
 call.i gml_Script_is_english(argc=0)
 conv.v.b
 not.b
-bf [8]
+bf [10]
 
 :[7]
+pushglb.v global.lang
+push.s "ja"@6044
+cmp.s.v EQ
+bf [9]
+
+:[8]
 pushi.e 1
 pop.v.i global.jp_data_loaded
+
+:[9]
 push.s "loaded: "@12008
 pushloc.v local.filename
 add.v.s
@@ -145,14 +153,14 @@ add.v.v
 call.i show_debug_message(argc=1)
 popz.v
 
-:[8]
+:[10]
 pushloc.v local.type
 ret.v
 
-:[9]
+:[11]
 exit.i
 
-:[10]
+:[12]
 push.i gml_Script_scr_84_lang_load
 conv.i.v
 pushi.e -1

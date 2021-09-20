@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using UndertaleModLib;
 using Yarhl.FileSystem;
 using Yarhl.Media.Text;
@@ -141,8 +142,10 @@ namespace TraduDelta
                                 string[] str = entry.Value.Split("\n");
                                 for (int i = 0; i < str.Length; i++)
                                 {
-                                    string buffervalue = "";
-                                    string bufferkey = "";
+                                    /*string buffervalue = "";
+                                    string bufferkey = "";*/
+                                    StringBuilder buffervalue = new StringBuilder();
+                                    StringBuilder bufferkey = new StringBuilder();
                                     if (str[i].Contains("gml_Script_stringsetloc") || str[i].Contains("gml_Script_msgsetsubloc") || str[i].Contains("gml_Script_msgnextloc") ||
                                         str[i].Contains("gml_Script_msgsetloc") || str[i].Contains("gml_Script_c_msgsetloc") || str[i].Contains("gml_Script_c_msgnextloc") ||
                                         str[i].Contains("gml_Script_msgnextsubloc") || str[i].Contains("gml_Script_stringsetsubloc") || str[i].Contains("gml_Script_scr_84_get_lang_string_ch1"))
@@ -167,11 +170,11 @@ namespace TraduDelta
                                                     {
                                                         if (!str[j][k].Equals('\"'))
                                                         {
-                                                            buffervalue += str[j][k];
+                                                            buffervalue.Append(str[j][k]);
                                                         }
                                                         else if (!str[j][k + 1].Equals('@'))
                                                         {
-                                                            buffervalue += str[j][k];
+                                                            buffervalue.Append(str[j][k]);
                                                         }
                                                         else
                                                         {
@@ -186,11 +189,11 @@ namespace TraduDelta
                                                     {
                                                         if (!str[j][k].Equals('\"'))
                                                         {
-                                                            bufferkey += str[j][k];
+                                                            bufferkey.Append(str[j][k]);
                                                         }
                                                         else if (!str[j][k + 1].Equals('@'))
                                                         {
-                                                            bufferkey += str[j][k];
+                                                            bufferkey.Append(str[j][k]);
                                                         }
                                                         else
                                                         {
@@ -210,18 +213,18 @@ namespace TraduDelta
                                             {
                                                 cmdutils.print("Importing text from Chapter 1", ConsoleColor.Gray);
                                                 //cmdutils.print(bufferkey);
-                                                buffervalue = json.getvaluefromjson(args[2], bufferkey);
+                                                buffervalue.Append(json.getvaluefromjson(args[2], bufferkey.ToString()));
                                             }
-                                            keyValuePairs.Add(bufferkey, buffervalue);
-                                            fullpair.Add(bufferkey, buffervalue);
+                                            keyValuePairs.Add(bufferkey.ToString(), buffervalue.ToString());
+                                            fullpair.Add(bufferkey.ToString(), buffervalue.ToString());
                                         }
                                         catch (Exception)
                                         {
                                             //cmdutils.print("Clave repetida");
                                         }
                                         /* Limpiamos buffer*/
-                                        buffervalue = "";
-                                        buffervalue = "";
+                                        bufferkey.Clear();
+                                        buffervalue.Clear();
                                     }
                                 }
                                 if (keyValuePairs.Count > 0)

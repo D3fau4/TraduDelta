@@ -77,9 +77,10 @@ namespace TraduDelta
                                         Importcode import = new Importcode(Data);
                                         import.Import(Path.GetFileName(file).Replace(".asm", ""), mod, false, true);
                                     }
-
+                                    cmdutils.print("Saving changes...", ConsoleColor.White);
                                     GameWin build = new GameWin(Data);
                                     build.save(args[1]);
+                                    cmdutils.print("Done! " + args[1].Replace(".win", ".mod.win") + " was saved.", ConsoleColor.Green);
                                 }
                             }
                         }

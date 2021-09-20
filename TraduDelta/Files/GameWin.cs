@@ -22,7 +22,7 @@ namespace TraduDelta
                 {
                     UndertaleIO.Write(stream, Data, message =>
                     {
-                        cmdutils.print(message, ConsoleColor.Gray);
+                        
                     });
                 }
 

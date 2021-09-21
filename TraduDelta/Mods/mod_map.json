@@ -10,7 +10,13 @@
   "chapter": "@FFFFF7",
   "START": "@FFFFF5",
   "LENGUAGE": "@FFFFFF",
-  "TITLE": "@UNKNOW",
-  "chapter1title": "@UNKNOW",
-  "chapter2title": "@UNKNOW"
+  "TITLE": "@FFFF00",
+  "chapter1title": "@FFFF01",
+  "chapter2title": "@FFFF02",
+  "Chapter1": "@FFFF03",
+  "lang": "@FFFF04",
+  "langupper": "@FFFF05",
+  "chselect": "@FFFF06",
+  "yes": "@FFFF07",
+  "no": "@FFFF08"
 }

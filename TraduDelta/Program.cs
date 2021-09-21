@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UndertaleModLib;
+using UndertaleModLib.Compiler;
 using Yarhl.FileSystem;
 using Yarhl.Media.Text;
 
@@ -31,7 +32,7 @@ namespace TraduDelta
                                 Data = UndertaleIO.Read(stream);
                                 cmdutils.print("Read complete!", ConsoleColor.Green);
                             }
-
+                            Importcode import = new Importcode(Data);
                             if (Data != null)
                             {
                                 if (Data.IsGameMaker2())
@@ -42,7 +43,6 @@ namespace TraduDelta
                                         string mod = File.ReadAllText(file);
 
                                         mod = json.replaceASM(mod, Path.Combine("Mods", "mod.json"), Data);
-                                        Importcode import = new Importcode(Data);
                                         import.Import(Path.GetFileName(file).Replace(".asm", ""), mod, false, true);
                                     }
                                     foreach (string file in Directory.GetFiles("Mods", "*.gml"))
@@ -51,9 +51,9 @@ namespace TraduDelta
                                         string mod = File.ReadAllText(file);
 
                                         mod = json.replaceASM(mod, Path.Combine("Mods", "mod.json"), Data);
-                                        Importcode import = new Importcode(Data);
                                         import.Import(Path.GetFileName(file).Replace(".gml", ""), mod, true, true);
                                     }
+
                                     cmdutils.print("Saving changes...", ConsoleColor.White);
                                     GameWin build = new GameWin(Data);
                                     build.save(args[1]);

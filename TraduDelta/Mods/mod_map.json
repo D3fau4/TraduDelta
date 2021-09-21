@@ -1,0 +1,13 @@
+{
+  "my_stringset": "@FFFFF0",
+  "wascompleted": "@FFFFF1",
+  "playnextch": "@FFFFF2",
+  "chapterselect": "@FFFFF3",
+  "continuenextchapter": "@FFFFF4",
+  "quit": "@FFFFF6",
+  "stringPlay": "@FFFFF8",
+  "stringDoNot": "@FFFFF9",
+  "chapter": "@FFFFF7",
+  "START": "@FFFFF5",
+  "LENGUAGE": "@FFFFFF"
+}

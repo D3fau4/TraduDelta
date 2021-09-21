@@ -21,16 +21,6 @@ namespace TraduDelta
                 switch (args[0])
                 {
                     case "--applymods":
-
-                        cmdutils.print("Write the lenguage code name: ", ConsoleColor.Cyan);
-                        var codename = Console.ReadLine();
-                        if (codename.Length > 2)
-                        {
-                            cmdutils.print("Error: the code name is bigger than 2 characters", ConsoleColor.Red);
-                            cmdutils.print("Please use a smoller lenguage code. ex: es, en, ja, etc...", ConsoleColor.Blue);
-                        }
-                        cmdutils.print("Write the lenguage what do you use: ", ConsoleColor.Cyan);
-                        var lenguage = Console.ReadLine();
                         if (args[1].Contains(".win"))
                         {
                             UndertaleData Data = null;
@@ -46,37 +36,23 @@ namespace TraduDelta
                             {
                                 if (Data.IsGameMaker2())
                                 {
-                                    int codename_index = 0;
-                                    int Lenguage_index = 0;
-                                    int LenguageUpper_index = 0;
-                                    Data.Strings.MakeString(codename);
-                                    Data.Strings.MakeString(lenguage);
-                                    Data.Strings.MakeString(lenguage.ToUpper());
-
-                                    for (int i = 0; i < Data.Strings.Count; i++)
-                                    {
-                                        if (Data.Strings[i].Content.Equals(codename))
-                                        {
-                                            codename_index = i;
-                                        }
-                                        else if (Data.Strings[i].Content.Equals(lenguage))
-                                        {
-                                            Lenguage_index = i;
-                                        }
-                                        else if (Data.Strings[i].Content.Equals(lenguage.ToUpper()))
-                                        {
-                                            LenguageUpper_index = i;
-                                            break;
-                                        }
-                                    }
                                     foreach (string file in Directory.GetFiles("Mods", "*.asm"))
                                     {
                                         cmdutils.print("Import mod: " + file);
                                         string mod = File.ReadAllText(file);
 
-                                        mod = mod.Replace("{LENGUAGE}", codename).Replace("@FFFFFF", "@" + codename_index.ToString());
+                                        mod = json.replaceASM(mod, Path.Combine("Mods", "mod.json"), Data);
                                         Importcode import = new Importcode(Data);
                                         import.Import(Path.GetFileName(file).Replace(".asm", ""), mod, false, true);
+                                    }
+                                    foreach (string file in Directory.GetFiles("Mods", "*.gml"))
+                                    {
+                                        cmdutils.print("Import mod: " + file);
+                                        string mod = File.ReadAllText(file);
+
+                                        mod = json.replaceASM(mod, Path.Combine("Mods", "mod.json"), Data);
+                                        Importcode import = new Importcode(Data);
+                                        import.Import(Path.GetFileName(file).Replace(".gml", ""), mod, true, true);
                                     }
                                     cmdutils.print("Saving changes...", ConsoleColor.White);
                                     GameWin build = new GameWin(Data);

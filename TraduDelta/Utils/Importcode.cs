@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
 using UndertaleModLib.Models;
@@ -8,17 +11,65 @@ namespace TraduDelta
     class Importcode
     {
         UndertaleData Data;
+        public static string ProfilesFolder = Path.Combine("tmp", "Profiles");
         public Importcode(UndertaleData Data)
         {
             this.Data = Data;
+        }
+
+        enum EventTypes
+        {
+            Create,
+            Destroy,
+            Alarm,
+            Step,
+            Collision,
+            Keyboard,
+            Mouse,
+            Other,
+            Draw,
+            KeyPress,
+            KeyRelease,
+            Trigger,
+            CleanUp,
+            Gesture,
+            PreCreate
+        }
+
+        public string GetDecompiledText(string codeName)
+        {
+            UndertaleCode code = Data.Code.ByName(codeName);
+            DecompileContext DECOMPILE_CONTEXT = new DecompileContext(Data, false);
+            try
+            {
+                return code != null ? UndertaleModLib.Decompiler.Decompiler.Decompile(code, DECOMPILE_CONTEXT) : "";
+            }
+            catch (Exception e)
+            {
+                return "/*\nDECOMPILER FAILED!\n\n" + e.ToString() + "\n*/";
+            }
         }
 
         void SafeImport(string codeName, string gmlCode, bool IsGML, bool destroyASM = true, bool CheckDecompiler = false)
         {
             try
             {
-                var instructions = Assembler.Assemble(gmlCode, Data);
-                Data.Code.ByName(codeName).Replace(instructions);
+                if (IsGML)
+                {
+                    Data.Code.ByName(codeName).ReplaceGML(gmlCode, Data);
+
+                    // Write to profile if necessary.
+                    /*string path = Path.Combine(ProfilesFolder, Data.ToolInfo.CurrentMD5, "Temp", codeName + ".gml");
+                    if (File.Exists(path))
+                        File.WriteAllText(path, GetDecompiledText(codeName));*/
+                }
+                else
+                {
+                    var instructions = Assembler.Assemble(gmlCode, Data);
+                    Data.Code.ByName(codeName).Replace(instructions);
+                    /*if (destroyASM)
+                        NukeProfileGML(codeName);*/
+                }
 
             }
             catch (Exception ex)
@@ -95,6 +146,149 @@ namespace TraduDelta
                     {
                         UndertaleGlobalInit NewInit = init_entry;
                         NewInit.Code = code;
+                    }
+                }
+                else if (codeName.Substring(0, 10).Equals("gml_Object"))
+                {
+                    string afterPrefix = codeName.Substring(11);
+                    int underCount = 0;
+                    string methodNumberStr = "", methodName = "", objName = "";
+                    for (int i = afterPrefix.Length - 1; i >= 0; i--)
+                    {
+                        if (afterPrefix[i] == '_')
+                        {
+                            underCount++;
+                            if (underCount == 1)
+                            {
+                                methodNumberStr = afterPrefix.Substring(i + 1);
+                            }
+                            else if (underCount == 2)
+                            {
+                                objName = afterPrefix.Substring(0, i);
+                                methodName = afterPrefix.Substring(i + 1, afterPrefix.Length - objName.Length - methodNumberStr.Length - 2);
+                                break;
+                            }
+                        }
+                    }
+                    int methodNumber = 0;
+                    try
+                    {
+                        methodNumber = int.Parse(methodNumberStr);
+                        if (methodName == "Collision" && (methodNumber >= Data.GameObjects.Count || methodNumber < 0))
+                        {
+                            bool doNewObj = false;
+                            if (doNewObj)
+                            {
+                                UndertaleGameObject gameObj = new UndertaleGameObject();
+                                //gameObj.Name = Data.Strings.MakeString(SimpleTextInput("Enter object name", "Enter object name", "This is a single text line input box test.", false));
+                                Data.GameObjects.Add(gameObj);
+                            }
+                            else
+                            {
+                                // It *needs* to have a valid value, make the user specify one.
+                                List<uint> possible_values = new List<uint>();
+                                possible_values.Add(uint.MaxValue);
+                                //methodNumber = (int)ReduceCollisionValue(possible_values);
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        if (afterPrefix.LastIndexOf("_Collision_") != -1)
+                        {
+                            string s2 = "_Collision_";
+                            objName = afterPrefix.Substring(0, (afterPrefix.LastIndexOf("_Collision_")));
+                            methodNumberStr = afterPrefix.Substring(afterPrefix.LastIndexOf("_Collision_") + s2.Length, afterPrefix.Length - (afterPrefix.LastIndexOf("_Collision_") + s2.Length));
+                            methodName = "Collision";
+                            // GMS 2.3+ use the object name for the one colliding, which is rather useful.
+                            if (Data.GMS2_3)
+                            {
+                                if (Data.GameObjects.ByName(methodNumberStr) != null)
+                                {
+                                    for (var i = 0; i < Data.GameObjects.Count; i++)
+                                    {
+                                        if (Data.GameObjects[i].Name.Content == methodNumberStr)
+                                        {
+                                            methodNumber = i;
+                                            break;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    bool doNewObj = false;
+                                    if (doNewObj)
+                                    {
+                                        UndertaleGameObject gameObj = new UndertaleGameObject();
+                                        gameObj.Name = Data.Strings.MakeString(objName);
+                                        Data.GameObjects.Add(gameObj);
+                                    }
+                                }
+                                if (Data.GameObjects.ByName(methodNumberStr) != null)
+                                {
+                                    // It *needs* to have a valid value, make the user specify one, silly.
+                                    List<uint> possible_values = new List<uint>();
+                                    possible_values.Add(uint.MaxValue);
+                                    //ReassignGUIDs(methodNumberStr, ReduceCollisionValue(possible_values));
+                                }
+                            }
+                            else
+                            {
+                                // Let's try to get this going
+                                /*methodNumber = (int)ReduceCollisionValue(GetCollisionValueFromCodeNameGUID(codeName));
+                                ReassignGUIDs(methodNumberStr, ReduceCollisionValue(GetCollisionValueFromCodeNameGUID(codeName)));*/
+                            }
+                        }
+                    }
+                    UndertaleGameObject obj = Data.GameObjects.ByName(objName);
+                    if (obj == null)
+                    {
+                        bool doNewObj = false;
+                        if (doNewObj)
+                        {
+                            UndertaleGameObject gameObj = new UndertaleGameObject();
+                            gameObj.Name = Data.Strings.MakeString(objName);
+                            Data.GameObjects.Add(gameObj);
+                        }
+                        else
+                        {
+                            SkipPortions = true;
+                        }
+                    }
+
+                    if (!(SkipPortions))
+                    {
+                        obj = Data.GameObjects.ByName(objName);
+                        int eventIdx = (int)Enum.Parse(typeof(EventTypes), methodName);
+                        bool duplicate = false;
+                        try
+                        {
+                            foreach (UndertaleGameObject.Event evnt in obj.Events[eventIdx])
+                            {
+                                foreach (UndertaleGameObject.EventAction action in evnt.Actions)
+                                {
+                                    if (action.CodeId?.Name?.Content == codeName)
+                                        duplicate = true;
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            // Something went wrong, but probably because it's trying to check something non-existent
+                            // Just keep going
+                        }
+                        if (duplicate == false)
+                        {
+                            UndertalePointerList<UndertaleGameObject.Event> eventList = obj.Events[eventIdx];
+                            UndertaleGameObject.EventAction action = new UndertaleGameObject.EventAction();
+                            UndertaleGameObject.Event evnt = new UndertaleGameObject.Event();
+
+                            action.ActionName = code.Name;
+                            action.CodeId = code;
+                            evnt.EventSubtype = (uint)methodNumber;
+                            evnt.Actions.Add(action);
+                            eventList.Add(evnt);
+                        }
                     }
                 }
             }

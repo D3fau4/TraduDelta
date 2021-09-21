@@ -1175,9 +1175,9 @@ namespace UndertaleModLib.Models
             try
             {
                 // When necessary, write to profile.
-                string tempPath = Path.Combine(data.ToolInfo.AppDataProfiles, data.ToolInfo.CurrentMD5, "Temp", Name.Content + ".gml");
+               /* string tempPath = Path.Combine(data.ToolInfo.AppDataProfiles, data.ToolInfo.CurrentMD5, "Temp", Name.Content + ".gml");
                 if (!data.GMS2_3 && (data.ToolInfo.ProfileMode || File.Exists(tempPath)))
-                    File.WriteAllText(tempPath, gmlCode);
+                    File.WriteAllText(tempPath, gmlCode);*/
             }
             catch (Exception exc)
             {

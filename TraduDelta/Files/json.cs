@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UndertaleModLib;
 
 namespace TraduDelta
 {
@@ -23,6 +24,28 @@ namespace TraduDelta
             {
                 File.WriteAllText(path, json);
             }
+        }
+
+        public static string replaceASM(string ASM, string path, UndertaleData Data)
+        {
+            Dictionary<string, string> keyValuePairs = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(path));
+            Dictionary<string, string> keyoffset = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(Path.Combine("Mods", "mod_map.json")));
+            Texts me = new Texts();
+            Texts offset = new Texts();
+
+            me.Keys = new List<string>(keyValuePairs.Keys);
+            me.Values = new List<string>(keyValuePairs.Values);
+            offset.Values = new List<string>(keyoffset.Values);
+            offset.Keys = new List<string>(keyoffset.Keys);
+            for (int i = 0; i < me.Keys.Count; i++)
+            {
+                int index = 0;
+                var string1 = Data.Strings.MakeString(me.Values[i]);
+                index = Data.Strings.IndexOf(string1);
+                cmdutils.print(index);
+                ASM = ASM.Replace("{" + me.Keys[i] + "}", me.Values[i]).Replace(offset.Values[i], "@" + index);
+            }
+            return ASM;
         }
 
         public static string getvaluefromjson(string path, string key)

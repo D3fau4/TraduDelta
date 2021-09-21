@@ -9,5 +9,8 @@
   "stringDoNot": "@FFFFF9",
   "chapter": "@FFFFF7",
   "START": "@FFFFF5",
-  "LENGUAGE": "@FFFFFF"
+  "LENGUAGE": "@FFFFFF",
+  "TITLE": "@UNKNOW",
+  "chapter1title": "@UNKNOW",
+  "chapter2title": "@UNKNOW"
 }

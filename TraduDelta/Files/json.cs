@@ -42,7 +42,6 @@ namespace TraduDelta
                 int index = 0;
                 var string1 = Data.Strings.MakeString(me.Values[i]);
                 index = Data.Strings.IndexOf(string1);
-                cmdutils.print(index);
                 ASM = ASM.Replace("{" + me.Keys[i] + "}", me.Values[i]).Replace(offset.Values[i], "@" + index);
             }
             return ASM;

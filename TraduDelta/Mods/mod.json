@@ -9,5 +9,8 @@
   "stringDoNot": "No jugar", 
   "chapter": "Capítulo",
   "START": "¿Quieres comenzar desde el capítulo 1?", 
-  "LENGUAGE": "es"
+  "LENGUAGE": "es",
+  "TITLE": "DELTARUNE Capítulo 1 y 2",
+  "chapter1title" : "El comienzo",
+  "chapter2title": "El cibermundo"
 }

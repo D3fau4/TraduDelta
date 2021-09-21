@@ -32,7 +32,7 @@ pushi.e 0
 pop.v.i global.savedata_error
 push.s ""@4766
 pop.v.s global.savedata_debuginfo
-push.s "DELTARUNE Chapter 1&2"@14460
+push.s "{TITLE}"@FFFF00
 conv.s.v
 call.i window_set_caption(argc=1)
 popz.v
@@ -620,6 +620,42 @@ conv.s.v
 pushi.e -1
 pushi.e 2
 pop.v.v [array]self.chapname
+pushglb.v global.lang
+push.s "{LENGUAGE}"@FFFFFF
+cmp.s.v EQ
+bf [78]
+
+:[74]
+pushglb.v global.lang
+push.s "{LENGUAGE}"@FFFFFF
+cmp.s.v EQ
+bf [76]
+
+:[75]
+pushi.e 3
+conv.i.v
+b [77]
+
+:[76]
+pushi.e 10
+conv.i.v
+
+:[77]
+pop.v.v self.text_font
+push.s "{yes}"@FFFF07
+pop.v.s self.yes
+push.s "{no}"@FFFF08
+pop.v.s self.no
+push.s "{chapter1title}"@FFFF01
+pushi.e -1
+pushi.e 1
+pop.v.s [array]self.chapname
+push.s "{chapter2title}"@FFFF02
+pushi.e -1
+pushi.e 2
+pop.v.s [array]self.chapname
+
+:[78]
 call.i gml_Script_scr_controls_default(argc=0)
 popz.v
 pushi.e 1

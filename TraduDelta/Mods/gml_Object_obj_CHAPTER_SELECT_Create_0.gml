@@ -139,9 +139,9 @@ else
     no = (global.lang == "en" ? "No" : "いいえ")
     chapname[1] = (global.lang == "en" ? "The Beginning" : "はじまり")
     chapname[2] = (global.lang == "en" ? "A Cyber's World" : "サイバーワールド")
-    if (global.lang == "es")
+    if (global.lang == "{LENGUAGE}")
     {
-        text_font = (global.lang == "es" ? 3 : 10)
+        text_font = 3
         yes = "{yes}"
         no = "{no}"
         chapname[1] = "{chapter1title}"

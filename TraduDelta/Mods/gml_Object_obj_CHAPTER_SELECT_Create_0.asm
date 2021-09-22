@@ -1,9 +1,9 @@
 ﻿.localvar 2 arguments
-.localvar 1 load_chapter
-.localvar 2 _id
-.localvar 3 _locale
-.localvar 4 _lang
-.localvar 5 is_fullscreen
+.localvar 14461 load_chapter 6217
+.localvar 11419 _id 6218
+.localvar 11936 _locale 6249
+.localvar 11938 _lang 6250
+.localvar 14502 is_fullscreen 6251
 
 :[0]
 pushbltn.v builtin.os_type

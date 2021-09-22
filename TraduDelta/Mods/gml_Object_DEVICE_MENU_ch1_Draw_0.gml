@@ -223,9 +223,9 @@ if (MENU_NO >= 0)
         if (global.lang == "ja")
         {
             CHSELECTTEXT = "チャプター選択"
-            LANGUAGETEXT = "{langupper}"
+            LANGUAGETEXT = "ENGLISH"
             if (TYPE == 1)
-                LANGUAGETEXT = "{lang}"
+                LANGUAGETEXT = "English"
         }
         else if (global.lang == "{LENGUAGE}")
         {
@@ -235,9 +235,10 @@ if (MENU_NO >= 0)
                 LANGUAGETEXT = "日本語"
         }else{
         CHSELECTTEXT = "Chapter Select"
-            LANGUAGETEXT = "ENGLISH"
+        LANGUAGETEXT = "{langupper}"
             if (TYPE == 1)
-                LANGUAGETEXT = "English"
+                LANGUAGETEXT = "{lang}"
+            
         }
         if (TYPE == 1)
         {

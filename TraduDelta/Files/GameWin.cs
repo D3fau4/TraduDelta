@@ -13,16 +13,15 @@ namespace TraduDelta
         }
         public void save(string path)
         {
-            if (this.Data == null || this.Data.UnsupportedBytecodeVersion)
+            if (Data == null || Data.UnsupportedBytecodeVersion)
                 return;
-            bool save_complete = true;
             try
             {
                 using (var stream = new FileStream(path + "temp", FileMode.Create, FileAccess.Write))
                 {
                     UndertaleIO.Write(stream, Data, message =>
                     {
-                        
+
                     });
                 }
 
@@ -32,9 +31,8 @@ namespace TraduDelta
                 }
                 File.Move(path + "temp", path.Replace(".win", ".mod.win"));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                save_complete = false;
             }
         }
     }

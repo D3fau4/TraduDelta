@@ -92,7 +92,7 @@ namespace TraduDelta
 
                         fullpair.Add(str_path_to_use, code_output);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
 
                     }

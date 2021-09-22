@@ -17,31 +17,35 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Mods\gml_GlobalScript_scr_change_language_ch1.asm">
+    <None Update="Mods\add_new_lang_ch1.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
     </None>
-    <None Update="Mods\gml_GlobalScript_scr_change_language.asm">
+    <None Update="Mods\add_new_lang.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
     </None>
-    <None Update="Mods\gml_Object_obj_CHAPTER_SELECT_Draw_0.gml">
+    <None Update="Mods\addnewtextsmainmenu.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
     </None>
-    <None Update="Mods\gml_Object_obj_CHAPTER_SELECT_Create_0.asm">
+    <None Update="Mods\addnewtextsinmenu.gml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
     </None>
-    <None Update="Mods\gml_Object_DEVICE_MENU_ch1_Draw_0.gml">
+    <None Update="Mods\add_new_langmenu.gml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
     </None>
-    <None Update="Mods\mod.json">
+    <None Update="Mods\addnewtexts.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
     </None>
-    <None Update="Mods\mod_map.json">
+    <None Update="Mods\addnewtexts_map.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
+    </None>
+    <None Update="Mods\Config.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
     </None>

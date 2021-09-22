@@ -29,7 +29,7 @@ namespace TraduDelta
         public static string replaceASM(string ASM, string path, UndertaleData Data)
         {
             Dictionary<string, string> keyValuePairs = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(path));
-            Dictionary<string, string> keyoffset = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(Path.Combine("Mods", "mod_map.json")));
+            Dictionary<string, string> keyoffset = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(path.Replace(".json", "_map.json")));
             Texts me = new Texts();
             Texts offset = new Texts();
 

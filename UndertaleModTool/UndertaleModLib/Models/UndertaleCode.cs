@@ -134,12 +134,10 @@ namespace UndertaleModLib.Models
 
         public enum VariableType : byte
         {
-            Array = 0x00,
+            Array,
             StackTop = 0x80,
             Normal = 0xA0,
-            Instance = 0xE0, // the InstanceType is an instance ID inside the room -100000
-            ArrayPushAF = 0x10, // GMS2.3+, multidimensional array with pushaf
-            ArrayPopAF = 0x90, // GMS2.3+, multidimensional array with pushaf or popaf
+            Unknown = 0xE0,  // room scope?
         }
 
         public enum ComparisonType : byte
@@ -817,7 +815,7 @@ namespace UndertaleModLib.Models
                                 // Special dup instruction with extra parameters
                                 sb.Append(' ');
                                 sb.Append((byte)ComparisonKind & 0x7F);
-                                sb.Append(" ;;; this is a weird GMS2.3+ swap instruction");
+                                sb.Append(" ; this is a weird GMS2.3+ swap instruction");
                             }
                         }
                     }
@@ -858,7 +856,7 @@ namespace UndertaleModLib.Models
                         // Special scenario - the swap instruction
                         // TODO: Figure out the proper syntax, see #129
                         sb.Append(SwapExtra.ToString());
-                        sb.Append(" ;;; this is a weird swap instruction, see #129");
+                        sb.Append(" ; this is a weird swap instruction, see #129");
                     }
                     else
                     {
@@ -1177,9 +1175,9 @@ namespace UndertaleModLib.Models
             try
             {
                 // When necessary, write to profile.
-                string tempPath = Path.Combine(data.ToolInfo.AppDataProfiles, data.ToolInfo.CurrentMD5, "Temp", Name.Content + ".gml");
+               /* string tempPath = Path.Combine(data.ToolInfo.AppDataProfiles, data.ToolInfo.CurrentMD5, "Temp", Name.Content + ".gml");
                 if (!data.GMS2_3 && (data.ToolInfo.ProfileMode || File.Exists(tempPath)))
-                    File.WriteAllText(tempPath, gmlCode);
+                    File.WriteAllText(tempPath, gmlCode);*/
             }
             catch (Exception exc)
             {

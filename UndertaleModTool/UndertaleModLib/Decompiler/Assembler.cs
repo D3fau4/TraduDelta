@@ -58,7 +58,6 @@ namespace UndertaleModLib.Decompiler
             label = null;
             string line = source;
             UndertaleInstruction instr = new UndertaleInstruction();
-            line = line.Split(" ;;; ", 2)[0]; // remove comments
 
             string opcode = line;
             int space = opcode.IndexOf(' ');
@@ -94,8 +93,8 @@ namespace UndertaleModLib.Decompiler
                             space = line.IndexOf(' ');
                             if (space >= 0)
                             {
-                                byte spec = Byte.Parse(line.Substring(space + 1).Trim());
-                                instr.ComparisonKind = (UndertaleInstruction.ComparisonType)(spec | 0x80);
+                                if (byte.TryParse(line.Substring(space + 1).Trim(), out byte spec))
+                                    instr.ComparisonKind = (UndertaleInstruction.ComparisonType)(spec | 0x80);
                                 line = line.Substring(0, space);
                             }
                         }

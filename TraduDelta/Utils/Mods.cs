@@ -1,11 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using UndertaleModLib;
 
 namespace TraduDelta
@@ -17,32 +13,36 @@ namespace TraduDelta
         private Dictionary<string, string> mods;
         private string stringsfile;
 
-        public Mods(UndertaleData data, string path = "Mods/Config.json")
+        public Mods(UndertaleData data, string path = "Mods/Config_PC.json")
         {
-            this.Data = data;
-            this.ConfigPath = path;
+            Data = data;
+            ConfigPath = path;
+            if (Data.GeneralInfo.LastObj.ToString().Equals("111627"))
+                path = path.Replace("_PC.json", "_Switch.json");
             JObject Json1 = JObject.Parse(File.ReadAllText(path));
-            this.mods = Json1.SelectToken("Mods").ToObject<Dictionary<string, string>>();
-            this.stringsfile = Path.Combine(Path.GetDirectoryName(ConfigPath), Json1.SelectToken("Strings").ToString());
+            mods = Json1.SelectToken("Mods").ToObject<Dictionary<string, string>>();
+            stringsfile = Path.Combine(Path.GetDirectoryName(ConfigPath), Json1.SelectToken("Strings").ToString());
         }
 
         public void ApplyMods()
         {
-            Importcode import = new Importcode(this.Data);
-            foreach (var mod in this.mods)
+            Importcode import = new Importcode(Data);
+            foreach (var mod in mods)
             {
                 if (mod.Value.Contains(".asm"))
                 {
-                    cmdutils.print("Import mod: " + mod.Value);
+                    cmdutils.print("Import mod: " + mod.Value, ConsoleColor.Magenta);
                     string file = File.ReadAllText(Path.Combine(Path.GetDirectoryName(ConfigPath), mod.Value));
 
-                    file = json.replaceASM(file, this.stringsfile, Data);
+                    file = json.replaceASM(file, stringsfile, Data);
                     import.Import(mod.Key, file, false, true);
-                }else if (mod.Value.Contains(".gml")){
-                    cmdutils.print("Import mod: " + mod.Value);
+                }
+                else if (mod.Value.Contains(".gml"))
+                {
+                    cmdutils.print("Import mod: " + mod.Value, ConsoleColor.Magenta);
                     string file = File.ReadAllText(Path.Combine(Path.GetDirectoryName(ConfigPath), mod.Value));
 
-                    file = json.replaceASM(file, this.stringsfile, Data);
+                    file = json.replaceASM(file, stringsfile, Data);
                     import.Import(mod.Key, file, true, true);
                 }
             }

@@ -8,8 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Yarhl" Version="3.1.0" />
-    <PackageReference Include="Yarhl.Media" Version="3.1.0" />
+    <PackageReference Include="Yarhl" Version="3.1.1-preview.28" />
+    <PackageReference Include="Yarhl.Media" Version="3.1.1-preview.28" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,6 +17,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Mods\addnewtextsmainmenu_Switch.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
+    </None>
+    <None Update="Mods\add_new_lang_ch1_Switch.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
+    </None>
+    <None Update="Mods\add_new_lang_Switch.asm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
+    </None>
     <None Update="Mods\add_new_lang_ch1.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
@@ -45,7 +57,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
     </None>
-    <None Update="Mods\Config.json">
+    <None Update="Mods\Config_Switch.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
+    </None>
+    <None Update="Mods\Config_PC.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
     </None>

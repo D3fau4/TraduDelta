@@ -25,6 +25,21 @@ namespace TraduDelta
                 File.WriteAllText(path, json);
             }
         }
+        public static void writejson(Texts keyValuePairs, string path, bool outfolder = true)
+        {
+            var json = JsonConvert.SerializeObject(keyValuePairs, Formatting.Indented);
+            if (outfolder)
+            {
+                if (!Directory.Exists(outputfolder))
+                    Directory.CreateDirectory(outputfolder);
+
+                File.WriteAllText(Path.Combine(outputfolder, path).Replace(".asm", ".json"), json);
+            }
+            else
+            {
+                File.WriteAllText(path, json);
+            }
+        }
 
         public static string replaceASM(string ASM, string path, UndertaleData Data)
         {

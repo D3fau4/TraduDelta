@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using UndertaleModLib;
 using Yarhl.FileSystem;
+using Yarhl.IO;
 using Yarhl.Media.Text;
 
 namespace TraduDelta
@@ -104,8 +105,6 @@ namespace TraduDelta
                                 string[] str = entry.Value.Split("\n");
                                 for (int i = 0; i < str.Length; i++)
                                 {
-                                    /*string buffervalue = "";
-                                    string bufferkey = "";*/
                                     StringBuilder buffervalue = new StringBuilder();
                                     StringBuilder bufferkey = new StringBuilder();
                                     if (str[i].Contains("gml_Script_stringsetloc") || str[i].Contains("gml_Script_msgsetsubloc") || str[i].Contains("gml_Script_msgnextloc") ||
@@ -220,6 +219,31 @@ namespace TraduDelta
                         var text3 = json.Gettext(args[1]);
                         var text4 = json.Gettext(args[2]);
                         Powritter.write(text3, text4, Path.GetFileName(args[1].Replace(".json", ".merged.po")));
+                        break;
+                    case "--updatepo":
+                        if (Directory.Exists(args[1]))
+                        {
+                            foreach(string str in Directory.GetFiles(args[1]))
+                            {
+                                var meme = NodeFactory.FromFile(str).TransformWith(new Binary2Po()).GetFormatAs<Po>();
+                                Po2json conversor = new Po2json();
+                                Texts file = conversor.Convert(meme);
+                                json2Po newpo = new json2Po();
+                                var updated_PO = newpo.Convert(file);
+                                var node1 = new Node(Path.GetFileName(str), new Po2Binary().Convert(updated_PO));
+                                node1.Stream.WriteTo(Path.GetFileName(str));
+                            }
+                        }
+                        else if (File.Exists(args[1]))
+                        {
+                            var meme = NodeFactory.FromFile(args[1]).TransformWith(new Binary2Po()).GetFormatAs<Po>();
+                            Po2json conversor = new Po2json();
+                            Texts file = conversor.Convert(meme);
+                            json2Po newpo = new json2Po();
+                            var updated_PO = newpo.Convert(file);
+                            var node1 = new Node(Path.GetFileName(args[1]), new Po2Binary().Convert(updated_PO));
+                            node1.Stream.WriteTo(Path.GetFileName(args[1]));
+                        }
                         break;
                     default:
                         cmdutils.print("Invalid settings: " + args[0], ConsoleColor.Red);

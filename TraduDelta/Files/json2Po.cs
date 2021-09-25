@@ -39,9 +39,22 @@ namespace TraduDelta
                 {
                     source.Values[i] = source.Values[i].Replace("\f", "<F>");
                 }
+
+                string translation = string.Empty;
+
+                if (source.TranslatedValues.Count > 0)
+                {
+                    var check = source.TranslatedValues.TryGetValue(source.Keys[i], out string value);
+                    if (check)
+                    {
+                        translation = value;
+                    }
+                }
+
                 po.Add(new PoEntry(source.Values[i])
                 {
                     //Flags = "font-family:dialog, font-size:20, max-size:216:1",
+                    Translated = translation,
                     Context = source.Keys[i],
                 });
             }

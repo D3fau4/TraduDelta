@@ -4,7 +4,6 @@ using System.IO;
 using System.Text;
 using UndertaleModLib;
 using Yarhl.FileSystem;
-using Yarhl.IO;
 using Yarhl.Media.Text;
 
 namespace TraduDelta
@@ -212,6 +211,7 @@ namespace TraduDelta
                     case "--clean":
                         Directory.Delete("Output", true);
                         Directory.Delete("OUT_PO", true);
+                        Directory.Delete("Updated_po", true);
                         File.Delete("lang_en.json");
                         cmdutils.print("Cleaned!");
                         break;
@@ -223,26 +223,18 @@ namespace TraduDelta
                     case "--updatepo":
                         if (Directory.Exists(args[1]))
                         {
-                            foreach(string str in Directory.GetFiles(args[1]))
+                            foreach (string str in Directory.GetFiles(args[1]))
                             {
-                                var meme = NodeFactory.FromFile(str).TransformWith(new Binary2Po()).GetFormatAs<Po>();
-                                Po2json conversor = new Po2json();
-                                Texts file = conversor.Convert(meme);
-                                json2Po newpo = new json2Po();
-                                var updated_PO = newpo.Convert(file);
-                                var node1 = new Node(Path.GetFileName(str), new Po2Binary().Convert(updated_PO));
-                                node1.Stream.WriteTo(Path.GetFileName(str));
+                                cmdutils.print(str, ConsoleColor.Blue);
+                                var meme = NodeFactory.FromFile(str).TransformWith(new Binary2Po());
+                                meme.TransformWith(new Po2json()).TransformWith(new json2Po()).TransformWith(new Po2Binary()).Stream.WriteTo(Path.Combine("Updated_po", Path.GetFileName(str)));
                             }
                         }
                         else if (File.Exists(args[1]))
                         {
-                            var meme = NodeFactory.FromFile(args[1]).TransformWith(new Binary2Po()).GetFormatAs<Po>();
-                            Po2json conversor = new Po2json();
-                            Texts file = conversor.Convert(meme);
-                            json2Po newpo = new json2Po();
-                            var updated_PO = newpo.Convert(file);
-                            var node1 = new Node(Path.GetFileName(args[1]), new Po2Binary().Convert(updated_PO));
-                            node1.Stream.WriteTo(Path.GetFileName(args[1]));
+                            //cmdutils.print(str, ConsoleColor.Blue);
+                            var meme = NodeFactory.FromFile(args[1]).TransformWith(new Binary2Po());
+                            meme.TransformWith(new Po2json()).TransformWith(new json2Po()).TransformWith(new Po2Binary()).Stream.WriteTo(args[1]);
                         }
                         break;
                     default:

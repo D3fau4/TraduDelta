@@ -47,7 +47,7 @@ namespace TraduDelta
                     var check = source.TranslatedValues.TryGetValue(source.Keys[i], out string value);
                     if (check)
                     {
-                        translation = value;
+                        translation = value.Replace("\\\\", "\\").Replace("\\\"", "\"").Replace('\f', 'ç');
                     }
                 }
 

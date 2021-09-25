@@ -42,5 +42,18 @@ namespace TraduDelta
                 Directory.CreateDirectory("OUT_PO");
             node1.Stream.WriteTo(Path.Combine("OUT_PO", Path.GetFileName(file).Replace(".json", ".po")));
         }
+
+        public static void write(Texts txt, string file)
+        {
+            Console.WriteLine("Output: " + file);
+            json2Po po = new json2Po();
+            var meme = po.Convert(txt);
+            Po2Binary po2Binary = new Po2Binary();
+            var binary = po2Binary.Convert(meme);
+            var node1 = new Node(Path.GetFileName(file), binary);
+            if (!Directory.Exists("OUT_PO"))
+                Directory.CreateDirectory("OUT_PO");
+            node1.Stream.WriteTo(Path.Combine("OUT_PO", Path.GetFileName(file).Replace(".json", ".po")));
+        }
     }
 }

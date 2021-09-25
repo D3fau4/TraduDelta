@@ -31,7 +31,7 @@ namespace TraduDelta
                                 Data = UndertaleIO.Read(stream);
                                 cmdutils.print("Read complete!", ConsoleColor.Green);
                             }
-                            Importcode import = new Importcode(Data);
+
                             if (Data != null)
                             {
                                 if (Data.IsGameMaker2())
@@ -216,9 +216,41 @@ namespace TraduDelta
                         cmdutils.print("Cleaned!");
                         break;
                     case "--mergetranslation":
-                        var text3 = json.Gettext(args[1]);
-                        var text4 = json.Gettext(args[2]);
-                        Powritter.write(text3, text4, Path.GetFileName(args[1].Replace(".json", ".merged.po")));
+                        if (Directory.Exists(args[1]))
+                        {
+                            foreach (string str in Directory.GetFiles(args[1]))
+                            {
+                                cmdutils.print(str, ConsoleColor.Blue);
+                                var meme = NodeFactory.FromFile(str).TransformWith(new Binary2Po());
+                                var old = meme.TransformWith(new Po2json()).GetFormatAs<Texts>();
+                                foreach (string str2 in Directory.GetFiles(args[2]))
+                                {
+                                    if (Path.GetFileName(str).Equals(Path.GetFileName(str2)))
+                                    {
+                                        var meme2 = NodeFactory.FromFile(str2).TransformWith(new Binary2Po());
+                                        var _new = meme2.TransformWith(new Po2json()).GetFormatAs<Texts>();
+                                        try
+                                        {
+                                            for (int i = 0; i < old.Keys.Count; i++)
+                                            {
+                                                if (_new.Keys.Contains(old.Keys[i]))
+                                                {
+                                                    var flag = old.TranslatedValues.TryGetValue(old.Keys[i], out string val);
+                                                    if (flag)
+                                                    {
+                                                        _new.TranslatedValues.Add(old.Keys[i], val);
+                                                    }
+                                                }
+                                            }
+                                        }catch (Exception)
+                                        {
+                                            /* No hacer nada */
+                                        }
+                                        Powritter.write(_new, Path.GetFileName(str));
+                                    }
+                                }
+                            }
+                        }
                         break;
                     case "--updatepo":
                         if (Directory.Exists(args[1]))
@@ -232,7 +264,7 @@ namespace TraduDelta
                         }
                         else if (File.Exists(args[1]))
                         {
-                            //cmdutils.print(str, ConsoleColor.Blue);
+                            cmdutils.print(args[1], ConsoleColor.Blue);
                             var meme = NodeFactory.FromFile(args[1]).TransformWith(new Binary2Po());
                             meme.TransformWith(new Po2json()).TransformWith(new json2Po()).TransformWith(new Po2Binary()).Stream.WriteTo(args[1]);
                         }

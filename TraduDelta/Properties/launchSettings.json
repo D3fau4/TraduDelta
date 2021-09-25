@@ -2,7 +2,7 @@
   "profiles": {
     "TraduDelta": {
       "commandName": "Project",
-      "commandLineArgs": "--applymods \"D:\\Users\\raul2\\Documents\\Tobycosas\\Deltarune\\Capitulo 2\\Switch.win\" D:\\SteamLibrary\\steamapps\\common\\DELTARUNEdemo\\lang\\lang_en_ch1.json D:\\SteamLibrary\\steamapps\\common\\DELTARUNEdemo\\lang\\lang_ja.json"
+      "commandLineArgs": "--mergetranslation D:\\Users\\raul2\\Documents\\GitHub\\Deltarune-tradu\\Localization\\es C:\\Users\\raul2\\source\\repos\\TraduDelta\\TraduDelta\\bin\\Debug\\net5.0\\NEW"
     }
   }
 }

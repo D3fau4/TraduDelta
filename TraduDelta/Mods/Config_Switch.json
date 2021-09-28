@@ -4,8 +4,8 @@
     "gml_GlobalScript_scr_change_language_ch1": "add_new_lang_ch1_Switch.asm",
     "gml_Object_obj_CHAPTER_SELECT_Draw_0": "addnewtextsinmenu.gml",
     "gml_Object_obj_CHAPTER_SELECT_Create_0": "addnewtextsmainmenu_Switch_0.asm",
-    "gml_Object_DEVICE_MENU_ch1_Draw_0": "add_new_langmenu.gml",
-    "gml_Object_obj_CHAPTER_SELECT_Other_72": "addnewtextsmainmenu_Switch_1.asm"
+    "gml_Object_obj_CHAPTER_SELECT_Other_72": "addnewtextsmainmenu_1.gml",
+    "gml_Object_DEVICE_MENU_ch1_Draw_0": "add_new_langmenu.gml"
   },
   "Strings": "addnewtexts.json"
 }

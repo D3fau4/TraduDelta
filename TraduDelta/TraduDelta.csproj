@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Mods\addnewtextsmainmenu_Switch.asm">
+    <None Update="Mods\addnewtextsmainmenu_Switch_0.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
     </None>
@@ -37,7 +37,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
     </None>
-    <None Update="Mods\addnewtextsmainmenu.asm">
+    <None Update="Mods\addnewtextsmainmenu_0.asm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
     </None>

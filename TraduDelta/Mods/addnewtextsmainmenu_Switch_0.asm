@@ -1,8 +1,8 @@
 ﻿.localvar 2 arguments
-.localvar 14457 load_chapter 6214
-.localvar 11422 _id 6215
-.localvar 11933 _locale 6246
-.localvar 11935 _lang 6247
+.localvar 1 load_chapter 21858
+.localvar 2 _id 21859
+.localvar 3 _locale 21860
+.localvar 4 _lang 21861
 
 :[0]
 pushbltn.v builtin.os_type
@@ -31,7 +31,7 @@ pushi.e 0
 pop.v.i global.savedata_error
 push.s ""@4766
 pop.v.s global.savedata_debuginfo
-push.s "{TITLE}"@FFFF00
+push.s "DELTARUNE Chapter 1&2"@14456
 conv.s.v
 call.i window_set_caption(argc=1)
 popz.v
@@ -96,6 +96,8 @@ conv.v.b
 bf [21]
 
 :[16]
+push.s ""@4766
+pop.v.s global.lang_loaded
 pushglb.v global.chapter_return
 pop.v.v local.load_chapter
 pushi.e -1
@@ -246,13 +248,10 @@ push.v self.window_size_multiplier
 mul.v.i
 call.i window_set_size(argc=2)
 popz.v
-push.i 68062
-setowner.e
 pushi.e 1
-conv.i.v
 pushi.e -1
 pushi.e 0
-pop.v.v [array]self.alarm
+pop.v.i [array]self.alarm
 
 :[39]
 pushglb.v global.is_console
@@ -330,48 +329,38 @@ push.e 1
 pop.v.b self.console
 pushi.e 2
 pop.v.i self.latestAvailableChapter
-push.i 167825
-setowner.e
 push.s " - - "@14482
-conv.s.v
 pushi.e -1
 pushi.e 0
-pop.v.v [array]self.chapname
+pop.v.s [array]self.chapname
 push.s "The Beginning"@14484
-conv.s.v
 pushi.e -1
 pushi.e 1
-pop.v.v [array]self.chapname
+pop.v.s [array]self.chapname
 push.s "A Cyber's World"@14485
-conv.s.v
 pushi.e -1
 pushi.e 2
-pop.v.v [array]self.chapname
+pop.v.s [array]self.chapname
 push.s " - - "@14482
-conv.s.v
 pushi.e -1
 pushi.e 3
-pop.v.v [array]self.chapname
+pop.v.s [array]self.chapname
 push.s " - - "@14482
-conv.s.v
 pushi.e -1
 pushi.e 4
-pop.v.v [array]self.chapname
+pop.v.s [array]self.chapname
 push.s " - - "@14482
-conv.s.v
 pushi.e -1
 pushi.e 5
-pop.v.v [array]self.chapname
+pop.v.s [array]self.chapname
 push.s " - - "@14482
-conv.s.v
 pushi.e -1
 pushi.e 6
-pop.v.v [array]self.chapname
+pop.v.s [array]self.chapname
 push.s " - - "@14482
-conv.s.v
 pushi.e -1
 pushi.e 7
-pop.v.v [array]self.chapname
+pop.v.s [array]self.chapname
 pushi.e 3
 pop.v.i self.text_font
 pushi.e 0
@@ -402,30 +391,21 @@ cmp.i.v LT
 bf [47]
 
 :[46]
-push.i 231990
-setowner.e
 pushi.e 0
-conv.i.v
 pushi.e -5
 push.v self.i
 conv.v.i
-pop.v.v [array]self.input_pressed
-push.i 231992
-setowner.e
+pop.v.i [array]global.input_pressed
 pushi.e 0
-conv.i.v
 pushi.e -5
 push.v self.i
 conv.v.i
-pop.v.v [array]self.input_held
-push.i 231993
-setowner.e
+pop.v.i [array]global.input_held
 pushi.e 0
-conv.i.v
 pushi.e -5
 push.v self.i
 conv.v.i
-pop.v.v [array]self.input_released
+pop.v.i [array]global.input_released
 push.v self.i
 pushi.e 1
 add.i.v
@@ -568,8 +548,6 @@ conv.s.v
 
 :[67]
 pop.v.v self.no
-push.i 167825
-setowner.e
 pushglb.v global.lang
 push.s "en"@9323
 cmp.s.v EQ

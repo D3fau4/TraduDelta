@@ -13,7 +13,7 @@ using UndertaleModLib.Util;
 
 EnsureDataLoaded();
 
-ThreadLocal<DecompileContext> DECOMPILE_CONTEXT = new ThreadLocal<DecompileContext>(() => new DecompileContext(Data, false));
+ThreadLocal<GlobalDecompileContext> DECOMPILE_CONTEXT = new ThreadLocal<GlobalDecompileContext>(() => new GlobalDecompileContext(Data, false));
 int progress = 0;
 int identical_count = 0;
 
@@ -191,9 +191,9 @@ void ImportCode(string importFolder, bool IsGML = true)
             continue; // Restarts loop if file is not a valid code asset.
         string gmlCode = File.ReadAllText(file);
         if (IsGML)
-            ImportGMLString(codeName, gmlCode, true, true);
+            ImportGMLString(codeName, gmlCode, false, true);
         else
-            ImportASMString(codeName, gmlCode, true, true);
+            ImportASMString(codeName, gmlCode, false, true);
     }
     progress = 0;
 }

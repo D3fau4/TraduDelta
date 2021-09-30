@@ -111,7 +111,7 @@ namespace UndertaleModTool
             }
             if (Data.ToolInfo.ProfileMode == false || Data.GMS2_3)
             {
-                ThreadLocal<DecompileContext> DECOMPILE_CONTEXT = new ThreadLocal<DecompileContext>(() => new DecompileContext(Data, false));
+                ThreadLocal<GlobalDecompileContext> DECOMPILE_CONTEXT = new ThreadLocal<GlobalDecompileContext>(() => new GlobalDecompileContext(Data, false));
                 try
                 {
                     passBack = GetPassBack((code != null ? Decompiler.Decompile(code, DECOMPILE_CONTEXT.Value) : ""), keyword, replacement, case_sensitive, isRegex);
@@ -135,7 +135,7 @@ namespace UndertaleModTool
                     }
                     else
                     {
-                        ThreadLocal<DecompileContext> DECOMPILE_CONTEXT = new ThreadLocal<DecompileContext>(() => new DecompileContext(Data, false));
+                        ThreadLocal<GlobalDecompileContext> DECOMPILE_CONTEXT = new ThreadLocal<GlobalDecompileContext>(() => new GlobalDecompileContext(Data, false));
                         try
                         {
                             passBack = GetPassBack((code != null ? Decompiler.Decompile(code, DECOMPILE_CONTEXT.Value) : ""), keyword, replacement, case_sensitive, isRegex);
@@ -171,9 +171,13 @@ namespace UndertaleModTool
             catch (Exception exc)
             {
                 if (!CheckDecompiler)
+                {
                     MessageBox.Show("Import" + (IsGML ? "GML" : "ASM") + "File error! Send this to Grossley#2869 and make an issue on Github\n" + exc.ToString());
+                }
                 else
-                    throw new Exception("Error!");
+                {
+                    MessageBox.Show("Import" + (IsGML ? "GML" : "ASM") + "File error! Send this to Grossley#2869 and make an issue on Github\n" + exc.ToString());
+                }
             }
         }
 
@@ -422,7 +426,10 @@ namespace UndertaleModTool
                     MessageBox.Show(ErrorText, "UndertaleModTool", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 else
-                    throw new Exception("Error!");
+                {
+                    ImportGMLString(codeName, "", false, true);
+                    //throw new Exception("Error!");
+                }
             }
         }
     }

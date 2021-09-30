@@ -134,10 +134,12 @@ namespace UndertaleModLib.Models
 
         public enum VariableType : byte
         {
-            Array,
+            Array = 0x00,
             StackTop = 0x80,
             Normal = 0xA0,
-            Unknown = 0xE0,  // room scope?
+            Instance = 0xE0, // the InstanceType is an instance ID inside the room -100000
+            ArrayPushAF = 0x10, // GMS2.3+, multidimensional array with pushaf
+            ArrayPopAF = 0x90, // GMS2.3+, multidimensional array with pushaf or popaf
         }
 
         public enum ComparisonType : byte
@@ -229,7 +231,7 @@ namespace UndertaleModLib.Models
                 Dictionary<T, List<UndertaleInstruction>> list = new Dictionary<T, List<UndertaleInstruction>>();
                 foreach (UndertaleCode code in codes)
                 {
-                    if (code.Offset != 0) // GMS 2.3, skip duplicates
+                    if (code.ParentEntry != null) // GMS 2.3, skip inner entries
                         continue;
                     foreach (UndertaleInstruction instr in code.Instructions)
                     {
@@ -815,7 +817,7 @@ namespace UndertaleModLib.Models
                                 // Special dup instruction with extra parameters
                                 sb.Append(' ');
                                 sb.Append((byte)ComparisonKind & 0x7F);
-                                sb.Append(" ; this is a weird GMS2.3+ swap instruction");
+                                sb.Append(" ;;; this is a weird GMS2.3+ swap instruction");
                             }
                         }
                     }
@@ -856,7 +858,7 @@ namespace UndertaleModLib.Models
                         // Special scenario - the swap instruction
                         // TODO: Figure out the proper syntax, see #129
                         sb.Append(SwapExtra.ToString());
-                        sb.Append(" ; this is a weird swap instruction, see #129");
+                        sb.Append(" ;;; this is a weird swap instruction, see #129");
                     }
                     else
                     {
@@ -957,9 +959,9 @@ namespace UndertaleModLib.Models
         public uint Offset { get; set; }
         public List<UndertaleInstruction> Instructions { get; } = new List<UndertaleInstruction>();
         public bool WeirdLocalFlag { get; set; }
-        public bool DuplicateEntry { get; set; } = false;
 
-        public List<UndertaleCode> Duplicates { get; set; } = new List<UndertaleCode>();
+        public UndertaleCode ParentEntry { get; set; } = null;
+        public List<UndertaleCode> ChildEntries { get; set; } = new List<UndertaleCode>();
 
         internal uint _BytecodeAbsoluteAddress;
         internal byte[] _UnsupportedBuffer;
@@ -968,7 +970,7 @@ namespace UndertaleModLib.Models
         {
             if (writer.undertaleData.UnsupportedBytecodeVersion || writer.Bytecode14OrLower)
                 return;
-            if (DuplicateEntry)
+            if (ParentEntry != null)
             {
                 // In GMS 2.3, code entries repeat often
                _BytecodeAbsoluteAddress = writer.LastBytecodeAddress;
@@ -1058,8 +1060,8 @@ namespace UndertaleModLib.Models
                 reader.Position = _BytecodeAbsoluteAddress;
                 if (Length > 0 && reader.GMS2_3 && reader.GetOffsetMap().TryGetValue(_BytecodeAbsoluteAddress, out var i))
                 {
-                    DuplicateEntry = true;
-                    (i as UndertaleInstruction).Entry.Duplicates.Add(this);
+                    ParentEntry = (i as UndertaleInstruction).Entry;
+                    ParentEntry.ChildEntries.Add(this);
                 }
                 Instructions.Clear();
                 while (reader.Position < _BytecodeAbsoluteAddress + Length)
@@ -1069,7 +1071,7 @@ namespace UndertaleModLib.Models
                     instr.Address = a;
                     Instructions.Add(instr);
                 }
-                if (!DuplicateEntry && Instructions.Count != 0)
+                if (ParentEntry == null && Instructions.Count != 0)
                     Instructions[0].Entry = this;
                 reader.Position = here;
                 Offset = reader.ReadUInt32();
@@ -1175,9 +1177,9 @@ namespace UndertaleModLib.Models
             try
             {
                 // When necessary, write to profile.
-               /* string tempPath = Path.Combine(data.ToolInfo.AppDataProfiles, data.ToolInfo.CurrentMD5, "Temp", Name.Content + ".gml");
+                string tempPath = Path.Combine(data.ToolInfo.AppDataProfiles, data.ToolInfo.CurrentMD5, "Temp", Name.Content + ".gml");
                 if (!data.GMS2_3 && (data.ToolInfo.ProfileMode || File.Exists(tempPath)))
-                    File.WriteAllText(tempPath, gmlCode);*/
+                    File.WriteAllText(tempPath, gmlCode);
             }
             catch (Exception exc)
             {

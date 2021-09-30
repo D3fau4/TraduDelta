@@ -35,17 +35,13 @@ namespace TraduDelta
             PreCreate
         }
 
-        public string GetDecompiledText(string codeName)
+        public void NukeProfileGML(string codeName)
         {
-            UndertaleCode code = Data.Code.ByName(codeName);
-            DecompileContext DECOMPILE_CONTEXT = new DecompileContext(Data, false);
-            try
+            // This is written as intended
+            string path = Path.Combine(ProfilesFolder, Data.ToolInfo.CurrentMD5, "Temp", codeName + ".gml");
+            if (File.Exists(path))
             {
-                return code != null ? UndertaleModLib.Decompiler.Decompiler.Decompile(code, DECOMPILE_CONTEXT) : "";
-            }
-            catch (Exception e)
-            {
-                return "/*\nDECOMPILER FAILED!\n\n" + e.ToString() + "\n*/";
+                File.Delete(path);
             }
         }
 
@@ -58,23 +54,30 @@ namespace TraduDelta
                     Data.Code.ByName(codeName).ReplaceGML(gmlCode, Data);
 
                     // Write to profile if necessary.
-                    /*string path = Path.Combine(ProfilesFolder, Data.ToolInfo.CurrentMD5, "Temp", codeName + ".gml");
+                    string path = Path.Combine(ProfilesFolder, Data.ToolInfo.CurrentMD5, "Temp", codeName + ".gml");
                     if (File.Exists(path))
-                        File.WriteAllText(path, GetDecompiledText(codeName));*/
+                        File.WriteAllText(path, Decompiler.GetDecompiledText(Data, codeName));
                 }
                 else
                 {
                     var instructions = Assembler.Assemble(gmlCode, Data);
                     Data.Code.ByName(codeName).Replace(instructions);
-                    /*if (destroyASM)
-                        NukeProfileGML(codeName);*/
+                    if (destroyASM)
+                        NukeProfileGML(codeName);
                 }
-
             }
             catch (Exception ex)
             {
-                string ErrorText = "Error at " + (IsGML ? "GML code: " : "ASM code: ") + codeName + @"': " + gmlCode + "\nError: " + ex.ToString();
-                cmdutils.print(ErrorText, ConsoleColor.Red);
+                if (!CheckDecompiler)
+                {
+                    string ErrorText = "Error at " + (IsGML ? "GML code: " : "ASM code: ") + codeName + @"': " + gmlCode + "\nError: " + ex.ToString();
+                    //MessageBox.Show(ErrorText, "UndertaleModTool", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                else
+                {
+                    Import(codeName, "", false, true);
+                    //throw new Exception("Error!");
+                }
             }
         }
 
@@ -175,7 +178,7 @@ namespace TraduDelta
                         methodNumber = int.Parse(methodNumberStr);
                         if (methodName == "Collision" && (methodNumber >= Data.GameObjects.Count || methodNumber < 0))
                         {
-                            bool doNewObj = false;
+                            bool doNewObj = true;
                             if (doNewObj)
                             {
                                 UndertaleGameObject gameObj = new UndertaleGameObject();
@@ -215,7 +218,7 @@ namespace TraduDelta
                                 }
                                 else
                                 {
-                                    bool doNewObj = false;
+                                    bool doNewObj = true;
                                     if (doNewObj)
                                     {
                                         UndertaleGameObject gameObj = new UndertaleGameObject();
@@ -242,7 +245,7 @@ namespace TraduDelta
                     UndertaleGameObject obj = Data.GameObjects.ByName(objName);
                     if (obj == null)
                     {
-                        bool doNewObj = false;
+                        bool doNewObj = true;
                         if (doNewObj)
                         {
                             UndertaleGameObject gameObj = new UndertaleGameObject();
@@ -291,7 +294,7 @@ namespace TraduDelta
                     }
                 }
             }
-            SafeImport(codeName, gmlCode, IsGML);
+            SafeImport(codeName, gmlCode, IsGML, destroyASM, CheckDecompiler);
         }
     }
 }

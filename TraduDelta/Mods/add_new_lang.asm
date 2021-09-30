@@ -11,7 +11,7 @@ cmp.s.v EQ
 bf [3]
 
 :[2]
-push.s "ja"@6044
+push.s "ja"@6049
 pop.v.s global.lang
 b [6]
 
@@ -31,14 +31,14 @@ push.s "{LENGUAGE}"@FFFFFF
 pop.v.s global.lang
 
 :[6]
-push.s "true_config.ini"@11939
+push.s "true_config.ini"@11944
 conv.s.v
 call.i gml_Script_ossafe_ini_open(argc=1)
 popz.v
 pushglb.v global.lang
-push.s "LANG"@11940
+push.s "LANG"@11945
 conv.s.v
-push.s "LANG"@11940
+push.s "LANG"@11945
 conv.s.v
 call.i ini_write_string(argc=3)
 popz.v

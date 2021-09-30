@@ -18,8 +18,23 @@ namespace TraduDelta
             return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
         }
 
+        public static string GetDecompiledText(UndertaleData Data, string codeName)
+        {
+            UndertaleCode code = Data.Code.ByName(codeName);
+            GlobalDecompileContext DECOMPILE_CONTEXT = new GlobalDecompileContext(Data, false);
+            try
+            {
+                return code != null ? UndertaleModLib.Decompiler.Decompiler.Decompile(code, DECOMPILE_CONTEXT) : "";
+            }
+            catch (Exception e)
+            {
+                return "/*\nDECOMPILER FAILED!\n\n" + e.ToString() + "\n*/";
+            }
+        }
+
         public static Dictionary<string, string> Decompile(UndertaleData Data)
         {
+            bool meme = false;
             Dictionary<string, string> fullpair = new Dictionary<string, string>();
             foreach (var code_orig in Data.Code)
             {
@@ -42,7 +57,7 @@ namespace TraduDelta
                         }
                         code_orig.LocalsCount = codeLocalsCount;
                         code_orig.GenerateLocalVarDefinitions(code_orig.FindReferencedLocalVars(), locals);
-                        code_orig.DuplicateEntry = false;
+                        meme = false;
                     }
                     else
                     {
@@ -56,7 +71,7 @@ namespace TraduDelta
                     Data.CodeLocals.Add(locals);
                 }
                 string file_name = code_orig.Name.Content + ".asm";
-                if (!code_orig.DuplicateEntry)
+                if (!meme)
                 {
                     string x = "";
                     try

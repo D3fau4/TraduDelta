@@ -287,6 +287,8 @@ namespace TraduDelta
             cmdutils.print("--applymods                  Apply TS mods.");
             cmdutils.print("--json2po                    Convert .json to .po");
             cmdutils.print("--extracttext                Extract the texts from the game.win");
+            cmdutils.print("--mergetranslation           ");
+            cmdutils.print("--updatepo                   ");
             cmdutils.print("--clean                      Clean files.");
         }
     }

@@ -5,7 +5,9 @@ TraduDelta.exe [MODE] [FILE/DIRECTORY]
 
 --applymods                  Apply TS mods.
 --json2po                    Convert .json to .po
---extracttext                Extract the texts from the Data.win
+--extracttext                Extract the texts from the game.win
+--mergetranslation
+--updatepo
 --clean                      Clean files.
 ```
 

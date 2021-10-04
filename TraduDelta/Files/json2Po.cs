@@ -53,7 +53,7 @@ namespace TraduDelta
 
                 po.Add(new PoEntry(source.Values[i])
                 {
-                    //Flags = "font-family:dialog, font-size:20, max-size:216:1",
+                    Flags = "game-Delta",
                     Translated = translation,
                     Context = source.Keys[i],
                 });

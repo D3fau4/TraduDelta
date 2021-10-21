@@ -14,7 +14,12 @@ EnsureDataLoaded();
 
 if (Data?.GeneralInfo?.DisplayName?.Content.ToLower() == "deltarune chapter 1 & 2")
 {
-    ScriptError("Incompatible with the new Deltarune Chapter 1 & 2 demo");
+    ScriptError("Error 0: Incompatible with the new Deltarune Chapter 1 & 2 demo");
+    return;
+}
+else if (Data?.GeneralInfo?.DisplayName?.Content.ToLower() == "deltarune chapter 1&2")
+{
+    ScriptError("Error 1: Incompatible with the new Deltarune Chapter 1 & 2 demo");
     return;
 }
 
@@ -140,7 +145,7 @@ void DumpJSON(string language)
     } 
     catch (Exception e) 
     {
-        throw new System.Exception("gml_Script_textdata_" + language + " has an error that prevents creation of JSONs.");
+        throw new ScriptException("gml_Script_textdata_" + language + " has an error that prevents creation of JSONs.");
     }
     UpdateProgress();
 }

@@ -106,7 +106,7 @@ namespace UndertaleModTests
 
             return ret;
         }
-        public string SimpleTextInput(string titleText, string labelText, string defaultInputBoxText, bool isMultiline)
+        public string SimpleTextInput(string titleText, string labelText, string defaultInputBoxText, bool isMultiline, bool showDialog = true)
         {
             return ScriptInputDialog(titleText, labelText, defaultInputBoxText, "Cancel", "Submit", isMultiline, false);
         }
@@ -144,6 +144,11 @@ namespace UndertaleModTests
         public void HideProgressBar()
         {
             Console.WriteLine("Hiding Progress Bar.");
+        }
+        
+        public void EnableUI()
+        {
+            Console.WriteLine("Enabling UI.");
         }
 
         protected async Task<object> RunScript(string path)

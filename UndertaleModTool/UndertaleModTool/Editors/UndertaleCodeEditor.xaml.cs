@@ -564,14 +564,7 @@ namespace UndertaleModTool
             var dispatcher = Dispatcher;
             Task t = Task.Run(() =>
             {
-                try
-                {
-                    compileContext = Compiler.CompileGMLText(text, data, code, (f) => { dispatcher.Invoke(() => f()); });
-                }
-                catch (Exception e)
-                {
-                    throw;// new Exception(e.Message);
-                }
+                compileContext = Compiler.CompileGMLText(text, data, code, (f) => { dispatcher.Invoke(() => f()); });
             });
             await t;
 
@@ -729,7 +722,14 @@ namespace UndertaleModTool
                 var textArea = CurrentContext.TextView.GetService(typeof(TextArea)) as TextArea;
                 var highlighter = textArea.GetService(typeof(IHighlighter)) as IHighlighter;
                 int line = CurrentContext.Document.GetLocation(startOffset).Line;
-                HighlightedLine highlighted = highlighter.HighlightLine(line);
+                HighlightedLine highlighted = null;
+                try
+                {
+                    highlighted = highlighter.HighlightLine(line);
+                }
+                catch
+                {
+                }
 
                 while (m.Success)
                 {
@@ -897,7 +897,14 @@ namespace UndertaleModTool
                 var textArea = CurrentContext.TextView.GetService(typeof(TextArea)) as TextArea;
                 var highlighter = textArea.GetService(typeof(IHighlighter)) as IHighlighter;
                 int line = CurrentContext.Document.GetLocation(startOffset).Line;
-                HighlightedLine highlighted = highlighter.HighlightLine(line);
+                HighlightedLine highlighted = null;
+                try
+                {
+                    highlighted = highlighter.HighlightLine(line);
+                }
+                catch
+                {
+                }
 
                 while (m.Success)
                 {
@@ -957,8 +964,21 @@ namespace UndertaleModTool
                         if (val == null)
                         {
                             val = data.Functions.ByName(m.Value);
-                            if (data.GMS2_3 && val != null && data.Code.ByName(val.Name.Content) != null)
-                                val = null; // in GMS2.3 every custom "function" is in fact a member variable, and the names in functions make no sense (they have the gml_Script_ prefix)
+                            if (data.GMS2_3)
+                            {
+                                if (val != null)
+                                {
+                                    if (data.Code.ByName(val.Name.Content) != null)
+                                        val = null; // in GMS2.3 every custom "function" is in fact a member variable, and the names in functions make no sense (they have the gml_Script_ prefix)
+                                } 
+                                else
+                                {
+                                    // Resolve 2.3 sub-functions for their parent entry
+                                    UndertaleFunction f = null;
+                                    if (data.KnownSubFunctions?.TryGetValue(m.Value, out f) == true)
+                                        val = data.Scripts.ByName(f.Name.Content).Code?.ParentEntry;
+                                }
+                            }
                         }
                         if (val == null)
                         {

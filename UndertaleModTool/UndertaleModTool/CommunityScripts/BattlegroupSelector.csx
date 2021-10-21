@@ -2,21 +2,26 @@ EnsureDataLoaded();
 
 if (Data?.GeneralInfo?.DisplayName?.Content.ToLower() == "deltarune chapter 1 & 2")
 {
-    ScriptError("Incompatible with the new Deltarune Chapter 1 & 2 demo");
+    ScriptError("Error 0: Incompatible with the new Deltarune Chapter 1 & 2 demo");
+    return;
+}
+else if (Data?.GeneralInfo?.DisplayName?.Content.ToLower() == "deltarune chapter 1&2")
+{
+    ScriptError("Error 1: Incompatible with the new Deltarune Chapter 1 & 2 demo");
     return;
 }
 
 
 if (Data.GeneralInfo?.DisplayName.Content.ToLower() != "undertale") {
-	ScriptError("This script can only be used on UNDERTALE.");
-	return;
+    ScriptError("This script can only be used on UNDERTALE.");
+    return;
 }
 
 var selector = Data.GameObjects.ByName("obj_battlegroup_input");
 
 if(selector == null) {
-	selector = new UndertaleGameObject() { Name = Data.Strings.MakeString("obj_battlegroup_input") };
-	Data.GameObjects.Add(selector);
+    selector = new UndertaleGameObject() { Name = Data.Strings.MakeString("obj_battlegroup_input") };
+    Data.GameObjects.Add(selector);
 }
 
 var gms2 = Data.IsGameMaker2();
@@ -93,8 +98,8 @@ global.battlegroup = battlegroup
 var mainchara = Data.GameObjects.ByName("obj_mainchara");
 
 for(var i = 0; i < 5; i++) {
-	mainchara.EventHandlerFor(EventType.KeyPress, (uint)(48 + i), Data)
-			 .ReplaceGML("if global.debug == 1 && !instance_exists(obj_battlegroup_input) global.filechoice = " + i, Data);
+    mainchara.EventHandlerFor(EventType.KeyPress, (uint)(48 + i), Data)
+             .ReplaceGML("if global.debug == 1 && !instance_exists(obj_battlegroup_input) global.filechoice = " + i, Data);
 }
 
 mainchara.EventHandlerFor(EventType.KeyPress, EventSubtypeKey.vk_home, Data).ReplaceGML(@"

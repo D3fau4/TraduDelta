@@ -82,7 +82,7 @@ namespace UndertaleModTool
         private Task scriptSetupTask;
 
         // Version info
-        public static string Edition = "Release-01";
+        public static string Edition = "";
         public static string Version = Assembly.GetExecutingAssembly().GetName().Version.ToString() + (Edition != "" ? "-" + Edition : "");
 
         public MainWindow()
@@ -107,7 +107,8 @@ namespace UndertaleModTool
                                 .AddReferences(typeof(UndertaleObject).GetTypeInfo().Assembly,
                                                 GetType().GetTypeInfo().Assembly,
                                                 typeof(JsonConvert).GetTypeInfo().Assembly,
-                                                typeof(System.Text.RegularExpressions.Regex).GetTypeInfo().Assembly);
+                                                typeof(System.Text.RegularExpressions.Regex).GetTypeInfo().Assembly)
+                                .WithEmitDebugInformation(true); //when script throws an exception, add a exception location (line number)
             });
         }
 
@@ -119,6 +120,8 @@ namespace UndertaleModTool
         [DllImport("shell32.dll")]
         static extern void SHChangeNotify(long wEventId, uint uFlags, IntPtr dwItem1, IntPtr dwItem2);
         const long SHCNE_ASSOCCHANGED = 0x08000000;
+
+        public static readonly string[] IFF_EXTENSIONS = new string[] { ".win", ".unx", ".ios", ".droid", ".3ds", ".symbian" };
 
         private void UpdateTree()
         {
@@ -157,7 +160,7 @@ namespace UndertaleModTool
                     UndertaleModTool_app.CreateSubKey(@"shell\special_launch").SetValue("", "Run extended options", RegistryValueKind.String);
                     if (SettingsWindow.AutomaticFileAssociation)
                     {
-                        foreach (var extStr in new string[] { ".win", ".unx", ".ios", ".droid" })
+                        foreach (var extStr in IFF_EXTENSIONS)
                         {
                             var ext = HKCU_Classes.CreateSubKey(extStr);
                             ext.SetValue("", "UndertaleModTool", RegistryValueKind.String);
@@ -316,6 +319,32 @@ namespace UndertaleModTool
             CanSave = true;
             CanSafelySave = true;
             return true;
+        }
+
+        private async void Window_Drop(object sender, DragEventArgs e)
+        {
+            // ignore drop events inside the main window (e.g. resource tree)
+            if (sender is MainWindow)
+            {
+                // try to detect stuff, autoConvert is false because we don't want any conversion.
+                if (e.Data.GetDataPresent(DataFormats.FileDrop, false))
+                {
+                    string filepath = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
+                    string fileext = Path.GetExtension(filepath);
+
+                    if (fileext == ".csx")
+                    {
+                        if (MessageBox.Show($"Run {filepath} as a script?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes)
+                            await RunScript(filepath);
+                    }
+                    else if (IFF_EXTENSIONS.Contains(fileext) || fileext == ".dat" /* audiogroup */)
+                    {
+                        if (MessageBox.Show($"Open {filepath} as a data file?", "Question", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes)
+                            await LoadFile(filepath, true);
+                    }
+                    // else, do something?
+                }
+            }
         }
 
         private async Task<bool> DoOpenDialog()
@@ -485,7 +514,7 @@ namespace UndertaleModTool
                                 data.ToolInfo.CurrentMD5 = BitConverter.ToString(MD5CurrentlyLoaded).Replace("-", "").ToLowerInvariant();
                             }
                         }
-                        if (data.GMS2_3)
+                        if (data.GMS2_3 && SettingsWindow.Warn_About_GMS23)
                         {
                             MessageBox.Show("This game was built using GameMaker Studio 2.3 (or above). Support for this version is a work in progress, and you will likely run into issues decompiling code or in other places.", "GMS 2.3", MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
@@ -958,7 +987,16 @@ namespace UndertaleModTool
 
         private void MenuItem_Add_Click(object sender, RoutedEventArgs e)
         {
-            object source = (MainTree.SelectedItem as TreeViewItem).ItemsSource;
+            object source = null;
+            try
+            {
+                source = (MainTree.SelectedItem as TreeViewItem).ItemsSource;
+            }
+            catch (Exception ex)
+            {
+                ScriptError("An error occurred while trying to add the menu item. No action has been taken.\r\n\r\nError:\r\n\r\n" + ex.ToString());
+                return;
+            }
             IList list = ((source as ICollectionView)?.SourceCollection as IList) ?? (source as IList);
             Type t = list.GetType().GetGenericArguments()[0];
             Debug.Assert(typeof(UndertaleResource).IsAssignableFrom(t));
@@ -1098,6 +1136,26 @@ namespace UndertaleModTool
             if (scriptDialog != null)
                 scriptDialog.TryHide();
         }
+        
+        public void EnableUI()
+        {
+            if (!this.IsEnabled)
+                this.IsEnabled = true;
+        }
+
+        public int ProcessExceptionOutput(ref string excString)
+        {
+            int excLineNum = -1;
+
+            int endOfPrevStack = excString.IndexOf("--- End of stack trace from previous location ---");
+            if (endOfPrevStack != -1)
+                excString = excString[..endOfPrevStack]; //keep only stack trace of the script
+
+            if (!int.TryParse(excString.Split(":line ").Last().Split("\r\n")[0], out excLineNum)) //try to get a line number
+                excLineNum = -1; //":line " not found
+
+            return excLineNum;
+        }
 
         public async Task RunScript(string path)
         {
@@ -1117,6 +1175,7 @@ namespace UndertaleModTool
 
         private async Task RunScriptNow(string path)
         {
+            string scriptText = File.ReadAllText(path);
             Debug.WriteLine(path);
 
             Dispatcher.Invoke(() => CommandBox.Text = "Running " + Path.GetFileName(path) + " ...");
@@ -1127,7 +1186,8 @@ namespace UndertaleModTool
                 
                 ScriptPath = path;
 
-                object result = await CSharpScript.EvaluateAsync(File.ReadAllText(path), scriptOptions, this, typeof(IScriptInterface));
+                object result = await CSharpScript.EvaluateAsync(scriptText, scriptOptions, this, typeof(IScriptInterface));
+                
                 if (FinishedMessageEnabled)
                 {
                     Dispatcher.Invoke(() => CommandBox.Text = result != null ? result.ToString() : Path.GetFileName(path) + " finished!");
@@ -1148,13 +1208,29 @@ namespace UndertaleModTool
             }
             catch (Exception exc)
             {
-                Console.WriteLine(exc.ToString());
+                bool isScriptException = exc.GetType().Name == "ScriptException";
+                string excString = exc.ToString();
+                string scriptLine = string.Empty;
+                int excLineNum = -1;
+
+                if (!isScriptException) //don't truncate the exception and don't add scriptLine to the output
+                {
+                    excLineNum = ProcessExceptionOutput(ref excString);
+                    if (excLineNum > 0) //if line number is found
+                        scriptLine = $"\nThe script line which caused the exception (line {excLineNum}):\n{scriptText.Split('\n')[excLineNum - 1].TrimStart(new char[] { '\t', ' ' })}";
+                }
+
+                Console.WriteLine(excString);
                 Dispatcher.Invoke(() => CommandBox.Text = exc.Message);
-                MessageBox.Show(exc.Message + "\n\n" + exc.ToString(), "Script error", MessageBoxButton.OK, MessageBoxImage.Error);
+                if (isScriptException)
+                    MessageBox.Show(exc.Message, "Script error", MessageBoxButton.OK, MessageBoxImage.Error);
+                else
+                    MessageBox.Show(excString + scriptLine, "Script error", MessageBoxButton.OK, MessageBoxImage.Error);
                 ScriptExecutionSuccess = false;
                 ScriptErrorMessage = exc.Message;
                 ScriptErrorType = "Exception";
             }
+            scriptText = null;
         }
 
         public string PromptLoadFile(string defaultExt, string filter)
@@ -1212,15 +1288,26 @@ namespace UndertaleModTool
             return MessageBox.Show(message, "Script message", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
         }
 
-        public string SimpleTextInput(string titleText, string labelText, string defaultInputBoxText, bool isMultiline)
+        public string SimpleTextInput(string titleText, string labelText, string defaultInputBoxText, bool isMultiline, bool showDialog = true)
         {
-            using (TextInput input = new TextInput(labelText, titleText, defaultInputBoxText, isMultiline))
+            TextInput input = new TextInput(labelText, titleText, defaultInputBoxText, isMultiline);
+
+            System.Windows.Forms.DialogResult result = System.Windows.Forms.DialogResult.None;
+            if (showDialog)
             {
-                var result = input.ShowDialog();
+                result = input.ShowDialog();
+                input.Dispose();
+
                 if (result == System.Windows.Forms.DialogResult.OK)
                     return input.ReturnString;            //values preserved after close
                 else
                     return null;
+            }
+            else //if we don't need to wait for result
+            {
+                input.Show(); 
+                return null;
+                //no need to call input.Dispose(), because if form wasn't shown modally, Form.Close() (or closing it with "X") also calls Dispose()
             }
         }
 
@@ -1354,7 +1441,7 @@ result in loss of work.");
             oldSteamValue = Data.GeneralInfo.SteamAppID;
             Data.GeneralInfo.SteamAppID = 0;
             Data.GeneralInfo.DisableDebugger = true;
-            string TempFilesFolder = Path.Combine(Path.GetDirectoryName(oldFilePath), "MyMod.temp");
+            string TempFilesFolder = (oldFilePath != null ? Path.Combine(Path.GetDirectoryName(oldFilePath), "MyMod.temp") : "");
             await SaveFile(TempFilesFolder, false);
             Data.GeneralInfo.SteamAppID = oldSteamValue;
             FilePath = oldFilePath;
@@ -1531,7 +1618,9 @@ result in loss of work.");
         public void EnsureDataLoaded()
         {
             if (Data == null)
-                throw new Exception("Please load data.win first!");
+            {
+                throw new ScriptException("Please load data.win first!");
+            }
         }
 
         private async void MenuItem_OffsetMap_Click(object sender, RoutedEventArgs e)

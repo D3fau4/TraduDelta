@@ -1,5 +1,5 @@
 # TraduDelta
-A translation tool for Deltarune (PC)
+A translation tool for Deltarune (PC/Switch)
 ```
 TraduDelta.exe [MODE] [FILE/DIRECTORY]
 

@@ -1,5 +1,7 @@
 # TraduDelta
+
 A translation tool for Deltarune (PC)
+
 ```
 TraduDelta.exe [MODE] [FILE/DIRECTORY]
 
@@ -11,7 +13,7 @@ TraduDelta.exe [MODE] [FILE/DIRECTORY]
 
 # Credits
 
- - ### [Undertale Mod Tools]()
-	 - For his descompiler and compiler and because i used part of his code.
+- ### [Undertale Mod Tools]()
+    - For his descompiler and compiler and because i used part of his code.
 - ### [Yarhl](https://github.com/SceneGate/Yarhl)
-	- For his implementation for generate .po
+    - For his implementation for generate .po

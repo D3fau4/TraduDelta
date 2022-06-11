@@ -122,7 +122,7 @@ namespace UndertaleModLib
 
         public void Serialize(UndertaleWriter writer)
         {
-            writer.resourceIDRefsToWrite.Add(new Pair<uint, UndertaleResourceRef>(writer.Position, this));
+            writer.resourceIDRefsToWrite.Add(new ValueTuple<uint, UndertaleResourceRef>(writer.Position, this));
             writer.Write((int)0);
         }
 
@@ -134,12 +134,20 @@ namespace UndertaleModLib
 
     public class UndertaleReader : Util.BufferBinaryReader
     {
+        /// <summary>
+        /// function to delegate warning messages to
+        /// </summary>
+        /// <param name="warning"></param>
         public delegate void WarningHandlerDelegate(string warning);
+        /// <summary>
+        /// function to delegate informational messages to
+        /// </summary>
+        /// <param name="message"></param>
         public delegate void MessageHandlerDelegate(string message);
         private WarningHandlerDelegate WarningHandler;
         private MessageHandlerDelegate MessageHandler;
 
-        public UndertaleReader(Stream input, 
+        public UndertaleReader(Stream input,
                                WarningHandlerDelegate warningHandler = null, MessageHandlerDelegate messageHandler = null) : base(input)
         {
             WarningHandler = warningHandler;
@@ -438,8 +446,8 @@ namespace UndertaleModLib
         private Dictionary<UndertaleObject, uint> objectPool = new Dictionary<UndertaleObject, uint>();
         private Dictionary<UndertaleObject, List<uint>> pendingWrites = new Dictionary<UndertaleObject, List<uint>>();
         private Dictionary<UndertaleObject, List<uint>> pendingStringWrites = new Dictionary<UndertaleObject, List<uint>>();
-        private List<Pair<uint, uint>> intsToWriteParallel = new List<Pair<uint, uint>>();
-        public List<Pair<uint, UndertaleResourceRef>> resourceIDRefsToWrite = new List<Pair<uint, UndertaleResourceRef>>();
+        private List<ValueTuple<uint, uint>> intsToWriteParallel = new List<ValueTuple<uint, uint>>();
+        public List<ValueTuple<uint, UndertaleResourceRef>> resourceIDRefsToWrite = new List<ValueTuple<uint, UndertaleResourceRef>>();
 
         public override void Flush()
         {
@@ -493,7 +501,7 @@ namespace UndertaleModLib
                     if (pendingStringWrites.ContainsKey(obj))
                     {
                         foreach (uint pointerAddr in pendingStringWrites[obj])
-                            intsToWriteParallel.Add(new Pair<uint, uint>(pointerAddr, objectAddr + 4));
+                            intsToWriteParallel.Add(new ValueTuple<uint, uint>(pointerAddr, objectAddr + 4));
                         pendingStringWrites.Remove(obj);
                     }
                 } else
@@ -502,7 +510,7 @@ namespace UndertaleModLib
                 if (pendingWrites.ContainsKey(obj))
                 {
                     foreach (uint pointerAddr in pendingWrites[obj])
-                        intsToWriteParallel.Add(new Pair<uint, uint>(pointerAddr, objectAddr));
+                        intsToWriteParallel.Add(new ValueTuple<uint, uint>(pointerAddr, objectAddr));
                     pendingWrites.Remove(obj);
                 }
             }

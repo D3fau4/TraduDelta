@@ -5,8 +5,8 @@
 ;
 [subrepo]
 	remote = https://github.com/krzys-h/UndertaleModTool.git
-	branch = UnbreakCompiler
-	commit = 0159044c4fe4dbb2bfe204ee0fb4ee688dce11d5
-	parent = f7ea6caf2619f8a8ea272fa89914ee260a21ae12
+	branch = master
+	commit = fb68ccb66ab725aaa6f10ef43677591a0752eff3
+	parent = 05f7d65f374fd92679e842b5986ee2dd0fe81c4c
 	method = merge
 	cmdver = 0.4.3

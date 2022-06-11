@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using UndertaleModLib.Models;
 using static UndertaleModLib.Models.UndertaleGeneralInfo;
 
-/// <summary>
-/// HUGE file containing definitions for most GameMaker builtin variables, functions, etc.
-/// </summary>
+
+// HUGE file containing definitions for most GameMaker builtin variables, functions, etc.
+
 
 namespace UndertaleModLib.Compiler
 {
@@ -105,9 +105,10 @@ namespace UndertaleModLib.Compiler
         }
     }
 
-    // This is a really long list of known constants and variables, taken from code analysis
-    // This deserves to be in its own file for that reason...
-    // This will likely need to be updated with every new GameMaker version with new features
+    /// <summary>
+    /// A really long list of known Game Maker: Studio constants and variables, taken from code analysis. <br/>
+    /// Will likely need to be updated on every new Game Maker version with new features.
+    /// </summary>
     public class BuiltinList
     {
         public Dictionary<string, double> Constants = null;
@@ -132,7 +133,7 @@ namespace UndertaleModLib.Compiler
         {
             Initialize(data);
         }
-        
+
         public void Initialize(UndertaleData data)
         {
             // Functions
@@ -2072,7 +2073,7 @@ namespace UndertaleModLib.Compiler
             Functions["buffer_async_group_begin"] = new FunctionInfo(this, 1);
             Functions["buffer_async_group_end"] = new FunctionInfo(this, 0);
             Functions["buffer_async_group_option"] = new FunctionInfo(this, 2);
-            Functions["buffer_get_surface"] = new FunctionInfo(this, 5);
+            Functions["buffer_get_surface"] = new FunctionInfo(this, (data.GMS2_3_1 ? 3 : 5)); // be more robust here
             Functions["buffer_set_surface"] = new FunctionInfo(this, 5);
             Functions["buffer_set_network_safe"] = new FunctionInfo(this, 2);
             Functions["buffer_create_from_vertex_buffer"] = new FunctionInfo(this, 3);

@@ -93,6 +93,7 @@ namespace UndertaleModLib.Compiler
                     SwitchCase,
                     SwitchDefault,
                     FunctionCall,
+                    FunctionDef,
                     Break,
                     Continue,
                     Exit,
@@ -113,6 +114,7 @@ namespace UndertaleModLib.Compiler
                     ExprConditional,
                     ExprVariableRef,
                     ExprSingleVariable,
+                    ExprFuncName,
 
                     Token,
                     Discard // optimization stage produces this
@@ -631,6 +633,9 @@ namespace UndertaleModLib.Compiler
                             ReportCodeError("Unexpected error token (invalid code).", remainingStageOne.Peek().Token, true);
                         }
                         break;
+                    case TokenKind.KeywordFunction:
+                        s = ParseFunction(context);
+                        break;
                     default:
                         // Assumes it's a variable assignment
                         if (remainingStageOne.Count > 0)
@@ -649,6 +654,53 @@ namespace UndertaleModLib.Compiler
                 result.Children.Add(ParseExpression(context));
                 result.Children.Add(ParseStatement(context));
                 return result;
+            }
+
+            private static Statement ParseFunction(CompileContext context)
+            {
+                Statement result = new Statement(Statement.StatementKind.FunctionDef, EnsureTokenKind(TokenKind.KeywordFunction).Token);
+                Statement args = new Statement();
+                bool expression = true;
+                Statement destination = null;
+
+                if (GetNextTokenKind() == TokenKind.ProcFunction)
+                {
+                    expression = false;
+                    Statement s = remainingStageOne.Dequeue();
+                    destination = new Statement(Statement.StatementKind.ExprFuncName, s.Token) { ID = s.ID };
+                }
+
+                EnsureTokenKind(TokenKind.OpenParen);
+
+                while (remainingStageOne.Count > 0 && !hasError && !IsNextToken(TokenKind.EOF, TokenKind.CloseParen))
+                {
+                    Statement expr = ParseExpression(context);
+                    if (expr != null)
+                        args.Children.Add(expr);
+                    if (!IsNextTokenDiscard(TokenKind.Comma))
+                    {
+                        if (!IsNextToken(TokenKind.CloseParen))
+                        {
+                            ReportCodeError("Expected ',' or ')' after argument in function call.", result.Token, true);
+                            break;
+                        }
+                    }
+                }
+                result.Children.Add(args);
+
+                if (EnsureTokenKind(TokenKind.CloseParen) == null) return null;
+
+                result.Children.Add(ParseStatement(context));
+                if (expression)
+                    return result;
+                else // Whatever you call non-anonymous definitions
+                {
+                    Statement trueResult = new Statement(Statement.StatementKind.Assign, new Lexer.Token(TokenKind.Assign));
+                    trueResult.Children.Add(destination);
+                    trueResult.Children.Add(new Statement(Statement.StatementKind.Token, trueResult.Token));
+                    trueResult.Children.Add(result);
+                    return trueResult;
+                }
             }
 
             private static Statement ParseFor(CompileContext context)
@@ -1331,19 +1383,22 @@ namespace UndertaleModLib.Compiler
                 // Check to make sure we aren't overriding a script/function name
                 if (context.BuiltInList.Functions.ContainsKey(s.Text) || context.scripts.Contains(s.Text))
                 {
-                    ReportCodeError(string.Format("Variable name {0} cannot be used; a function or script already has the name.", s.Text), false);
+                    //ReportCodeError(string.Format("Variable name {0} cannot be used; a function or script already has the name.", s.Text), false);
+                    return new Statement(Statement.StatementKind.ExprFuncName, s.Token) { ID = s.ID };       
                 }
 
                 Statement result = new Statement(Statement.StatementKind.ExprSingleVariable, s.Token);
                 result.ID = s.ID;
                 // Check for array
-                if (remainingStageOne.Count > 0 && IsNextToken(
+                bool array = false; // hack because you can't else if a while
+                while (remainingStageOne.Count > 0 && IsNextToken(
                     TokenKind.OpenArray,
                     TokenKind.OpenArrayBaseArray,
                     TokenKind.OpenArrayGrid,
                     TokenKind.OpenArrayList,
                     TokenKind.OpenArrayMap))
                 {
+                    array = true;
                     Lexer.Token tok = remainingStageOne.Dequeue().Token;
                     TokenKind t = tok.Kind;
 
@@ -1378,7 +1433,7 @@ namespace UndertaleModLib.Compiler
 
                     if (EnsureTokenKind(TokenKind.CloseArray) == null) return null;
                 }
-                else if (context.BuiltInList.GlobalArray.TryGetValue(result.Text, out _) || context.BuiltInList.InstanceLimitedEvent.TryGetValue(result.Text, out _))
+                if (!array && (context.BuiltInList.GlobalArray.TryGetValue(result.Text, out _) || context.BuiltInList.InstanceLimitedEvent.TryGetValue(result.Text, out _)))
                 {
                     // The compiler apparently does this
                     // I think this makes some undefined value for whatever reason
@@ -1421,6 +1476,8 @@ namespace UndertaleModLib.Compiler
                         }
                     case TokenKind.ProcFunction:
                         return ParseFunctionCall(context, true);
+                    case TokenKind.KeywordFunction:
+                        return ParseFunction(context);
                     case TokenKind.ProcVariable:
                         {
                             Statement variableRef = ParseSingleVar(context);

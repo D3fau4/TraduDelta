@@ -24,7 +24,7 @@ namespace UndertaleModTool
     /// <summary>
     /// Logika interakcji dla klasy UndertaleSpriteEditor.xaml
     /// </summary>
-    public partial class UndertaleSpriteEditor : UserControl
+    public partial class UndertaleSpriteEditor : DataUserControl
     {
         public UndertaleSpriteEditor()
         {
@@ -192,6 +192,28 @@ namespace UndertaleModTool
                     MessageBox.Show("Failed to export file: " + ex.Message, "Failed to export file", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        private void UndertaleObjectReference_Loaded(object sender, RoutedEventArgs e)
+        {
+            var objRef = sender as UndertaleObjectReference;
+
+            objRef.ClearRemoveClickHandler();
+            objRef.RemoveButton.Click += Remove_Click_Override;
+            objRef.RemoveButton.ToolTip = "Remove texture entry";
+            objRef.RemoveButton.IsEnabled = true;
+            objRef.DetailsButton.ToolTip = "Open texture entry";
+            objRef.ObjectText.PreviewKeyDown += ObjectText_PreviewKeyDown;
+        }
+        private void ObjectText_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+                Remove_Click_Override(sender, null);
+        }
+        private void Remove_Click_Override(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is UndertaleSprite sprite && (sender as FrameworkElement).DataContext is UndertaleSprite.TextureEntry entry)
+                sprite.Textures.Remove(entry);
         }
     }
 }

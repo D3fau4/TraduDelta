@@ -15,8 +15,8 @@ internal class Decompiler
 
     public static string GetDecompiledText(UndertaleData Data, string codeName)
     {
-        UndertaleCode code = Data.Code.ByName(codeName);
-        GlobalDecompileContext DECOMPILE_CONTEXT = new GlobalDecompileContext(Data, false);
+        var code = Data.Code.ByName(codeName);
+        var DECOMPILE_CONTEXT = new GlobalDecompileContext(Data, false);
         try
         {
             return code != null ? UndertaleModLib.Decompiler.Decompiler.Decompile(code, DECOMPILE_CONTEXT) : "";
@@ -36,16 +36,16 @@ internal class Decompiler
             code_orig.Offset = 0;
             if (Data.CodeLocals.ByName(code_orig.Name.Content) == null)
             {
-                UndertaleCodeLocals locals = new UndertaleCodeLocals();
+                var locals = new UndertaleCodeLocals();
                 locals.Name = code_orig.Name;
                 uint codeLocalsCount = 0;
-                string equivalentGlobalScript = code_orig.Name.Content.Replace("gml_Script_", "gml_GlobalScript_");
+                var equivalentGlobalScript = code_orig.Name.Content.Replace("gml_Script_", "gml_GlobalScript_");
                 if (Data.CodeLocals.ByName(equivalentGlobalScript) != null)
                 {
-                    foreach (UndertaleCodeLocals.LocalVar localvar in Data.CodeLocals.ByName(equivalentGlobalScript)
+                    foreach (var localvar in Data.CodeLocals.ByName(equivalentGlobalScript)
                                  .Locals)
                     {
-                        UndertaleCodeLocals.LocalVar argsLocal = new UndertaleCodeLocals.LocalVar();
+                        var argsLocal = new UndertaleCodeLocals.LocalVar();
                         argsLocal.Name = localvar.Name;
                         argsLocal.Index = localvar.Index;
                         locals.Locals.Add(argsLocal);
@@ -58,7 +58,7 @@ internal class Decompiler
                 }
                 else
                 {
-                    UndertaleCodeLocals.LocalVar argsLocal = new UndertaleCodeLocals.LocalVar();
+                    var argsLocal = new UndertaleCodeLocals.LocalVar();
                     argsLocal.Name = Data.Strings.MakeString("arguments");
                     argsLocal.Index = 0;
                     locals.Locals.Add(argsLocal);
@@ -75,7 +75,7 @@ internal class Decompiler
                 var x = "";
                 try
                 {
-                    string disasm_code = code_orig.Disassemble(Data.Variables, Data.CodeLocals.For(code_orig));
+                    var disasm_code = code_orig.Disassemble(Data.Variables, Data.CodeLocals.For(code_orig));
                     //ScriptMessage(code_orig.Name.Content);
                     //ScriptMessage("1 " + disasm_code);
                     var ix = -1;

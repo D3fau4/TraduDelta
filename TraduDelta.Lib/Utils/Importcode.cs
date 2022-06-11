@@ -63,7 +63,7 @@ internal class Importcode
         bool CheckDecompiler = false)
     {
         var SkipPortions = false;
-        UndertaleCode code = Data.Code.ByName(codeName);
+        var code = Data.Code.ByName(codeName);
         if (Data.Code.ByName(codeName) == null)
         {
             code = new UndertaleCode();
@@ -73,10 +73,10 @@ internal class Importcode
 
         if (Data?.GeneralInfo.BytecodeVersion > 14 && Data.CodeLocals.ByName(codeName) == null)
         {
-            UndertaleCodeLocals locals = new UndertaleCodeLocals();
+            var locals = new UndertaleCodeLocals();
             locals.Name = code.Name;
 
-            UndertaleCodeLocals.LocalVar argsLocal = new UndertaleCodeLocals.LocalVar();
+            var argsLocal = new UndertaleCodeLocals.LocalVar();
             argsLocal.Name = Data.Strings.MakeString("arguments");
             argsLocal.Index = 0;
 
@@ -96,14 +96,14 @@ internal class Importcode
                 // Add code to scripts section.
                 if (Data.Scripts.ByName(codeName.Substring(11)) == null)
                 {
-                    UndertaleScript scr = new UndertaleScript();
+                    var scr = new UndertaleScript();
                     scr.Name = Data.Strings.MakeString(codeName.Substring(11));
                     scr.Code = code;
                     Data.Scripts.Add(scr);
                 }
                 else
                 {
-                    UndertaleScript scr = Data.Scripts.ByName(codeName.Substring(11));
+                    var scr = Data.Scripts.ByName(codeName.Substring(11));
                     scr.Code = code;
                 }
             }
@@ -112,7 +112,7 @@ internal class Importcode
                 // Add code to global init section.
                 UndertaleGlobalInit init_entry = null;
                 // This doesn't work, have to do it the hard way: UndertaleGlobalInit init_entry = Data.GlobalInitScripts.ByName(scr_dup_code_name_con);
-                foreach (UndertaleGlobalInit globalInit in Data.GlobalInitScripts)
+                foreach (var globalInit in Data.GlobalInitScripts)
                     if (globalInit.Code.Name.Content == codeName)
                     {
                         init_entry = globalInit;
@@ -121,13 +121,13 @@ internal class Importcode
 
                 if (init_entry == null)
                 {
-                    UndertaleGlobalInit NewInit = new UndertaleGlobalInit();
+                    var NewInit = new UndertaleGlobalInit();
                     NewInit.Code = code;
                     Data.GlobalInitScripts.Add(NewInit);
                 }
                 else
                 {
-                    UndertaleGlobalInit NewInit = init_entry;
+                    var NewInit = init_entry;
                     NewInit.Code = code;
                 }
             }
@@ -162,7 +162,7 @@ internal class Importcode
                         var doNewObj = true;
                         if (doNewObj)
                         {
-                            UndertaleGameObject gameObj = new UndertaleGameObject();
+                            var gameObj = new UndertaleGameObject();
                             //gameObj.Name = Data.Strings.MakeString(SimpleTextInput("Enter object name", "Enter object name", "This is a single text line input box test.", false));
                             Data.GameObjects.Add(gameObj);
                         }
@@ -201,7 +201,7 @@ internal class Importcode
                                 var doNewObj = true;
                                 if (doNewObj)
                                 {
-                                    UndertaleGameObject gameObj = new UndertaleGameObject();
+                                    var gameObj = new UndertaleGameObject();
                                     gameObj.Name = Data.Strings.MakeString(objName);
                                     Data.GameObjects.Add(gameObj);
                                 }
@@ -218,13 +218,13 @@ internal class Importcode
                     }
                 }
 
-                UndertaleGameObject obj = Data.GameObjects.ByName(objName);
+                var obj = Data.GameObjects.ByName(objName);
                 if (obj == null)
                 {
                     var doNewObj = true;
                     if (doNewObj)
                     {
-                        UndertaleGameObject gameObj = new UndertaleGameObject();
+                        var gameObj = new UndertaleGameObject();
                         gameObj.Name = Data.Strings.MakeString(objName);
                         Data.GameObjects.Add(gameObj);
                     }
@@ -241,8 +241,8 @@ internal class Importcode
                     var duplicate = false;
                     try
                     {
-                        foreach (UndertaleGameObject.Event evnt in obj.Events[eventIdx])
-                        foreach (UndertaleGameObject.EventAction action in evnt.Actions)
+                        foreach (var evnt in obj.Events[eventIdx])
+                        foreach (var action in evnt.Actions)
                             if (action.CodeId?.Name?.Content == codeName)
                                 duplicate = true;
                     }
@@ -255,8 +255,8 @@ internal class Importcode
                     if (duplicate == false)
                     {
                         UndertalePointerList<UndertaleGameObject.Event> eventList = obj.Events[eventIdx];
-                        UndertaleGameObject.EventAction action = new UndertaleGameObject.EventAction();
-                        UndertaleGameObject.Event evnt = new UndertaleGameObject.Event();
+                        var action = new UndertaleGameObject.EventAction();
+                        var evnt = new UndertaleGameObject.Event();
 
                         action.ActionName = code.Name;
                         action.CodeId = code;

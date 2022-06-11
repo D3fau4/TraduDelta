@@ -13,7 +13,7 @@ internal class Powritter
         me.Values = new List<string>(keyValuePairs.Values);
         var po = new json2Po();
         var meme = po.Convert(me);
-        Po2Binary po2Binary = new Po2Binary();
+        var po2Binary = new Po2Binary();
         var binary = po2Binary.Convert(meme);
         var node1 = new Node(Path.GetFileName(file), binary);
         if (!Directory.Exists("OUT_PO"))
@@ -34,7 +34,7 @@ internal class Powritter
         tradu.Values = new List<string>(keyValuePairsTradu.Values);
         var po = new json2Po();
         var meme = po.Convert(me, tradu);
-        Po2Binary po2Binary = new Po2Binary();
+        var po2Binary = new Po2Binary();
         var binary = po2Binary.Convert(meme);
         var node1 = new Node(Path.GetFileName(file), binary);
         if (!Directory.Exists("OUT_PO"))
@@ -47,7 +47,7 @@ internal class Powritter
         Console.WriteLine("Output: " + file);
         var po = new json2Po();
         var meme = po.Convert(txt);
-        Po2Binary po2Binary = new Po2Binary();
+        var po2Binary = new Po2Binary();
         var binary = po2Binary.Convert(meme);
         var node1 = new Node(Path.GetFileName(file), binary);
         if (!Directory.Exists("OUT_PO"))

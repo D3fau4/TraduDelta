@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <GenerateDocumentationFile>False</GenerateDocumentationFile>
+        <RootNamespace>TraduDelta</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\TraduDelta.Lib\TraduDelta.Lib.csproj"/>
+        <ProjectReference Include="..\UndertaleModTool\UndertaleModLib\UndertaleModLib.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="README.md">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
+        </None>
+    </ItemGroup>
+
+</Project>

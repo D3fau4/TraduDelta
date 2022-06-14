@@ -85,11 +85,18 @@ public class json
 
         IList<string> keys1 = Json1.Properties().Select(p => p.Name).ToList();
         IList<string> keys2 = Json2.Properties().Select(p => p.Name).ToList();
-
         for (var i = 0; i < keys1.Count; i++)
             if (!keys2.Contains(keys1[i]))
+            {
                 Json1.Remove(keys1[i]);
+                keys1.RemoveAt(i);
+            }
 
+        string meme = "";
+        for (var i = 0; i < keys2.Count; i++)
+            if (!keys1.Contains(keys2[i]))
+                meme += $"{keys2[i]}\n";
+        File.WriteAllText("log.txt", meme);
         File.WriteAllText(path1, Json1.ToString());
     }
 }

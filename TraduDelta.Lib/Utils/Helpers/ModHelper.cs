@@ -5,6 +5,10 @@ namespace TraduDelta.Lib.Utils.Helpers;
 
 public class ModHelper : IHelper
 {
+    /// <summary>
+    ///     Apply all mods
+    /// </summary>
+    /// <param name="path">game.win path</param>
     public void Process(string path)
     {
         if (path.Contains(".win"))

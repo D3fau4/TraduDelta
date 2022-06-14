@@ -10,11 +10,9 @@ public class HandlerArgs
         ApplyMods,
         Json2Po,
         ExtractText,
+        MergePo,
         Help
     }
-    
-    public Mode? OperationMode { get; private set; }
-    public string GameWinPath  { get; private set; } = "game.win";
 
     public HandlerArgs(string[] raw_args)
     {
@@ -24,10 +22,15 @@ public class HandlerArgs
             new(new[] { "--applymods" }, () => OperationMode = Mode.ApplyMods),
             new(new[] { "--json2po" }, () => OperationMode = Mode.Json2Po),
             new(new[] { "--extracttext", "-x" }, () => OperationMode = Mode.ExtractText),
+            new(new[] { "--merge", "-m" }, () => OperationMode = Mode.MergePo),
             new(new[] { "--help", "-h" }, () => OperationMode = Mode.Help),
-            
+
             // Args
-            new(new []{ "--gamewin", "-g" }, x => GameWinPath = x)
+            new(new[] { "--gamewin", "-g" }, x => GameWinPath = x),
+            new(new[] { "--ch1text", "-ch1t" }, x => ch1TextPath = x),
+            new(new[] { "--ch2jptext", "-ch2jpt" }, x => ch2jpTextPath = x),
+            new(new[] { "--poold" }, x => poOld = x),
+            new(new[] { "--ponew"}, x => poNew = x),
         };
 
         for (var i = 0; i < raw_args.Length; ++i)
@@ -39,11 +42,18 @@ public class HandlerArgs
             else
                 handler.Invoke(handler.RequiresArg ? raw_args[++i] : null!);
         }
-        
+
         if (OperationMode is null)
             return;
     }
-    
+
+    public Mode? OperationMode { get; private set; }
+    public string GameWinPath { get; private set; } = "game.win";
+    public string ch1TextPath { get; private set; } = "lang/lang_en_ch1.json";
+    public string ch2jpTextPath { get; private set; } = "lang/lang_ja.json";
+    public string poOld { get; private set; }
+    public string poNew { get; private set; }
+
     public static void PrintInfo()
     {
         cmdutils.print("TraduDelta.exe [MODE] [FILE/DIRECTORY]");

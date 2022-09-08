@@ -14,6 +14,6 @@ TraduDelta.exe [MODE] [FILE/DIRECTORY]
 # Credits
 
  - ### [Undertale Mod Tools]()
-	 - For his descompiler and compiler and because i used part of his code.
+	 - For his descompiler and compiler
 - ### [Yarhl](https://github.com/SceneGate/Yarhl)
 	- For his implementation for generate .po

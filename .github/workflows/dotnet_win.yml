@@ -20,7 +20,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet publish TraduDelta.CLI/ -r win-x64 -c Release /p:PublishSingleFile=true /p:PublishTrimmed=true TraduDelta
+      run: dotnet publish TraduDelta.CLI/ -r win-x64 -c Release /p:PublishSingleFile=true /p:PublishTrimmed=true
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.4
       with:

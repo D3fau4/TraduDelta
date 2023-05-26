@@ -92,7 +92,7 @@ public class json
                 keys1.RemoveAt(i);
             }
 
-        string meme = "";
+        var meme = "";
         for (var i = 0; i < keys2.Count; i++)
             if (!keys1.Contains(keys2[i]))
                 meme += $"{keys2[i]}\n";

@@ -38,7 +38,7 @@ public class Po2JsonHelper : IHelper
 public class PoMergeTranslation : IHelper
 {
     /// <summary>
-    /// Merge Po files
+    ///     Merge Po files
     /// </summary>
     /// <param name="OldPo">translation to merge in the new one</param>
     /// <param name="NewPo">translation with new texts</param>

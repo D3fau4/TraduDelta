@@ -3,7 +3,7 @@ using Yarhl.Media.Text;
 
 namespace TraduDelta.Lib.Files;
 
-internal class Powritter
+public class Powritter
 {
     public static void write(Dictionary<string, string> keyValuePairs, string file)
     {

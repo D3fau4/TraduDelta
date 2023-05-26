@@ -30,7 +30,7 @@ public class HandlerArgs
             new(new[] { "--ch1text", "-ch1t" }, x => ch1TextPath = x),
             new(new[] { "--ch2jptext", "-ch2jpt" }, x => ch2jpTextPath = x),
             new(new[] { "--poold" }, x => poOld = x),
-            new(new[] { "--ponew"}, x => poNew = x),
+            new(new[] { "--ponew" }, x => poNew = x)
         };
 
         for (var i = 0; i < raw_args.Length; ++i)

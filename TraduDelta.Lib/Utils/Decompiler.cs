@@ -4,7 +4,7 @@ using UndertaleModLib.Models;
 
 namespace TraduDelta.Lib.Utils;
 
-internal class Decompiler
+public class Decompiler
 {
     private static string ReplaceFirst(string text, string search, string replace)
     {

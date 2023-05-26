@@ -16,7 +16,7 @@ internal class Program
 
     private static void Main(string[] args)
     {
-        cmdutils.print("Welcome to TraduDelta.CLI by D3fau4!", ConsolTraduDelta.OLD.CLI
+        cmdutils.print("Welcome to TraduDelta.CLI by D3fau4!");
 
         if (args.Length > 0)
             switch (args[0])
@@ -298,7 +298,7 @@ internal class Program
 
     private static void printhelp()
     {
-        cmdutils.print("TraduDelta.CLI.exe [MODE] [FILE/DITraduDelta.OLD.CLI        cmdutils.print("--applymods                  Apply TS mods.");
+        cmdutils.print("TraduDelta.CLI.exe ");
         cmdutils.print("--json2po                    Convert .json to .po");
         cmdutils.print("--extracttext                Extract the texts from the game.win");
         cmdutils.print("--mergetranslation           ");

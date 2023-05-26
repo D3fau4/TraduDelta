@@ -185,7 +185,7 @@ internal class Importcode
                             afterPrefix.Length - (afterPrefix.LastIndexOf("_Collision_") + s2.Length));
                         methodName = "Collision";
                         // GMS 2.3+ use the object name for the one colliding, which is rather useful.
-                        if (Data.GMS2_3)
+                        if (Data.IsGameMaker2())
                         {
                             if (Data.GameObjects.ByName(methodNumberStr) != null)
                             {

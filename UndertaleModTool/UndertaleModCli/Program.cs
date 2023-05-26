@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -194,7 +193,6 @@ public partial class Program : IScriptInterface
                 "System.Text.RegularExpressions")
             .AddReferences(typeof(UndertaleObject).GetTypeInfo().Assembly,
                 GetType().GetTypeInfo().Assembly,
-                typeof(JsonConvert).GetTypeInfo().Assembly,
                 typeof(System.Text.RegularExpressions.Regex).GetTypeInfo().Assembly,
                 typeof(TextureWorker).GetTypeInfo().Assembly)
             // "WithEmitDebugInformation(true)" not only lets us to see a script line number which threw an exception,
@@ -409,7 +407,7 @@ public partial class Program : IScriptInterface
             {
                 string directory = codeDict[UMT_REPLACE_ALL].FullName;
                 foreach (FileInfo file in new DirectoryInfo(directory).GetFiles())
-                    program.ReplaceCodeEntryWithFile(file.Name, file);
+                    program.ReplaceCodeEntryWithFile(Path.GetFileNameWithoutExtension(file.Name), file);
             }
             // Otherwise, just replace every file which was given
             else
@@ -442,7 +440,7 @@ public partial class Program : IScriptInterface
             {
                 string directory = textureDict[UMT_REPLACE_ALL].FullName;
                 foreach (FileInfo file in new DirectoryInfo(directory).GetFiles())
-                    program.ReplaceTextureWithFile(file.Name, file);
+                    program.ReplaceTextureWithFile(Path.GetFileNameWithoutExtension(file.Name), file);
             }
             // Otherwise, just replace every file which was given
             else
@@ -705,6 +703,7 @@ public partial class Program : IScriptInterface
             throw;
         }
 
+        lines = $"#line 1 \"{path}\"\n" + lines;
         ScriptPath = path;
         RunCSharpCode(lines, ScriptPath);
     }
@@ -793,7 +792,7 @@ public partial class Program : IScriptInterface
     private static string RemoveQuotes(string s)
 
     {
-        return s.TrimStart('"').TrimEnd('"');
+        return s.Trim('"', '\'');
     }
 
     /// <summary>

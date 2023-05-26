@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace UndertaleModLib.Models;
@@ -9,7 +10,7 @@ namespace UndertaleModLib.Models;
 /// <remarks>For Game Maker Studio: 2, this will only ever be a tileset. For Game Maker Studio: 1, this is usually a background,
 /// but is sometimes repurposed as use for a tileset as well.</remarks>
 [PropertyChanged.AddINotifyPropertyChangedInterface]
-public class UndertaleBackground : UndertaleNamedResource
+public class UndertaleBackground : UndertaleNamedResource, IDisposable
 {
     /// <summary>
     /// A tile id, which can be used for referencing specific tiles in a tileset. Game Maker Studio 2 only.
@@ -128,7 +129,7 @@ public class UndertaleBackground : UndertaleNamedResource
         writer.Write(Smooth);
         writer.Write(Preload);
         writer.WriteUndertaleObjectPointer(Texture);
-        if (writer.undertaleData.GeneralInfo.Major >= 2)
+        if (writer.undertaleData.IsGameMaker2())
         {
             writer.Write(GMS2UnknownAlways2);
             writer.Write(GMS2TileWidth);
@@ -155,7 +156,7 @@ public class UndertaleBackground : UndertaleNamedResource
         Smooth = reader.ReadBoolean();
         Preload = reader.ReadBoolean();
         Texture = reader.ReadUndertaleObjectPointer<UndertaleTexturePageItem>();
-        if (reader.undertaleData.GeneralInfo.Major >= 2)
+        if (reader.undertaleData.IsGameMaker2())
         {
             GMS2UnknownAlways2 = reader.ReadUInt32();
             GMS2TileWidth = reader.ReadUInt32();
@@ -180,6 +181,16 @@ public class UndertaleBackground : UndertaleNamedResource
     /// <inheritdoc />
     public override string ToString()
     {
-        return Name.Content + " (" + GetType().Name + ")";
+        return Name?.Content + " (" + GetType().Name + ")";
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+
+        GMS2TileIds = new();
+        Name = null;
+        Texture = null;
     }
 }

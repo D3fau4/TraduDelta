@@ -21,15 +21,7 @@ namespace UndertaleModTool
     /// </summary>
     public partial class SettingsWindow : Window
     {
-        public static string GraphVizPath
-        {
-            get => Settings.Instance.GraphVizPath;
-            set
-            {
-                Settings.Instance.GraphVizPath = value;
-                Settings.Save();
-            }
-        }
+        private static readonly MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
 
         public static string GameMakerStudioPath
         {
@@ -67,16 +59,6 @@ namespace UndertaleModTool
             set
             {
                 Settings.Instance.ProfileModeEnabled = value;
-                Settings.Save();
-            }
-        }
-
-        public static bool Warn_About_GMS23
-        {
-            get => Settings.Instance.Warn_About_GMS23;
-            set
-            {
-                Settings.Instance.Warn_About_GMS23 = value;
                 Settings.Save();
             }
         }
@@ -139,6 +121,94 @@ namespace UndertaleModTool
             }
         }
 
+        public static double GlobalGridWidth
+        {
+            get => Settings.Instance.GlobalGridWidth;
+            set
+            {
+                Settings.Instance.GlobalGridWidth = value;
+                Settings.Save();
+            }
+        }
+
+        public static bool GridWidthEnabled
+        {
+            get => Settings.Instance.GridWidthEnabled;
+            set
+            {
+                Settings.Instance.GridWidthEnabled = value;
+                Settings.Save();
+            }
+        }
+
+        public static double GlobalGridHeight
+        {
+            get => Settings.Instance.GlobalGridHeight;
+            set
+            {
+                Settings.Instance.GlobalGridHeight = value;
+                Settings.Save();
+            }
+        }
+
+        public static bool GridHeightEnabled
+        {
+            get => Settings.Instance.GridHeightEnabled;
+            set
+            {
+                Settings.Instance.GridHeightEnabled = value;
+                Settings.Save();
+            }
+        }
+
+        public static double GlobalGridThickness
+        {
+            get => Settings.Instance.GlobalGridThickness;
+            set
+            {
+                Settings.Instance.GlobalGridThickness = value;
+                Settings.Save();
+            }
+        }
+
+        public static bool GridThicknessEnabled
+        {
+            get => Settings.Instance.GridThicknessEnabled;
+            set
+            {
+                Settings.Instance.GridThicknessEnabled = value;
+                Settings.Save();
+            }
+        }
+
+        public static bool EnableDarkMode
+        {
+            get => Settings.Instance.EnableDarkMode;
+            set
+            {
+                Settings.Instance.EnableDarkMode = value;
+                Settings.Save();
+
+                MainWindow.SetDarkMode(value);
+
+                if (value)
+                    mainWindow.ShowWarning("The message boxes (like this one) aren't compatible with the dark mode.\n" +
+                                           "This will be fixed in future versions.");
+            }
+        }
+
+        public static bool ShowDebuggerOption
+        {
+            get => Settings.Instance.ShowDebuggerOption;
+            set
+            {
+                Settings.Instance.ShowDebuggerOption = value;
+                Settings.Save();
+
+                mainWindow.RunGMSDebuggerItem.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
         public bool UpdateButtonEnabled
         {
             get => UpdateAppButton.IsEnabled;
@@ -150,6 +220,14 @@ namespace UndertaleModTool
             InitializeComponent();
             this.DataContext = this;
             Settings.Load();
+        }
+        private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (!IsVisible || IsLoaded)
+                return;
+
+            if (Settings.Instance.EnableDarkMode)
+                MainWindow.SetDarkTitleBarForWindow(this, true, false);
         }
 
         private void AppDataButton_Click(object sender, RoutedEventArgs e)

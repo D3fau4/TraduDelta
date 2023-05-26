@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 
 namespace UndertaleModLib.Models;
 
@@ -6,13 +7,13 @@ namespace UndertaleModLib.Models;
 /// A timeline in a data file.
 /// </summary>
 [PropertyChanged.AddINotifyPropertyChangedInterface]
-public class UndertaleTimeline : UndertaleNamedResource
+public class UndertaleTimeline : UndertaleNamedResource, IDisposable
 {
     /// <summary>
     /// A specific moment in a timeline.
     /// </summary>
     [PropertyChanged.AddINotifyPropertyChangedInterface]
-    public class UndertaleTimelineMoment : UndertaleObject
+    public class UndertaleTimelineMoment : UndertaleObject, IDisposable
     {
         /// <summary>
         /// After how many steps this moment gets executed.
@@ -57,6 +58,14 @@ public class UndertaleTimeline : UndertaleNamedResource
         {
             // Same goes for unserializing.
         }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+
+            Event = null;
+        }
     }
 
     /// <summary>
@@ -72,7 +81,18 @@ public class UndertaleTimeline : UndertaleNamedResource
     /// <inheritdoc />
     public override string ToString()
     {
-        return Name.Content + " (" + GetType().Name + ")";
+        return Name?.Content + " (" + GetType().Name + ")";
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+
+        foreach (var moment in Moments)
+            moment?.Dispose();
+        Name = null;
+        Moments = new();
     }
 
     /// <inheritdoc />
@@ -116,12 +136,29 @@ public class UndertaleTimeline : UndertaleNamedResource
         // Read the actions for each moment
         for (int i = 0; i < momentCount; i++)
         {
-            if (reader.Position != unnecessaryPointers[i])
+            if (reader.AbsPosition != unnecessaryPointers[i])
                 throw new UndertaleSerializationException("Invalid action list pointer");
 
             // Read action list and assign time point (put into list)
             var timeEvent = reader.ReadUndertaleObject<UndertalePointerList<UndertaleGameObject.EventAction>>();
             Moments.Add(new UndertaleTimelineMoment(timePoints[i], timeEvent));
         }
+    }
+
+    /// <inheritdoc cref="UndertaleObject.UnserializeChildObjectCount(UndertaleReader)"/>
+    public static uint UnserializeChildObjectCount(UndertaleReader reader)
+    {
+        uint count = 0;
+
+        reader.Position += 4; // "Name"
+
+        int momentCount = reader.ReadInt32();
+
+        reader.Position += (uint)momentCount * 8;
+
+        for (int i = 0; i < momentCount; i++)
+            count += 1 + UndertalePointerList<UndertaleGameObject.EventAction>.UnserializeChildObjectCount(reader);
+
+        return count;
     }
 }

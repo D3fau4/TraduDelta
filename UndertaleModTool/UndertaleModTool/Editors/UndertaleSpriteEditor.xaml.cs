@@ -15,7 +15,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using UndertaleModLib.Models;
 using UndertaleModLib.Util;
 
@@ -26,6 +25,8 @@ namespace UndertaleModTool
     /// </summary>
     public partial class UndertaleSpriteEditor : DataUserControl
     {
+        private static readonly MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+
         public UndertaleSpriteEditor()
         {
             InitializeComponent();
@@ -33,17 +34,17 @@ namespace UndertaleModTool
 
         private void ExportAllSpine(SaveFileDialog dlg, UndertaleSprite sprite)
         {
-            MessageBox.Show("This seems to be a Spine sprite, .json and .atlas files will be exported together with the frames. " +
-                "PLEASE EDIT THEM CAREFULLY! SOME MANUAL EDITING OF THE JSON MAY BE REQUIRED! THE DATA IS EXPORTED AS-IS.", "Spine warning", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+            mainWindow.ShowWarning("This seems to be a Spine sprite, .json and .atlas files will be exported together with the frames. " +
+                                 "PLEASE EDIT THEM CAREFULLY! SOME MANUAL EDITING OF THE JSON MAY BE REQUIRED! THE DATA IS EXPORTED AS-IS.", "Spine warning");
 
             if (dlg.ShowDialog() == true)
             {
                 try
                 {
-                    string dir = System.IO.Path.GetDirectoryName(dlg.FileName);
-                    string name = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
-                    string path = System.IO.Path.Combine(dir, name);
-                    string ext = System.IO.Path.GetExtension(dlg.FileName);
+                    string dir = Path.GetDirectoryName(dlg.FileName);
+                    string name = Path.GetFileNameWithoutExtension(dlg.FileName);
+                    string path = Path.Combine(dir, name);
+                    string ext = Path.GetExtension(dlg.FileName);
 
                     if (sprite.SpineTextures.Count > 0)
                     {
@@ -54,22 +55,22 @@ namespace UndertaleModTool
                         {
                             try
                             {
-                                File.WriteAllBytes(System.IO.Path.Combine(path, tex.id + ext), tex.tex.PNGBlob);
+                                File.WriteAllBytes(Path.Combine(path, tex.id + ext), tex.tex.TexBlob);
                             }
                             catch (Exception ex)
                             {
-                                MessageBox.Show("Failed to export file: " + ex.Message, "Failed to export file", MessageBoxButton.OK, MessageBoxImage.Error);
+                                mainWindow.ShowError("Failed to export file: " + ex.Message, "Failed to export file");
                             }
                         }
 
                         // json and atlas
-                        File.WriteAllText(System.IO.Path.Combine(path, "spine.json"), sprite.SpineJSON);
-                        File.WriteAllText(System.IO.Path.Combine(path, "spine.atlas"), sprite.SpineAtlas);
+                        File.WriteAllText(Path.Combine(path, "spine.json"), sprite.SpineJSON);
+                        File.WriteAllText(Path.Combine(path, "spine.atlas"), sprite.SpineAtlas);
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Failed to export: " + ex.Message, "Failed to export sprite", MessageBoxButton.OK, MessageBoxImage.Error);
+                    mainWindow.ShowError("Failed to export: " + ex.Message, "Failed to export sprite");
                 }
             }
         }
@@ -96,23 +97,27 @@ namespace UndertaleModTool
             {
                 try
                 {
+                    bool includePadding = false;
+                    if (mainWindow.ShowQuestion("Include padding?") == MessageBoxResult.Yes)
+                        includePadding = true;
+
                     if (sprite.Textures.Count > 1)
                     {
-                        string dir = System.IO.Path.GetDirectoryName(dlg.FileName);
-                        string name = System.IO.Path.GetFileNameWithoutExtension(dlg.FileName);
-                        string path = System.IO.Path.Combine(dir, name);
-                        string ext = System.IO.Path.GetExtension(dlg.FileName);
+                        string dir = Path.GetDirectoryName(dlg.FileName);
+                        string name = Path.GetFileNameWithoutExtension(dlg.FileName);
+                        string path = Path.Combine(dir, name);
+                        string ext = Path.GetExtension(dlg.FileName);
 
                         Directory.CreateDirectory(path);
                         foreach (var tex in sprite.Textures.Select((tex, id) => new { id, tex }))
                         {
                             try
                             {
-                                worker.ExportAsPNG(tex.tex.Texture, System.IO.Path.Combine(path, sprite.Name.Content + "_" + tex.id + ext));
+                                worker.ExportAsPNG(tex.tex.Texture, Path.Combine(path, sprite.Name.Content + "_" + tex.id + ext), null, includePadding);
                             }
                             catch (Exception ex)
                             {
-                                MessageBox.Show("Failed to export file: " + ex.Message, "Failed to export file", MessageBoxButton.OK, MessageBoxImage.Error);
+                                mainWindow.ShowError("Failed to export file: " + ex.Message, "Failed to export file");
                             }
                         }
                     }
@@ -120,21 +125,21 @@ namespace UndertaleModTool
                     {
                         try
                         {
-                            worker.ExportAsPNG(sprite.Textures[0].Texture, dlg.FileName);
+                            worker.ExportAsPNG(sprite.Textures[0].Texture, dlg.FileName, null, includePadding);
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show("Failed to export file: " + ex.Message, "Failed to export file", MessageBoxButton.OK, MessageBoxImage.Error);
+                            mainWindow.ShowError("Failed to export file: " + ex.Message, "Failed to export file");
                         }
                     }
                     else
                     {
-                        MessageBox.Show("No frames to export", "Failed to export sprite", MessageBoxButton.OK, MessageBoxImage.Error);
+                        mainWindow.ShowError("No frames to export", "Failed to export sprite");
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Failed to export: " + ex.Message, "Failed to export sprite", MessageBoxButton.OK, MessageBoxImage.Error);
+                    mainWindow.ShowError("Failed to export: " + ex.Message, "Failed to export sprite");
                 }
             }
 
@@ -166,7 +171,7 @@ namespace UndertaleModTool
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Failed to import file: " + ex.Message, "Failed to import file", MessageBoxButton.OK, MessageBoxImage.Error);
+                    mainWindow.ShowError("Failed to import file: " + ex.Message, "Failed to import file");
                 }
             }
         }
@@ -189,7 +194,7 @@ namespace UndertaleModTool
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Failed to export file: " + ex.Message, "Failed to export file", MessageBoxButton.OK, MessageBoxImage.Error);
+                    mainWindow.ShowError("Failed to export file: " + ex.Message, "Failed to export file");
                 }
             }
         }

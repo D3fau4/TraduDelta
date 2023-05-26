@@ -16,8 +16,8 @@ Note, that you can update to the bleeding edge releases at any time from within 
 
 | Releases 	| Status 	|
 |:---:	|----------	|
-| Stable 	| [![Latest Stable Release](https://img.shields.io/github/downloads/krzys-h/UndertaleModTool/latest/total)](https://github.com/krzys-h/UndertaleModTool/releases/latest) |
-| Bleeding edge 	| [![Latest Bleeding Edge](https://github.com/krzys-h/UndertaleModTool/actions/workflows/publish_gui.yml/badge.svg)](https://github.com/krzys-h/UndertaleModTool/actions/workflows/publish_gui.yml) |
+| Stable 	| [![Latest Stable Release](https://img.shields.io/github/downloads/krzys-h/UndertaleModTool/0.5.1.0/total)](https://github.com/krzys-h/UndertaleModTool/releases/tag/0.5.1.0) |
+| Bleeding edge 	| [![Latest Bleeding Edge](https://img.shields.io/github/downloads/krzys-h/UndertaleModTool/bleeding-edge/total)](https://github.com/krzys-h/UndertaleModTool/releases/tag/bleeding-edge) |
 
 It's worth noting that UndertaleModTool has different builds per release. The differences are as follows:
 
@@ -36,6 +36,7 @@ It's worth noting that UndertaleModTool has different builds per release. The di
 * Support for running scripts that automatically modify your data file (or perform other nefarious tasks) - this is the way to distribute mods, but creating them is a manual job for now. It also serves as a replacement for sharing hex editor offsets - if you make it into a file-format-aware script instead, there is much smaller change of it breaking after an update.
 * All core IO functionality extracted into a library for use in external tools.
 * Can generate an .yydebug file for the GM:S debugger so that you can edit variables live! (see [here](https://github.com/krzys-h/UndertaleModTool/wiki/Corrections-to-GameMaker-Studio-1.4-data.win-format-and-VM-bytecode,-.yydebug-format-and-debugger-instructions#yydebug-file-format))
+* Automatic file associations for all GameMaker related files. This can be disabled by having a `dna.txt` file next to the executable.
 
 # Screenshots
 
@@ -77,7 +78,6 @@ All contributions are welcome! If you find a bug, a data file that does not load
 
 * Work on the profile system
 * Decompiler improvements
-* Dark mode / theming support
 * Add support for latest versions of GameMaker (notably, 2.3) - decompiler cannot function in most cases currently
 * Eventually, making the GUI cross-platform if possible
 

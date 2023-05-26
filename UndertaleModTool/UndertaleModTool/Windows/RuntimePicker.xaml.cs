@@ -39,6 +39,14 @@ namespace UndertaleModTool
             this.DataContext = this;
             InitializeComponent();
         }
+        private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (!IsVisible || IsLoaded)
+                return;
+
+            if (Settings.Instance.EnableDarkMode)
+                MainWindow.SetDarkTitleBarForWindow(this, true, false);
+        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -106,7 +114,7 @@ namespace UndertaleModTool
             DiscoverRuntimes(dataFilePath, data);
             if (Runtimes.Count == 0)
             {
-                MessageBox.Show("Unable to find game EXE or any installed Studio runtime", "Run error", MessageBoxButton.OK, MessageBoxImage.Error);
+                this.ShowError("Unable to find game EXE or any installed Studio runtime", "Run error");
                 return null;
             }
             else if (Runtimes.Count == 1)

@@ -7,7 +7,7 @@ namespace UndertaleModLib.Models;
 /// An embedded audio entry in a data file.
 /// </summary>
 [PropertyChanged.AddINotifyPropertyChangedInterface]
-public class UndertaleEmbeddedAudio : UndertaleNamedResource, PaddedObject
+public class UndertaleEmbeddedAudio : UndertaleNamedResource, PaddedObject, IDisposable
 {
     /// <summary>
     /// The name of the embedded audio entry.
@@ -44,7 +44,7 @@ public class UndertaleEmbeddedAudio : UndertaleNamedResource, PaddedObject
     /// <inheritdoc />
     public void UnserializePadding(UndertaleReader reader)
     {
-        while (reader.Position % 4 != 0)
+        while (reader.AbsPosition % 4 != 0)
             if (reader.ReadByte() != 0)
                 throw new IOException("Padding error!");
     }
@@ -61,5 +61,14 @@ public class UndertaleEmbeddedAudio : UndertaleNamedResource, PaddedObject
             Name = new UndertaleString("EmbeddedSound Unknown Index");
         }
         return Name.Content + " (" + GetType().Name + ")";
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+
+        Name = null;
+        Data = Array.Empty<byte>();
     }
 }

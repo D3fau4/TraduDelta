@@ -6,7 +6,7 @@
 [subrepo]
 	remote = https://github.com/krzys-h/UndertaleModTool.git
 	branch = master
-	commit = fb68ccb66ab725aaa6f10ef43677591a0752eff3
-	parent = 05f7d65f374fd92679e842b5986ee2dd0fe81c4c
+	commit = ca423ddbfae75d28ef81dfb896f30fced789bfbb
+	parent = 6d0cf0f99e4b91182fc142e485abd21a1dd1c03e
 	method = merge
-	cmdver = 0.4.3
+	cmdver = 0.4.5

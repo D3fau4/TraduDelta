@@ -96,6 +96,8 @@ namespace UndertaleModTool
                     return null;
             }
 
+            if (texture.SourceWidth == 0 || texture.SourceHeight == 0)
+                return null;
 
             if (tileRectList is not null)
             {
@@ -273,7 +275,7 @@ namespace UndertaleModTool
         {
             throw new NotImplementedException();
         }
-    }    
+    }
 
     // UndertaleCachedImageLoader wrappers
     public class CachedTileImageLoader : IMultiValueConverter
@@ -337,6 +339,11 @@ namespace UndertaleModTool
 
         public static void Reset()
         {
+            foreach (Bitmap bmp in TileCache.Values)
+                bmp.Dispose();
+            foreach (Bitmap bmp in tilePageCache.Values)
+                bmp.Dispose();
+
             TileCache.Clear();
             tilePageCache.Clear();
             TileRectanglesConverter.TileCache.Clear();
@@ -355,12 +362,14 @@ namespace UndertaleModTool
             if (tilesBG is null)
                 return null;
 
+            MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+
             try
             {
                 string texName = tilesBG.Texture?.Name?.Content;
                 if (texName is null or "PageItem Unknown Index")
                 {
-                    texName = ((Application.Current.MainWindow as MainWindow).Data.TexturePageItems.IndexOf(tilesBG.Texture) + 1).ToString();
+                    texName = (mainWindow.Data.TexturePageItems.IndexOf(tilesBG.Texture) + 1).ToString();
                     if (texName == "0")
                         return null;
                 }
@@ -437,8 +446,8 @@ namespace UndertaleModTool
 
                 if (outOfBounds)
                 {
-                    MainWindow.ShowError($"Tileset of \"{tilesData.ParentLayer.LayerName.Content}\" tile layer has wrong parameters (tile size, output border, etc.).\n" +
-                                          "It can't be displayed.", false);
+                    mainWindow.ShowError($"Tileset of \"{tilesData.ParentLayer.LayerName.Content}\" tile layer has wrong parameters (tile size, output border, etc.).\n" +
+                                          "It can't be displayed.");
                     return "Error";
                 }
 
@@ -446,7 +455,7 @@ namespace UndertaleModTool
             }
             catch (Exception ex)
             {
-                MainWindow.ShowError($"An error occured while rendering tile layer \"{tilesData.ParentLayer.LayerName.Content}\".\n\n{ex}", false);
+                mainWindow.ShowError($"An error occured while rendering tile layer \"{tilesData.ParentLayer.LayerName.Content}\".\n\n{ex}");
                 return "Error";
             }
         }
@@ -495,10 +504,10 @@ namespace UndertaleModTool
                                 resBMP.RotateFlip(RotateFlipType.Rotate90FlipNone);
                                 break;
                             case 5:
-                                resBMP.RotateFlip(RotateFlipType.Rotate90FlipY);
+                                resBMP.RotateFlip(RotateFlipType.Rotate270FlipY);
                                 break;
                             case 6:
-                                resBMP.RotateFlip(RotateFlipType.Rotate270FlipY);
+                                resBMP.RotateFlip(RotateFlipType.Rotate90FlipY);
                                 break;
                             case 7:
                                 resBMP.RotateFlip(RotateFlipType.Rotate270FlipNone);

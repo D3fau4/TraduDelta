@@ -1,10 +1,12 @@
-﻿namespace UndertaleModLib.Models;
+﻿using System;
+
+namespace UndertaleModLib.Models;
 
 /// <summary>
 /// An animation curve entry in a data file.
 /// </summary>
 [PropertyChanged.AddINotifyPropertyChangedInterface]
-public class UndertaleAnimationCurve : UndertaleNamedResource
+public class UndertaleAnimationCurve : UndertaleNamedResource, IDisposable
 {
     public enum GraphTypeEnum : uint
     {
@@ -63,14 +65,47 @@ public class UndertaleAnimationCurve : UndertaleNamedResource
         Channels = reader.ReadUndertaleObject<UndertaleSimpleList<Channel>>();
     }
 
+    /// <inheritdoc cref="UndertaleObject.UnserializeChildObjectCount(UndertaleReader)"/>
+    public static uint UnserializeChildObjectCount(UndertaleReader reader)
+    {
+        return UnserializeChildObjectCount(reader, true);
+    }
+
+    /// <inheritdoc cref="UndertaleObject.UnserializeChildObjectCount(UndertaleReader)"/>
+    /// <param name="reader">Where to deserialize from.</param>
+    /// <param name="includeName">Whether to include <see cref="Name"/> in the deserialization.</param>
+    public static uint UnserializeChildObjectCount(UndertaleReader reader, bool includeName)
+    {
+        if (!includeName)
+            reader.Position += 4;     // "GraphType"
+        else
+            reader.Position += 4 + 4; // + "Name"
+
+        return 1 + UndertaleSimpleList<Channel>.UnserializeChildObjectCount(reader);
+    }
+
     /// <inheritdoc />
     public override string ToString()
     {
-        return Name.Content;
+        return Name?.Content;
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+
+        if (Channels is not null)
+        {
+            foreach (Channel channel in Channels)
+                channel?.Dispose();
+         }
+        Name = null;
+        Channels = null;
     }
 
     [PropertyChanged.AddINotifyPropertyChangedInterface]
-    public class Channel : UndertaleObject
+    public class Channel : UndertaleObject, IDisposable
     {
         public enum FunctionType : uint
         {
@@ -101,6 +136,30 @@ public class UndertaleAnimationCurve : UndertaleNamedResource
             Points = reader.ReadUndertaleObject<UndertaleSimpleList<Point>>();
         }
 
+        /// <inheritdoc cref="UndertaleObject.UnserializeChildObjectCount(UndertaleReader)"/>
+        public static uint UnserializeChildObjectCount(UndertaleReader reader)
+        {
+            reader.Position += 12;
+
+            // "Points"
+            uint count = reader.ReadUInt32();
+            if (reader.undertaleData.IsVersionAtLeast(2, 3, 1))
+                reader.Position += 24 * count;
+            else
+                reader.Position += 12 * count;
+
+            return 1 + count;
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+
+            Name = null;
+            Points = null;
+        }
+
         public class Point : UndertaleObject
         {
             public float X;
@@ -117,7 +176,7 @@ public class UndertaleAnimationCurve : UndertaleNamedResource
                 writer.Write(X);
                 writer.Write(Value);
 
-                if (writer.undertaleData.GMS2_3_1)
+                if (writer.undertaleData.IsVersionAtLeast(2, 3, 1))
                 {
                     writer.Write(BezierX0);
                     writer.Write(BezierY0);
@@ -134,19 +193,7 @@ public class UndertaleAnimationCurve : UndertaleNamedResource
                 X = reader.ReadSingle();
                 Value = reader.ReadSingle();
 
-                if (reader.ReadUInt32() != 0) // in 2.3 a int with the value of 0 would be set here,
-                {                             // it cannot be version 2.3 if this value isn't 0
-                    reader.undertaleData.GMS2_3_1 = true;
-                    reader.Position -= 4;
-                }
-                else
-                {
-                    if (reader.ReadUInt32() == 0)              // At all points (besides the first one)
-                        reader.undertaleData.GMS2_3_1 = true; // if BezierX0 equals to 0 (the above check)
-                    reader.Position -= 8;                        // then BezierY0 equals to 0 as well (the current check)
-                }
-
-                if (reader.undertaleData.GMS2_3_1)
+                if (reader.undertaleData.IsVersionAtLeast(2, 3, 1))
                 {
                     BezierX0 = reader.ReadSingle();
                     BezierY0 = reader.ReadSingle();

@@ -8,6 +8,7 @@ using UndertaleModLib.Util;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Data;
+using UndertaleModTool.Windows;
 
 namespace UndertaleModTool
 {
@@ -16,6 +17,8 @@ namespace UndertaleModTool
     /// </summary>
     public partial class UndertaleTexturePageItemEditor : DataUserControl
     {
+        private static readonly MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+
         public UndertaleTexturePageItemEditor()
         {
             InitializeComponent();
@@ -46,14 +49,14 @@ namespace UndertaleModTool
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Failed to import image", MessageBoxButton.OK, MessageBoxImage.Error);
+                mainWindow.ShowError(ex.Message, "Failed to import image");
             }
         }
 
         private void Export_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog dlg = new SaveFileDialog();
-            
+
             dlg.DefaultExt = ".png";
             dlg.Filter = "PNG files (.png)|*.png|All files|*";
 
@@ -66,9 +69,32 @@ namespace UndertaleModTool
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Failed to export file: " + ex.Message, "Failed to export file", MessageBoxButton.OK, MessageBoxImage.Error);
+                    mainWindow.ShowError("Failed to export file: " + ex.Message, "Failed to export file");
                 }
                 worker.Cleanup();
+            }
+        }
+
+        private void FindReferencesButton_Click(object sender, RoutedEventArgs e)
+        {
+            var obj = (sender as FrameworkElement)?.DataContext;
+            if (obj is not UndertaleTexturePageItem item)
+                return;
+
+            FindReferencesTypesDialog dialog = null;
+            try
+            {
+                dialog = new(item, mainWindow.Data);
+                dialog.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                mainWindow.ShowError("An error occured in the object references related window.\n" +
+                                     $"Please report this on GitHub.\n\n{ex}");
+            }
+            finally
+            {
+                dialog?.Close();
             }
         }
     }

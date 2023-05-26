@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using UndertaleModLib.Compiler;
+using UndertaleModLib.Decompiler;
 
 namespace UndertaleModLib.Models;
 
@@ -8,7 +11,7 @@ namespace UndertaleModLib.Models;
 /// General info about a data file.
 /// </summary>
 [PropertyChanged.AddINotifyPropertyChangedInterface]
-public class UndertaleGeneralInfo : UndertaleObject
+public class UndertaleGeneralInfo : UndertaleObject, IDisposable
 {
     /// <summary>
     /// Information flags a data file can use.
@@ -204,6 +207,7 @@ public class UndertaleGeneralInfo : UndertaleObject
 
     /// <summary>
     /// The major version of the data file.
+    /// If greater than 1, serialization produces "2.0.0.0" due to the flag no longer updating in data.win
     /// </summary>
     public uint Major { get; set; } = 1;
 
@@ -278,7 +282,7 @@ public class UndertaleGeneralInfo : UndertaleObject
     /// <summary>
     /// The room order of the data file.
     /// </summary>
-    public UndertaleSimpleResourcesList<UndertaleRoom, UndertaleChunkROOM> RoomOrder { get; private set; } = new UndertaleSimpleResourcesList<UndertaleRoom, UndertaleChunkROOM>();
+    public UndertaleSimpleResourcesList<UndertaleRoom, UndertaleChunkROOM> RoomOrder { get; private set; } = new();
 
     /// <summary>
     /// TODO: unknown, some sort of checksum.
@@ -300,6 +304,42 @@ public class UndertaleGeneralInfo : UndertaleObject
     /// </summary>
     public byte[] GMS2GameGUID { get; set; } = new byte[16];
 
+    /// <summary>
+    /// Whether the random UID's timestamp was initially offset.
+    /// </summary>
+    public bool InfoTimestampOffset { get; set; } = true;
+
+    public static (uint, uint, uint, uint) TestForCommonGMSVersions(UndertaleReader reader,
+                                                                    (uint, uint, uint, uint) readVersion)
+    {
+        (uint Major, uint Minor, uint Release, uint Build) detectedVer = readVersion;
+
+        // Some GMS2+ version detection. The rest is spread around, mostly in UndertaleChunks.cs
+        if (reader.AllChunkNames.Contains("PSEM"))      // 2023.2
+            detectedVer = (2023, 2, 0, 0);
+        else if (reader.AllChunkNames.Contains("FEAT")) // 2022.8
+            detectedVer = (2022, 8, 0, 0);
+        else if (reader.AllChunkNames.Contains("FEDS")) // 2.3.6
+            detectedVer = (2, 3, 6, 0);
+        else if (reader.AllChunkNames.Contains("SEQN")) // 2.3
+            detectedVer = (2, 3, 0, 0);
+        else if (reader.AllChunkNames.Contains("TGIN")) // 2.2.1
+            detectedVer = (2, 2, 1, 0);
+
+        if (detectedVer.Major > 2 || (detectedVer.Major == 2 && detectedVer.Minor >= 3))
+        {
+            CompileContext.GMS2_3 = true;
+            DecompileContext.GMS2_3 = true;
+        }
+        else
+        {
+            CompileContext.GMS2_3 = false;
+            DecompileContext.GMS2_3 = false;
+        }
+
+        return detectedVer;
+    }
+
     /// <inheritdoc/>
     /// <exception cref="IOException">If <see cref="LicenseMD5"/> or <see cref="GMS2GameGUID"/> has an invalid length.</exception>
     public void Serialize(UndertaleWriter writer)
@@ -314,10 +354,22 @@ public class UndertaleGeneralInfo : UndertaleObject
         writer.Write(GameID);
         writer.Write(DirectPlayGuid.ToByteArray());
         writer.WriteUndertaleString(Name);
-        writer.Write(Major);
-        writer.Write(Minor);
-        writer.Write(Release);
-        writer.Write(Build);
+        if (Major == 1)
+        {
+            writer.Write(Major);
+            writer.Write(Minor);
+            writer.Write(Release);
+            writer.Write(Build);
+        }
+        else
+        {
+            // The version number here is no longer updated,
+            // but it's still useful for the tool
+            writer.Write((uint)2);
+            writer.Write((uint)0);
+            writer.Write((uint)0);
+            writer.Write((uint)0);
+        }
         writer.Write(DefaultWindowWidth);
         writer.Write(DefaultWindowHeight);
         writer.Write((uint)Info);
@@ -343,21 +395,8 @@ public class UndertaleGeneralInfo : UndertaleObject
             // Write random UID
             Random random = new Random((int)(Timestamp & 4294967295L));
             long firstRandom = (long)random.Next() << 32 | (long)random.Next();
-            long infoNumber = (long)(Timestamp - 1000);
-            ulong temp = (ulong)infoNumber;
-            temp = ((temp << 56 & 18374686479671623680UL) | (temp >> 8 & 71776119061217280UL) |
-                    (temp << 32 & 280375465082880UL) | (temp >> 16 & 1095216660480UL) | (temp << 8 & 4278190080UL) |
-                    (temp >> 24 & 16711680UL) | (temp >> 16 & 65280UL) | (temp >> 32 & 255UL));
-            infoNumber = (long)temp;
-            infoNumber ^= firstRandom;
-            infoNumber = ~infoNumber;
-            infoNumber ^= ((long)GameID << 32 | (long)GameID);
-            infoNumber ^= ((long)(DefaultWindowWidth + (int)Info) << 48 |
-                           (long)(DefaultWindowHeight + (int)Info) << 32 |
-                           (long)(DefaultWindowHeight + (int)Info) << 16 |
-                           (long)(DefaultWindowWidth + (int)Info));
-            infoNumber ^= BytecodeVersion;
-            int infoLocation = Math.Abs((int)((int)(Timestamp & 65535L) / 7 + (GameID - DefaultWindowWidth) + RoomOrder.Count)) % 4;
+            long infoNumber = GetInfoNumber(firstRandom, InfoTimestampOffset);
+            int infoLocation = Math.Abs((int)((long)Timestamp & 65535L) / 7 + (int)(GameID - DefaultWindowWidth) + RoomOrder.Count) % 4;
             GMS2RandomUID.Clear();
             writer.Write(firstRandom);
             GMS2RandomUID.Add(firstRandom);
@@ -388,10 +427,30 @@ public class UndertaleGeneralInfo : UndertaleObject
     /// <inheritdoc />
     public void Unserialize(UndertaleReader reader)
     {
+        Func<UndertaleString> readFileNameDelegate;
+        if (reader.ReadOnlyGEN8)
+            readFileNameDelegate = () =>
+            {
+                UndertaleString res = reader.ReadUndertaleString();
+                if (res.Content is not null)
+                    return res;
+
+                reader.SwitchReaderType(false);
+                long returnTo = reader.Position;
+                reader.Position = reader.GetOffsetMapRev()[res];
+                reader.ReadUndertaleObject<UndertaleString>();
+                reader.Position = returnTo;
+                reader.SwitchReaderType(true);
+
+                return res;
+            };
+        else
+            readFileNameDelegate = reader.ReadUndertaleString;
+
         IsDebuggerDisabled = reader.ReadByte() != 0;
         BytecodeVersion = reader.ReadByte();
         Unknown = reader.ReadUInt16();
-        FileName = reader.ReadUndertaleString();
+        FileName = readFileNameDelegate();
         Config = reader.ReadUndertaleString();
         LastObj = reader.ReadUInt32();
         LastTile = reader.ReadUInt32();
@@ -403,6 +462,29 @@ public class UndertaleGeneralInfo : UndertaleObject
         Minor = reader.ReadUInt32();
         Release = reader.ReadUInt32();
         Build = reader.ReadUInt32();
+
+        if (reader.ReadOnlyGEN8)
+            return;
+
+        var detectedVer = TestForCommonGMSVersions(reader, (Major, Minor, Release, Build));
+        (Major, Minor, Release, Build) = detectedVer;
+
+        if (reader.undertaleData.GeneralInfo is not null)
+        {
+            var prevGenInfo = reader.undertaleData.GeneralInfo;
+            // If previous version is greater than current
+            if (prevGenInfo.Major > Major
+                || prevGenInfo.Major == Major && prevGenInfo.Minor > Minor
+                || prevGenInfo.Major == Major && prevGenInfo.Minor == Minor && prevGenInfo.Release > Release
+                || prevGenInfo.Major == Major && prevGenInfo.Minor == Minor && prevGenInfo.Release == Release && prevGenInfo.Build > Build)
+            {
+                Major = prevGenInfo.Major;
+                Minor = prevGenInfo.Minor;
+                Release = prevGenInfo.Release;
+                Build = prevGenInfo.Build;
+            }
+        }
+
         DefaultWindowWidth = reader.ReadUInt32();
         DefaultWindowHeight = reader.ReadUInt32();
         Info = (InfoFlags)reader.ReadUInt32();
@@ -420,40 +502,35 @@ public class UndertaleGeneralInfo : UndertaleObject
         {
             // Begin parsing random UID, and verify it based on original algorithm
             GMS2RandomUID = new List<long>();
-            Random random = new Random((int)(Timestamp & 4294967295L));
+
+            Random random = new Random((int)((long)Timestamp & 4294967295L));
             long firstRandom = (long)random.Next() << 32 | (long)random.Next();
             if (reader.ReadInt64() != firstRandom)
-            {
-                //throw new IOException("Unexpected random UID");
-            }
-            long infoNumber = (long)(Timestamp - 1000);
-            ulong temp = (ulong)infoNumber;
-            temp = ((temp << 56 & 18374686479671623680UL) | (temp >> 8 & 71776119061217280UL) |
-                    (temp << 32 & 280375465082880UL) | (temp >> 16 & 1095216660480UL) | (temp << 8 & 4278190080UL) |
-                    (temp >> 24 & 16711680UL) | (temp >> 16 & 65280UL) | (temp >> 32 & 255UL));
-            infoNumber = (long)temp;
-            infoNumber ^= firstRandom;
-            infoNumber = ~infoNumber;
-            infoNumber ^= ((long)GameID << 32 | (long)GameID);
-            infoNumber ^= ((long)(DefaultWindowWidth + (int)Info) << 48 |
-                           (long)(DefaultWindowHeight + (int)Info) << 32 |
-                           (long)(DefaultWindowHeight + (int)Info) << 16 |
-                           (long)(DefaultWindowWidth + (int)Info));
-            infoNumber ^= BytecodeVersion;
-            int infoLocation = (int)(Math.Abs((int)(Timestamp & 65535L) / 7 + (GameID - DefaultWindowWidth) + RoomOrder.Count) % 4);
+                throw new Exception("Unexpected random UID #1");
+            int infoLocation = Math.Abs((int)((long)Timestamp & 65535L) / 7 + (int)(GameID - DefaultWindowWidth) + RoomOrder.Count) % 4;
             for (int i = 0; i < 4; i++)
             {
                 if (i == infoLocation)
                 {
-                    reader.ReadInt64();
-                    GMS2RandomUID.Add(infoNumber);
+                    long curr = reader.ReadInt64();
+                    GMS2RandomUID.Add(curr);
+                    if (curr != GetInfoNumber(firstRandom, true))
+                    {
+                        if (curr != GetInfoNumber(firstRandom, false))
+                            throw new Exception("Unexpected random UID info");
+                        else
+                            InfoTimestampOffset = false;
+                    }
                 }
                 else
                 {
-                    reader.ReadInt64();
-                    int first = random.Next();
-                    int second = random.Next();
-                    GMS2RandomUID.Add(((long)first << 32) | (long)second);
+                    int first = reader.ReadInt32();
+                    int second = reader.ReadInt32();
+                    if (first != random.Next())
+                        throw new Exception("Unexpected random UID #2");
+                    if (second != random.Next())
+                        throw new Exception("Unexpected random UID #3");
+                    GMS2RandomUID.Add((long)(first << 32) | (long)second);
                 }
             }
             GMS2FPS = reader.ReadSingle();
@@ -464,10 +541,89 @@ public class UndertaleGeneralInfo : UndertaleObject
         reader.Bytecode14OrLower = BytecodeVersion <= 14;
     }
 
+    /// <inheritdoc cref="UndertaleObject.UnserializeChildObjectCount(UndertaleReader)"/>
+    public static uint UnserializeChildObjectCount(UndertaleReader reader)
+    {
+        reader.Position++; // "IsDebuggerDisabled"
+        byte bytecodeVer = reader.ReadByte();
+        bool readDebugPort = bytecodeVer >= 14;
+
+        reader.Position += (uint)(122 + (readDebugPort ? 4 : 0));
+
+        // "RoomOrder"
+        return 1 + UndertaleSimpleResourcesList<UndertaleRoom, UndertaleChunkROOM>.UnserializeChildObjectCount(reader);
+    }
+
+    /// <summary>
+    /// Generates "info number" used for GMS2 UIDs.
+    /// </summary>
+    private long GetInfoNumber(long firstRandom, bool infoTimestampOffset)
+    {
+        long infoNumber = (long)Timestamp;
+        if (infoTimestampOffset)
+            infoNumber -= 1000;
+        ulong temp = (ulong)infoNumber;
+        temp = ((temp << 56 & 18374686479671623680UL) | (temp >> 8 & 71776119061217280UL) |
+                (temp << 32 & 280375465082880UL) | (temp >> 16 & 1095216660480UL) | (temp << 8 & 4278190080UL) |
+                (temp >> 24 & 16711680UL) | (temp >> 16 & 65280UL) | (temp >> 32 & 255UL));
+        infoNumber = (long)temp;
+        infoNumber ^= firstRandom;
+        infoNumber = ~infoNumber;
+        infoNumber ^= ((long)GameID << 32 | (long)GameID);
+        infoNumber ^= ((long)(DefaultWindowWidth + (int)Info) << 48 |
+                       (long)(DefaultWindowHeight + (int)Info) << 32 |
+                       (long)(DefaultWindowHeight + (int)Info) << 16 |
+                       (long)(DefaultWindowWidth + (int)Info));
+        infoNumber ^= BytecodeVersion;
+        return infoNumber;
+    }
+
     /// <inheritdoc />
     public override string ToString()
     {
-        return DisplayName + " (GMS " + Major + "." + Minor + "." + Release + "." + Build + ", bytecode " + BytecodeVersion + ")";
+        if (Major == 1)
+            return DisplayName + " (GMS " + Major + "." + Minor + "." + Release + "." + Build + ", bytecode " + BytecodeVersion + ")";
+        else
+        {
+            StringBuilder sb = new(DisplayName?.ToString() ?? "");
+            if (Major < 2022 || (Major == 2022 && Minor < 3))
+                sb.Append(" (GMS ");
+            else
+                sb.Append(" (GM ");
+            sb.Append(Major);
+            sb.Append(".");
+            sb.Append(Minor);
+            if (Release != 0)
+            {
+                sb.Append(".");
+                sb.Append(Release);
+                if (Build != 0)
+                {
+                    sb.Append(".");
+                    sb.Append(Build);
+                }
+            }
+            if (Major < 2022)
+            {
+                sb.Append(", bytecode ");
+                sb.Append(BytecodeVersion);
+            }
+            sb.Append(")");
+            return sb.ToString();
+        }
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+
+        FileName = null;
+        Config = null;
+        Name = null;
+        DisplayName = null;
+        RoomOrder = new();
+        GMS2RandomUID = new();
     }
 }
 
@@ -475,7 +631,7 @@ public class UndertaleGeneralInfo : UndertaleObject
 /// General options about a data file.
 /// </summary>
 [PropertyChanged.AddINotifyPropertyChangedInterface]
-public class UndertaleOptions : UndertaleObject
+public class UndertaleOptions : UndertaleObject, IDisposable
 {
     /// <summary>
     /// Option flags a data file can use
@@ -607,8 +763,9 @@ public class UndertaleOptions : UndertaleObject
     /// A class for game constants.
     /// </summary>
     [PropertyChanged.AddINotifyPropertyChangedInterface]
-    public class Constant : UndertaleObject
+    public class Constant : UndertaleObject, IStaticChildObjectsSize, IDisposable
     {
+        public static readonly uint ChildObjectsSize = 8;
         /// <summary>
         /// The name of the constant.
         /// </summary>
@@ -631,6 +788,15 @@ public class UndertaleOptions : UndertaleObject
         {
             Name = reader.ReadUndertaleString();
             Value = reader.ReadUndertaleString();
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+
+            Name = null;
+            Value = null;
         }
     }
 
@@ -760,10 +926,42 @@ public class UndertaleOptions : UndertaleObject
             Constants = reader.ReadUndertaleObject<UndertaleSimpleList<Constant>>();
         }
     }
+
+    /// <inheritdoc cref="UndertaleObject.UnserializeChildObjectCount(UndertaleReader)"/>
+    public static uint UnserializeChildObjectCount(UndertaleReader reader)
+    {
+        uint count = 0;
+        bool newFormat = reader.ReadInt32() == int.MinValue;
+        reader.Position -= 4;
+
+        reader.Position += newFormat ? 60u : 140u;
+        count += 3; // images
+
+        // "Constants"
+        count += 1 + UndertaleSimpleList<Constant>.UnserializeChildObjectCount(reader);
+
+        return count;
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+
+        if (Constants is not null)
+        {
+            foreach (Constant constant in Constants)
+                constant?.Dispose();
+         }
+        BackImage = new();
+        FrontImage = new();
+        LoadImage = new();
+        Constants = null;
+    }
 }
 
 [PropertyChanged.AddINotifyPropertyChangedInterface]
-public class UndertaleLanguage : UndertaleObject
+public class UndertaleLanguage : UndertaleObject, IDisposable
 {
     // Seems to be a list of entry IDs paired to strings for several languages
     public uint Unknown1 { get; set; } = 1;
@@ -815,8 +1013,19 @@ public class UndertaleLanguage : UndertaleObject
         }
     }
 
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+
+        foreach (LanguageData data in Languages)
+            data?.Dispose();
+        EntryIDs = new();
+        Languages = new();
+    }
+
     [PropertyChanged.AddINotifyPropertyChangedInterface]
-    public class LanguageData
+    public class LanguageData : IDisposable
     {
         public UndertaleString Name { get; set; }
         public UndertaleString Region { get; set; }
@@ -824,7 +1033,7 @@ public class UndertaleLanguage : UndertaleObject
         // values that correspond to IDs in the main chunk content
 
         /// <summary>
-        /// Serializes the data file into a specified <see cref="UndertaleWriter"/>.
+        /// Serializes <see cref="LanguageData"/> into a specified <see cref="UndertaleWriter"/>.
         /// </summary>
         /// <param name="writer">Where to serialize to.</param>
         public void Serialize(UndertaleWriter writer)
@@ -837,6 +1046,11 @@ public class UndertaleLanguage : UndertaleObject
             }
         }
 
+        /// <summary>
+        /// Deserializes <see cref="LanguageData"/> from a specified <see cref="UndertaleReader"/> and with a specified entries count.
+        /// </summary>
+        /// <param name="reader">Where to deserialize from.</param>
+        /// <param name="entryCount">Count of entries to read.</param>
         public void Unserialize(UndertaleReader reader, uint entryCount)
         {
             Name = reader.ReadUndertaleString();
@@ -845,6 +1059,16 @@ public class UndertaleLanguage : UndertaleObject
             {
                 Entries.Add(reader.ReadUndertaleString());
             }
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+
+            Entries = new();
+            Name = null;
+            Region = null;
         }
     }
 }

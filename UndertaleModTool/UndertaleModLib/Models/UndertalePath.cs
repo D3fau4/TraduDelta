@@ -1,10 +1,12 @@
-﻿namespace UndertaleModLib.Models;
+﻿using System;
+
+namespace UndertaleModLib.Models;
 
 /// <summary>
 /// A Path entry in a GameMaker data file.
 /// </summary>
 [PropertyChanged.AddINotifyPropertyChangedInterface]
-public class UndertalePath : UndertaleNamedResource
+public class UndertalePath : UndertaleNamedResource, IDisposable
 {
     /// <summary>
     /// The name of <see cref="UndertalePath"/>.
@@ -37,8 +39,11 @@ public class UndertalePath : UndertaleNamedResource
     /// A point in a <see cref="UndertalePath"/>.
     /// </summary>
     [PropertyChanged.AddINotifyPropertyChangedInterface]
-    public class PathPoint : UndertaleObject
+    public class PathPoint : UndertaleObject, IStaticChildObjectsSize
     {
+        /// <inheritdoc cref="IStaticChildObjectsSize.ChildObjectsSize" />
+        public static readonly uint ChildObjectsSize = 12;
+
         /// <summary>
         /// The X position of the <see cref="PathPoint"/>.
         /// </summary>
@@ -91,9 +96,26 @@ public class UndertalePath : UndertaleNamedResource
         Points = reader.ReadUndertaleObject<UndertaleSimpleList<PathPoint>>();
     }
 
+    /// <inheritdoc cref="UndertaleObject.UnserializeChildObjectCount(UndertaleReader)"/>
+    public static uint UnserializeChildObjectCount(UndertaleReader reader)
+    {
+        reader.Position += 16;
+
+        return 1 + UndertaleSimpleList<PathPoint>.UnserializeChildObjectCount(reader);
+    }
+
     /// <inheritdoc />
     public override string ToString()
     {
-        return Name.Content + " (" + GetType().Name + ")";
+        return Name?.Content + " (" + GetType().Name + ")";
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+
+        Name = null;
+        Points = new();
     }
 }

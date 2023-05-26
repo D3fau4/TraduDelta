@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using UndertaleModLib.Compiler;
 using UndertaleModLib.Models;
 
@@ -15,25 +18,33 @@ namespace UndertaleModLib
     /// It includes all the data within it accessible by either the <see cref="FORM"/>-Chunk attribute,
     /// but also via already organized attributes such as <see cref="Backgrounds"/> or <see cref="GameObjects"/>.
     /// TODO: add more documentation about how a data file works at one point.</remarks>
-    public class UndertaleData
+    public class UndertaleData : IDisposable
     {
         /// <summary>
         /// Indexer to access the resource list by its name.
         /// </summary>
         /// <param name="resourceTypeName">The resource name to get.</param>
         /// <exception cref="MissingMemberException"> if the data file does not contain a property with that name.</exception>
-        public object this[string resourceTypeName]
+        public IList this[string resourceTypeName]
         {
             get
             {
+                // Prevent recursion
+                if (resourceTypeName == "Item")
+                    return null;
+
                 var property = GetType().GetProperty(resourceTypeName);
                 if (property is null)
                     throw new MissingMemberException($"\"UndertaleData\" doesn't contain a property named \"{resourceTypeName}\".");
 
-                return property.GetValue(this, null);
+                return property.GetValue(this, null) as IList;
             }
             set
             {
+                // Prevent recursion
+                if (resourceTypeName == "Item")
+                    return;
+                
                 var property = GetType().GetProperty(resourceTypeName);
                 if (property is null)
                     throw new MissingMemberException($"\"UndertaleData\" doesn't contain a property named \"{resourceTypeName}\".");
@@ -48,24 +59,28 @@ namespace UndertaleModLib
         /// <param name="resourceType">The resource type to get.</param>
         /// <exception cref="NotSupportedException"> if the type is not an <see cref="UndertaleNamedResource"/>.</exception>
         /// <exception cref="MissingMemberException"> if the data file does not contain a property of that type.</exception>
-        public object this[Type resourceType]
+        public IList this[Type resourceType]
         {
             get
             {
-                if (!typeof(UndertaleNamedResource).IsAssignableFrom(resourceType))
-                    throw new NotSupportedException($"\"{resourceType.FullName}\" is not a UndertaleNamedResource.");
+                // Prevent recursion
+                if (resourceType == typeof(UndertaleResource))
+                    return null;
+
+                if (!typeof(UndertaleResource).IsAssignableFrom(resourceType))
+                    throw new NotSupportedException($"\"{resourceType.FullName}\" is not an UndertaleResource.");
 
                 var property = GetType().GetProperties().Where(x => x.PropertyType.Name == "IList`1")
                                                         .FirstOrDefault(x => x.PropertyType.GetGenericArguments()[0] == resourceType);
                 if (property is null)
                     throw new MissingMemberException($"\"UndertaleData\" doesn't contain a resource list of type \"{resourceType.FullName}\".");
 
-                return property.GetValue(this, null);
+                return property.GetValue(this, null) as IList;
             }
             set
             {
-                if (!typeof(UndertaleNamedResource).IsAssignableFrom(resourceType))
-                    throw new NotSupportedException($"\"{resourceType.FullName}\" is not a UndertaleNamedResource.");
+                if (!typeof(UndertaleResource).IsAssignableFrom(resourceType))
+                    throw new NotSupportedException($"\"{resourceType.FullName}\" is not an UndertaleResource.");
 
                 var property = GetType().GetProperties().Where(x => x.PropertyType.Name == "IList`1")
                                                         .FirstOrDefault(x => x.PropertyType.GetGenericArguments()[0] == resourceType);
@@ -267,6 +282,27 @@ namespace UndertaleModLib
         public IList<UndertaleSequence> Sequences => FORM.SEQN?.List;
 
         /// <summary>
+        /// The feature flags stored in the data file.
+        /// </summary>
+        public UndertaleFeatureFlags FeatureFlags => FORM.FEAT?.Object;
+
+        /// <summary>
+        /// The filter effects stored in the data file.
+        /// </summary>
+        public IList<UndertaleFilterEffect> FilterEffects => FORM.FEDS?.List;
+
+        /// <summary>
+        /// The particle systems stored in the data file.
+        /// </summary>
+        public IList<UndertaleParticleSystem> ParticleSystems => FORM.PSYS?.List;
+
+        /// <summary>
+        /// The particle system emitters stored in the data file.
+        /// </summary>
+        public IList<UndertaleParticleSystemEmitter> ParticleSystemEmitters => FORM.PSEM?.List;
+
+
+        /// <summary>
         /// Whether this is an unsupported bytecode version.
         /// </summary>
         public bool UnsupportedBytecodeVersion = false;
@@ -280,51 +316,6 @@ namespace UndertaleModLib
         /// Whether the data file has short circuiting enabled.
         /// </summary>
         public bool ShortCircuit = true;
-
-        /// <summary>
-        /// Whether the data file is from version GMS2.2.2.302
-        /// </summary>
-        public bool GMS2_2_2_302 = false;
-
-        /// <summary>
-        /// Whether the data file is from version GMS2.3
-        /// </summary>
-        public bool GMS2_3 = false;
-
-        /// <summary>
-        /// Whether the data file is from version GMS2.3.1
-        /// </summary>
-        public bool GMS2_3_1 = false;
-
-        /// <summary>
-        /// Whether the data file is from version GMS2.3.2
-        /// </summary>
-        public bool GMS2_3_2 = false;
-
-        /// <summary>
-        /// Whether the data file uses the QOI format for images.
-        /// </summary>
-        public bool UseQoiFormat = false;
-
-        /// <summary>
-        /// Whether the data file uses BZip compression.
-        /// </summary>
-        public bool UseBZipFormat = false;
-
-        /// <summary>
-        /// Whether the data file is from version GMS2022.1.
-        /// </summary>
-        public bool GMS2022_1 = false;
-
-        /// <summary>
-        /// Whether the data file is from version GMS2022.2.
-        /// </summary>
-        public bool GMS2022_2 = false;
-
-        /// <summary>
-        /// Whether the data file is from version GMS2022.3.
-        /// </summary>
-        public bool GM2022_3 = false;
 
         /// <summary>
         /// Some info for the editor to store data on.
@@ -382,6 +373,22 @@ namespace UndertaleModLib
         public bool GMLCacheIsReady { get; set; } = true;
 
         /// <summary>
+        /// An array of a <see cref="UndertaleData"/> properties with <see cref="IList{T}"/> as their type.
+        /// </summary>
+        public PropertyInfo[] AllListProperties { get; private set; }
+
+        /// <summary>
+        /// Initializes new <see cref="UndertaleData"/> instance.
+        /// </summary>
+        public UndertaleData()
+        {
+            AllListProperties = GetType().GetProperties()
+                                .Where(x => x.PropertyType.IsGenericType
+                                            && x.PropertyType.GetGenericTypeDefinition() == typeof(IList<>))
+                                .ToArray();
+        }
+
+        /// <summary>
         /// Get a resource from the data file by name.
         /// </summary>
         /// <param name="name">The name of the desired resource.</param>
@@ -408,49 +415,22 @@ namespace UndertaleModLib
         }
 
         /// <summary>
-        /// Reports the zero-based index of the first occurence of the specified <see cref="UndertaleNamedResource"/>.
+        /// Reports the zero-based index of the first occurence of the specified <see cref="UndertaleResource"/>.
         /// </summary>
         /// <param name="obj">The object to get the index of.</param>
         /// <param name="panicIfInvalid">Whether to throw if <paramref name="obj"/> is not a valid object.</param>
         /// <returns>The zero-based index position of the <paramref name="obj"/> parameter if it is found or -2 if it is not.</returns>
         /// <exception cref="InvalidOperationException"><paramref name="panicIfInvalid"/> is <see langword="true"/>
         /// and <paramref name="obj"/> could not be found.</exception>
-        public int IndexOf(UndertaleNamedResource obj, bool panicIfInvalid = true)
+        public int IndexOf(UndertaleResource obj, bool panicIfInvalid = true)
         {
-            if (obj is UndertaleSound)
-                return Sounds.IndexOf(obj as UndertaleSound);
-            if (obj is UndertaleSprite)
-                return Sprites.IndexOf(obj as UndertaleSprite);
-            if (obj is UndertaleBackground)
-                return Backgrounds.IndexOf(obj as UndertaleBackground);
-            if (obj is UndertalePath)
-                return Paths.IndexOf(obj as UndertalePath);
-            if (obj is UndertaleScript)
-                return Scripts.IndexOf(obj as UndertaleScript);
-            if (obj is UndertaleFont)
-                return Fonts.IndexOf(obj as UndertaleFont);
-            if (obj is UndertaleGameObject)
-                return GameObjects.IndexOf(obj as UndertaleGameObject);
-            if (obj is UndertaleRoom)
-                return Rooms.IndexOf(obj as UndertaleRoom);
-            if (obj is UndertaleExtension)
-                return Extensions.IndexOf(obj as UndertaleExtension);
-            if (obj is UndertaleShader)
-                return Shaders.IndexOf(obj as UndertaleShader);
-            if (obj is UndertaleTimeline)
-                return Timelines.IndexOf(obj as UndertaleTimeline);
-            if (obj is UndertaleAnimationCurve)
-                return AnimationCurves.IndexOf(obj as UndertaleAnimationCurve);
-            if (obj is UndertaleSequence)
-                return Sequences.IndexOf(obj as UndertaleSequence);
-            if (obj is UndertaleEmbeddedAudio)
-                return EmbeddedAudio.IndexOf(obj as UndertaleEmbeddedAudio);
-            if (obj is UndertaleEmbeddedTexture)
-                return EmbeddedTextures.IndexOf(obj as UndertaleEmbeddedTexture);
-            if (obj is UndertaleTexturePageItem)
-                return TexturePageItems.IndexOf(obj as UndertaleTexturePageItem);
-            if (obj is UndertaleAudioGroup)
-                return AudioGroups.IndexOf(obj as UndertaleAudioGroup);
+            Type objType = obj.GetType();
+            PropertyInfo objListPropInfo = AllListProperties.FirstOrDefault(x => x.PropertyType.GetGenericArguments()[0] == objType);
+            if (objListPropInfo is not null)
+            {
+                if (objListPropInfo.GetValue(this) is IList list)
+                    return list.IndexOf(obj);
+            }
 
             if (panicIfInvalid)
                 throw new InvalidOperationException();
@@ -468,7 +448,7 @@ namespace UndertaleModLib
         /// <returns><see langword="true"/> if yes, <see langword="false"/> if not.</returns>
         public bool IsGameMaker2()
         {
-            return IsVersionAtLeast(2, 0, 0, 0);
+            return IsVersionAtLeast(2);
         }
 
 
@@ -481,6 +461,24 @@ namespace UndertaleModLib
         }
 
         /// <summary>
+        /// Sets the GMS2+ version flag in GeneralInfo.
+        /// </summary>
+        /// <param name="major">The major version.</param>
+        /// <param name="minor">The minor version.</param>
+        /// <param name="release">The release version.</param>
+        /// <param name="build">The build version.</param>
+        public void SetGMS2Version(uint major, uint minor = 0, uint release = 0, uint build = 0)
+        {
+            if (major != 2 && major != 2022 && major != 2023)
+                throw new NotSupportedException("Attempted to set a version of GameMaker " + major + " using SetGMS2Version");
+
+            GeneralInfo.Major = major;
+            GeneralInfo.Minor = minor;
+            GeneralInfo.Release = release;
+            GeneralInfo.Build = build;
+        }
+
+        /// <summary>
         /// Reports whether the version of the data file is the same or higher than a specified version.
         /// </summary>
         /// <param name="major">The major version.</param>
@@ -488,8 +486,14 @@ namespace UndertaleModLib
         /// <param name="release">The release version.</param>
         /// <param name="build">The build version.</param>
         /// <returns>Whether the version of the data file is the same or higher than a specified version.</returns>
-        public bool IsVersionAtLeast(uint major, uint minor, uint release, uint build)
+        public bool IsVersionAtLeast(uint major, uint minor = 0, uint release = 0, uint build = 0)
         {
+            if (GeneralInfo is null)
+            {
+                Debug.WriteLine("\"UndertaleData.IsVersionAtLeast()\" error - \"GeneralInfo\" is null.");
+                return false;
+            }
+
             if (GeneralInfo.Major != major)
                 return (GeneralInfo.Major > major);
 
@@ -587,6 +591,8 @@ namespace UndertaleModLib
             data.FORM.Chunks["STRG"] = new UndertaleChunkSTRG();
             data.FORM.Chunks["TXTR"] = new UndertaleChunkTXTR();
             data.FORM.Chunks["AUDO"] = new UndertaleChunkAUDO();
+            foreach (UndertaleChunk chunk in data.FORM.Chunks.Values)
+                data.FORM.ChunksTypeDict[chunk.GetType()] = chunk;
             data.FORM.GEN8.Object = new UndertaleGeneralInfo();
             data.FORM.OPTN.Object = new UndertaleOptions();
             data.FORM.LANG.Object = new UndertaleLanguage();
@@ -602,6 +608,56 @@ namespace UndertaleModLib
             data.BuiltinList = new BuiltinList(data);
             Decompiler.AssetTypeResolver.InitializeTypes(data);
             return data;
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+
+            Type disposableType = typeof(IDisposable);
+            PropertyInfo[] dataProperties = GetType().GetProperties();
+            var dataDisposableProps = dataProperties.Except(AllListProperties)
+                                                    .Where(x => disposableType.IsAssignableFrom(x.PropertyType));
+
+            // Dispose disposable properties
+            foreach (PropertyInfo disposableProp in dataDisposableProps)
+            {
+                // If property is null
+                if (disposableProp.GetValue(this) is not IDisposable disposable)
+                    continue;
+
+                disposable.Dispose();
+            }
+
+            // Clear all object lists (sprites, code, etc.)
+            foreach (PropertyInfo dataListProperty in AllListProperties)
+            {
+                // If it's an indexer property
+                if (dataListProperty.Name == "Item")
+                    continue;
+
+                // If list is null
+                if (dataListProperty.GetValue(this) is not IList list)
+                    continue;
+
+                // If list elements are disposable
+                if (disposableType.IsAssignableFrom(list.GetType().GetGenericArguments()[0]))
+                {
+                    foreach (IDisposable disposable in list)
+                        disposable.Dispose();
+                }
+
+                list.Clear();
+            }
+
+            // Clear other references
+            FORM = null;
+            KnownSubFunctions = null;
+            GMLCache = null;
+            GMLCacheFailed = null;
+            GMLCacheChanged = new();
+            GMLEditedBefore = null;
         }
     }
 

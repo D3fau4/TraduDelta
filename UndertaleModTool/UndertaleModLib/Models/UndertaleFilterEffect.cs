@@ -1,11 +1,16 @@
-﻿namespace UndertaleModLib.Models;
+﻿using System;
+
+namespace UndertaleModLib.Models;
 
 /// <summary>
 /// A filter effect as it's used in a GameMaker data file. These are GameMaker: Studio 2.3.6+ only.
 /// </summary>
 [PropertyChanged.AddINotifyPropertyChangedInterface]
-public class UndertaleFilterEffect : UndertaleNamedResource
+public class UndertaleFilterEffect : UndertaleNamedResource, IStaticChildObjectsSize, IDisposable
 {
+    /// <inheritdoc cref="IStaticChildObjectsSize.ChildObjectsSize" />
+    public static readonly uint ChildObjectsSize = 8;
+
     /// <summary>
     /// The name of the <see cref="UndertaleFilterEffect"/>.
     /// </summary>
@@ -33,6 +38,15 @@ public class UndertaleFilterEffect : UndertaleNamedResource
     /// <inheritdoc />
     public override string ToString()
     {
-        return Name.Content + " (" + GetType().Name + ")";
+        return Name?.Content + " (" + GetType().Name + ")";
+    }
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+
+        Name = null;
+        Value = null;
     }
 }

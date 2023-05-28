@@ -27,5 +27,5 @@ jobs:
         # Artifact name
         name: win-x64 # optional, default is artifact
         # A file, directory or wildcard pattern that describes what to upload
-        path: D:\a\TraduDelta\TraduDelta\TraduDelta\bin\Release\net6.0\win-x64\publish\
+        path: D:\a\TraduDelta\TraduDelta\TraduDelta\bin\Release\net7.0\win-x64\publish\
         # The desired behavior if no files are found using the provided path.

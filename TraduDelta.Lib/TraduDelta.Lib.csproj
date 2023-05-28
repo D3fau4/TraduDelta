@@ -8,10 +8,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-        <PackageReference Include="Spectre.Console" Version="0.47.1-preview.0.5" />
-        <PackageReference Include="Yarhl" Version="4.0.0-preview.185" />
-        <PackageReference Include="Yarhl.Media" Version="4.0.0-preview.157" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+        <PackageReference Include="Spectre.Console" Version="0.47.1-preview.0.5"/>
+        <PackageReference Include="Yarhl" Version="4.0.0-preview.185"/>
+        <PackageReference Include="Yarhl.Media" Version="4.0.0-preview.157"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -70,7 +70,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\UndertaleModTool\UndertaleModLib\UndertaleModLib.csproj" />
+        <ProjectReference Include="..\UndertaleModTool\UndertaleModLib\UndertaleModLib.csproj"/>
     </ItemGroup>
 
 </Project>

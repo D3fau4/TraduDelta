@@ -1,9 +1,5 @@
 ﻿using Spectre.Console.Cli;
-using TraduDelta.CLI;
 using TraduDelta.CLI.Commands;
-using TraduDelta.Lib.Utils;
-using TraduDelta.Lib.Utils.Helpers;
-
 
 var app = new CommandApp();
 
@@ -15,7 +11,7 @@ app.Configure(config =>
     config.PropagateExceptions();
     config.ValidateExamples();
 #endif
-    config.AddExample(new []{ "mergepo"});
+    config.AddExample("mergepo");
     config.AddCommand<MergePo>("mergepo")
         .WithDescription("Merge all po to one.");
 

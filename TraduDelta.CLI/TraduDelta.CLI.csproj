@@ -8,13 +8,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TraduDelta.Lib\TraduDelta.Lib.csproj" />
-        <ProjectReference Include="..\UndertaleModTool\UndertaleModLib\UndertaleModLib.csproj" />
+        <ProjectReference Include="..\TraduDelta.Lib\TraduDelta.Lib.csproj"/>
+        <ProjectReference Include="..\UndertaleModTool\UndertaleModLib\UndertaleModLib.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Spectre.Console" Version="0.47.1-preview.0.5" />
-      <PackageReference Include="Spectre.Console.Cli" Version="0.47.1-preview.0.5" />
+        <PackageReference Include="Spectre.Console" Version="0.47.1-preview.0.5"/>
+        <PackageReference Include="Spectre.Console.Cli" Version="0.47.1-preview.0.5"/>
     </ItemGroup>
 
 </Project>

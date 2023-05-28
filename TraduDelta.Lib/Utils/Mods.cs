@@ -26,14 +26,14 @@ public class Mods
     public void ApplyMods()
     {
         var import = new Importcode(Data);
-        
+
         AnsiConsole.Progress()
-            .Start(ctx => 
+            .Start(ctx =>
             {
                 // Define tasks
                 var task1 = ctx.AddTask("[green]Añadiendo mods...[/]");
 
-                int inc = 100 / mods.Count;
+                var inc = 100 / mods.Count;
                 foreach (var mod in mods)
                     if (mod.Value.Contains(".asm"))
                     {

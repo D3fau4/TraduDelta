@@ -39,6 +39,10 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
         </None>
+        <None Update="Mods\add_new_langmenu_2.gml">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <ExcludeFromSingleFile>false</ExcludeFromSingleFile>
+        </None>
         <None Update="Mods\add_new_lang.asm">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <ExcludeFromSingleFile>false</ExcludeFromSingleFile>

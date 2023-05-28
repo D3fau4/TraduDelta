@@ -223,21 +223,23 @@ if (MENU_NO >= 0)
         if (global.lang == "ja")
         {
             CHSELECTTEXT = "チャプター選択"
-            LANGUAGETEXT = "ENGLISH"
-            if (TYPE == 1)
-                LANGUAGETEXT = "English"
+            LANGUAGETEXT = "{langupper}"
+                        if (TYPE == 1)
+                            LANGUAGETEXT = "{lang}"
+            
         }
         else if (global.lang == "{LENGUAGE}")
         {
         CHSELECTTEXT = "{chselect}"
-            LANGUAGETEXT = "日本語"
-            if (TYPE == 1)
-                LANGUAGETEXT = "日本語"
+        LANGUAGETEXT = "ENGLISH"
+                    if (TYPE == 1)
+                        LANGUAGETEXT = "English"
+            
         }else{
         CHSELECTTEXT = "Chapter Select"
-        LANGUAGETEXT = "{langupper}"
-            if (TYPE == 1)
-                LANGUAGETEXT = "{lang}"
+        LANGUAGETEXT = "日本語"
+                    if (TYPE == 1)
+                        LANGUAGETEXT = "日本語"
             
         }
         if (TYPE == 1)
@@ -261,7 +263,7 @@ if (MENU_NO >= 0)
         if (MENUCOORD[0] == 6)
             draw_set_color(COL_B)
         var lang_offset = 0
-        if (global.lang == "{LENGUAGE}")
+        if (global.lang == "en")
         {
             lang_offset -= 2
             draw_set_font(fnt_ja_main)

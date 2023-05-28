@@ -5,6 +5,7 @@
     "gml_Object_obj_CHAPTER_SELECT_Draw_0": "addnewtextsinmenu.gml",
     "gml_Object_obj_CHAPTER_SELECT_Create_0": "addnewtextsmainmenu_0.asm",
     "gml_Object_obj_CHAPTER_SELECT_Other_72": "addnewtextsmainmenu_1.gml",
+    "gml_Object_DEVICE_MENU_Draw_0": "add_new_langmenu_2.gml",
     "gml_Object_DEVICE_MENU_ch1_Draw_0": "add_new_langmenu.gml"
   },
   "Strings": "addnewtexts.json"

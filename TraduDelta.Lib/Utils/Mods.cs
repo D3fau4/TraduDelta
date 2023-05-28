@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using Spectre.Console;
 using TraduDelta.Lib.Files;
 using UndertaleModLib;
 
@@ -25,22 +26,35 @@ public class Mods
     public void ApplyMods()
     {
         var import = new Importcode(Data);
-        foreach (var mod in mods)
-            if (mod.Value.Contains(".asm"))
+        
+        AnsiConsole.Progress()
+            .Start(ctx => 
             {
-                cmdutils.print("Import mod: " + mod.Value, ConsoleColor.Magenta);
-                var file = File.ReadAllText(Path.Combine(Path.GetDirectoryName(ConfigPath), mod.Value));
+                // Define tasks
+                var task1 = ctx.AddTask("[green]Añadiendo mods...[/]");
 
-                file = json.replaceASM(file, stringsfile, Data);
-                import.Import(mod.Key, file, false);
-            }
-            else if (mod.Value.Contains(".gml"))
-            {
-                cmdutils.print("Import mod: " + mod.Value, ConsoleColor.Magenta);
-                var file = File.ReadAllText(Path.Combine(Path.GetDirectoryName(ConfigPath), mod.Value));
+                int inc = 100 / mods.Count;
+                foreach (var mod in mods)
+                    if (mod.Value.Contains(".asm"))
+                    {
+                        //cmdutils.print("Import mod: " + mod.Value, ConsoleColor.Magenta);
+                        var file = File.ReadAllText(Path.Combine(Path.GetDirectoryName(ConfigPath), mod.Value));
 
-                file = json.replaceASM(file, stringsfile, Data);
-                import.Import(mod.Key, file);
-            }
+                        file = json.replaceASM(file, stringsfile, Data);
+                        import.Import(mod.Key, file, false);
+                        task1.Increment(inc);
+                    }
+                    else if (mod.Value.Contains(".gml"))
+                    {
+                        //cmdutils.print("Import mod: " + mod.Value, ConsoleColor.Magenta);
+                        var file = File.ReadAllText(Path.Combine(Path.GetDirectoryName(ConfigPath), mod.Value));
+
+                        file = json.replaceASM(file, stringsfile, Data);
+                        import.Import(mod.Key, file);
+                        task1.Increment(inc);
+                    }
+
+                task1.Value = 100;
+            });
     }
 }

@@ -1,4 +1,5 @@
-﻿using TraduDelta.Lib.Files;
+﻿using Spectre.Console;
+using TraduDelta.Lib.Files;
 using UndertaleModLib;
 
 namespace TraduDelta.Lib.Utils.Helpers;
@@ -9,7 +10,7 @@ public class ModHelper : IHelper
     ///     Apply all mods
     /// </summary>
     /// <param name="path">game.win path</param>
-    public void Process(string path)
+    public override void Process(string path)
     {
         if (path.Contains(".win"))
         {
@@ -17,19 +18,19 @@ public class ModHelper : IHelper
 
             using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
-                cmdutils.print("Reading Data.win...");
+                AnsiConsole.MarkupLine("Reading Data.win...");
                 Data = UndertaleIO.Read(stream);
-                cmdutils.print("Read complete!", ConsoleColor.Green);
+                AnsiConsole.MarkupLine("[Green]Read complete![/]");
             }
 
             if (Data != null)
                 if (Data.IsGameMaker2())
                 {
-                    cmdutils.print("Applying mods...");
+                    AnsiConsole.MarkupLine("Applying mods...");
                     var mod = new Mods(Data);
                     mod.ApplyMods();
-                    cmdutils.print("Done!", ConsoleColor.Green);
-                    cmdutils.print("Saving changes...");
+                    AnsiConsole.MarkupLine("[Green]Done![/]");
+                    AnsiConsole.MarkupLine("Saving changes...");
                     if (true)
                         Data.Strings.MakeString(
                             "4275696c6420636f6d70696c61646f206578706cc3ad636974616d656e74652070617261206c612074726164756" +
@@ -37,8 +38,7 @@ public class ModHelper : IHelper
                             "46f7320656e205472616475537175617265");
                     var build = new GameWin(Data);
                     build.save(path);
-                    cmdutils.print("Done! " + path.Replace(".win", ".mod.win") + " was saved.",
-                        ConsoleColor.Green);
+                    AnsiConsole.MarkupLine("[Green]Done! " + path.Replace(".win", ".mod.win") + " was saved.[/]");
                 }
         }
     }

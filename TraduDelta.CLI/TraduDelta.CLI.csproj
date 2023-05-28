@@ -4,12 +4,17 @@
         <OutputType>Exe</OutputType>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+        <TargetFramework>net7.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TraduDelta.Lib\TraduDelta.Lib.csproj"/>
-        <ProjectReference Include="..\UndertaleModTool\UndertaleModLib\UndertaleModLib.csproj"/>
+        <ProjectReference Include="..\TraduDelta.Lib\TraduDelta.Lib.csproj" />
+        <ProjectReference Include="..\UndertaleModTool\UndertaleModLib\UndertaleModLib.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Spectre.Console" Version="0.47.1-preview.0.5" />
+      <PackageReference Include="Spectre.Console.Cli" Version="0.47.1-preview.0.5" />
     </ItemGroup>
 
 </Project>

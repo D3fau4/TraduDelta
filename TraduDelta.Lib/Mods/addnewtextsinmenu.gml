@@ -1,7 +1,20 @@
-﻿if (!audio_group_is_loaded(1))
+﻿if global.is_console
+{
+    if chapter_is_loading
+    {
+        draw_set_font(fnt_mainbig)
+        draw_set_halign(fa_center)
+        draw_text(320, 250, "LOADING...")
+    }
+}
+if (!audio_group_is_loaded(1))
     return;
 if (!init_loaded)
     return;
+    
+// TODO: BORRAR CUANDO SE SOLUCIONE
+scale = 2
+// TODO: BORRAR CUANDO SE SOLUCIONE
 draw_set_font(text_font)
 draw_set_halign(fa_center)
 draw_set_color(c_gray)
@@ -19,15 +32,15 @@ if (con == "init")
 if (con == "start")
 {
     file_found = 0
-    if gml_Script_ossafe_file_exists("dr.ini")
+    if ossafe_file_exists("dr.ini")
     {
-        gml_Script_ossafe_ini_open("dr.ini")
-        gml_Script_ossafe_ini_close()
+        ossafe_ini_open("dr.ini")
+        ossafe_ini_close()
     }
     for (var i = 0; i < 7; i++)
     {
         var filename = (("filech" + string(i)) + "_")
-        if (gml_Script_ossafe_file_exists((filename + string(3))) || gml_Script_ossafe_file_exists((filename + string(4))) || gml_Script_ossafe_file_exists((filename + string(5))))
+        if (ossafe_file_exists((filename + string(3))) || ossafe_file_exists((filename + string(4))) || ossafe_file_exists((filename + string(5))))
             highestCompletedChapter = i
         if (highestCompletedChapter > 0)
             file_found = 1
@@ -36,7 +49,7 @@ if (con == "start")
     for (i = 0; i < 7; i++)
     {
         filename = (("filech" + string(i)) + "_")
-        if (gml_Script_ossafe_file_exists((filename + string(0))) || gml_Script_ossafe_file_exists((filename + string(1))) || gml_Script_ossafe_file_exists((filename + string(2))))
+        if (ossafe_file_exists((filename + string(0))) || ossafe_file_exists((filename + string(1))) || ossafe_file_exists((filename + string(2))))
             highestUncompletedChapter = i
         if (highestUncompletedChapter > 0)
             file_found = 1
@@ -86,21 +99,21 @@ if (con == "nofile")
         draw_set_color(c_white)
     draw_text_transformed(xx, ((((20 * scale) + yy) - fadescaled) + (mspace * 1)), no, scale, scale, 0)
     if (mpos == 0)
-        draw_sprite_ext(spr_heart, 0, ((xx - ((string_width(yes) / 2) * scale)) - (13 * scale)), (((((20 * scale) + yy) - fadescaled) + (mspace * mpos)) + (4 * scale)), (scale / 2), (scale / 2), 0, c_white, ((fademax - fade) / fademax))
+        draw_sprite_ext(spr_heart_launcher, 0, ((xx - ((string_width(yes) / 2) * scale)) - (13 * scale)), (((((20 * scale) + yy) - fadescaled) + (mspace * mpos)) + (4 * scale)), (scale / 2), (scale / 2), 0, c_white, ((fademax - fade) / fademax))
     if (mpos == 1)
-        draw_sprite_ext(spr_heart, 0, ((xx - ((string_width(no) / 2) * scale)) - (13 * scale)), (((((20 * scale) + yy) - fadescaled) + (mspace * mpos)) + (4 * scale)), (scale / 2), (scale / 2), 0, c_white, ((fademax - fade) / fademax))
-    if gml_Script_up_p()
+        draw_sprite_ext(spr_heart_launcher, 0, ((xx - ((string_width(no) / 2) * scale)) - (13 * scale)), (((((20 * scale) + yy) - fadescaled) + (mspace * mpos)) + (4 * scale)), (scale / 2), (scale / 2), 0, c_white, ((fademax - fade) / fademax))
+    if up_p()
     {
         mpos--
         move_noise = 1
     }
-    if gml_Script_down_p()
+    if down_p()
     {
         mpos++
         move_noise = 1
     }
     mpos = clamp(mpos, 0, 1)
-    if (gml_Script_button1_p() && timer > 10)
+    if (button1_p() && timer > 10)
     {
         select_noise = 1
         switch mpos
@@ -151,7 +164,7 @@ if (con == "startNextChapter")
     }
     if (global.lang == "{LENGUAGE}"){
         my_stringset = (("{my_stringset}" + string(highestCompletedChapter)) + "{wascompleted}")
-    stringset2 = ("{playnextch}" + string((highestCompletedChapter + 1)))
+        stringset2 = ("{playnextch}" + string((highestCompletedChapter + 1)))
     }
     draw_set_font(text_font)
     draw_set_halign(fa_center)
@@ -171,21 +184,21 @@ if (con == "startNextChapter")
     }
     draw_text_transformed(xx, ((yy - fadescaled) + (mspace * 2)), select_text, scale, scale, 0)
     if (mpos == 0)
-        draw_sprite_ext(spr_heart, 0, ((xx - ((string_width(stringset2) / 2) * scale)) - (13 * scale)), (((yy - fadescaled) + (mspace * 1)) + (4 * scale)), (scale / 2), (scale / 2), 0, c_white, ((fademax - fade) / fademax))
+        draw_sprite_ext(spr_heart_launcher, 0, ((xx - ((string_width(stringset2) / 2) * scale)) - (13 * scale)), (((yy - fadescaled) + (mspace * 1)) + (4 * scale)), (scale / 2), (scale / 2), 0, c_white, ((fademax - fade) / fademax))
     if (mpos == 1)
-        draw_sprite_ext(spr_heart, 0, ((xx - ((string_width(select_text) / 2) * scale)) - (13 * scale)), (((yy - fadescaled) + (mspace * 2)) + (4 * scale)), (scale / 2), (scale / 2), 0, c_white, ((fademax - fade) / fademax))
-    if gml_Script_up_p()
+        draw_sprite_ext(spr_heart_launcher, 0, ((xx - ((string_width(select_text) / 2) * scale)) - (13 * scale)), (((yy - fadescaled) + (mspace * 2)) + (4 * scale)), (scale / 2), (scale / 2), 0, c_white, ((fademax - fade) / fademax))
+    if up_p()
     {
         mpos--
         move_noise = 1
     }
-    if gml_Script_down_p()
+    if down_p()
     {
         mpos++
         move_noise = 1
     }
     mpos = clamp(mpos, 0, 1)
-    if (gml_Script_button1_p() && timer > 10)
+    if (button1_p() && timer > 10)
     {
         select_noise = 1
         switch mpos
@@ -223,6 +236,7 @@ if (con == "continueChapter")
     my_stringset = (("Continue from Chapter " + string(highestUncompletedChapter)) + "?")
     if (global.lang == "ja")
         my_stringset = (("Chapter " + string(highestUncompletedChapter)) + "から続けますか？")
+    
     if (global.lang == "{LENGUAGE}"){
         my_stringset = (("{continuenextchapter}" + string(highestUncompletedChapter)) + "?")
     }
@@ -240,21 +254,21 @@ if (con == "continueChapter")
         draw_set_color(c_white)
     draw_text_transformed(xx, ((yy - fadescaled) + (mspace * 2)), no, scale, scale, 0)
     if (mpos == 0)
-        draw_sprite_ext(spr_heart, 0, ((xx - ((string_width(yes) / 2) * scale)) - (13 * scale)), ((((yy - fadescaled) + (mspace * 1)) + (mspace * mpos)) + (4 * scale)), (scale / 2), (scale / 2), 0, c_white, ((fademax - fade) / fademax))
+        draw_sprite_ext(spr_heart_launcher, 0, ((xx - ((string_width(yes) / 2) * scale)) - (13 * scale)), ((((yy - fadescaled) + (mspace * 1)) + (mspace * mpos)) + (4 * scale)), (scale / 2), (scale / 2), 0, c_white, ((fademax - fade) / fademax))
     if (mpos == 1)
-        draw_sprite_ext(spr_heart, 0, ((xx - ((string_width(no) / 2) * scale)) - (13 * scale)), ((((yy - fadescaled) + (mspace * 1)) + (mspace * mpos)) + (4 * scale)), (scale / 2), (scale / 2), 0, c_white, ((fademax - fade) / fademax))
-    if gml_Script_up_p()
+        draw_sprite_ext(spr_heart_launcher, 0, ((xx - ((string_width(no) / 2) * scale)) - (13 * scale)), ((((yy - fadescaled) + (mspace * 1)) + (mspace * mpos)) + (4 * scale)), (scale / 2), (scale / 2), 0, c_white, ((fademax - fade) / fademax))
+    if up_p()
     {
         mpos--
         move_noise = 1
     }
-    if gml_Script_down_p()
+    if down_p()
     {
         mpos++
         move_noise = 1
     }
     mpos = clamp(mpos, 0, 1)
-    if (gml_Script_button1_p() && timer > 10)
+    if (button1_p() && timer > 10)
     {
         timer = 0
         select_noise = 1
@@ -275,12 +289,14 @@ if (con == "continueChapter")
 }
 if (con == "chapterselect")
 {
-    quit = (global.lang == "en" ? "Quit" : "とじる") 
+    quit = (global.lang == "en" ? "Quit" : "とじる")
     chapterstring = "Chapter"
-        if (global.lang == "{LENGUAGE}"){
+    
+    if (global.lang == "{LENGUAGE}"){
         quit = "{quit}"
         chapterstring = "{chapter}"
     }
+    
     if (chapterselectinit == 0)
     {
         fade = fademax
@@ -297,14 +313,14 @@ if (con == "chapterselect")
     for (i = 0; i < 6; i++)
         draw_sprite_ext(spr_horzBar, 0, 0, (((36 * scale) + (space * i)) + (fadescaled / 2)), scale, scale, 0, c_white, (1 - (fade / fademax)))
     draw_set_halign(fa_center)
-    if gml_Script_up_p()
+    if up_p()
     {
         move_noise = 1
         mpos--
         if (mpos > (latestAvailableChapter - 1))
             mpos = (latestAvailableChapter - 1)
     }
-    if gml_Script_down_p()
+    if down_p()
     {
         move_noise = 1
         mpos++
@@ -345,7 +361,7 @@ if (con == "chapterselect")
         heart_ypos -= (5 * scale)
         heart_xpos = (130 * scale)
     }
-    draw_sprite_ext(spr_heart, 0, heart_xpos, heart_ypos, (scale / 2), (scale / 2), 1, c_white, ((fademax - fade) / fademax))
+    draw_sprite_ext(spr_heart_launcher, 0, heart_xpos, heart_ypos, (scale / 2), (scale / 2), 1, c_white, ((fademax - fade) / fademax))
     if (!console)
     {
         mycolor = c_white
@@ -357,7 +373,7 @@ if (con == "chapterselect")
         draw_text_transformed((160 * scale), ((-fadescaled) + (218 * scale)), quit, scale, scale, 0)
         draw_set_halign(fa_left)
     }
-    if (gml_Script_button1_p() && timer > 12)
+    if (button1_p() && timer > 12)
     {
         select_noise = 1
         timer = 0
@@ -390,12 +406,12 @@ else if (con == "gameloadConfirm")
     xx = (35 * scale)
     yy = (10 * scale)
     mspace = (30 * scale)
-    if gml_Script_left_p()
+    if left_p()
     {
         move_noise = 1
         confirm_choice_index = (confirm_choice_index - 1) < 0
     }
-    if gml_Script_right_p()
+    if right_p()
     {
         move_noise = 1
         confirm_choice_index = ((confirm_choice_index + 1) > 1 ? 0 : 1)
@@ -404,7 +420,7 @@ else if (con == "gameloadConfirm")
     if (global.lang == "ja")
         heart_xpos = ((106 * scale) + ((confirm_choice_index * 95) * scale))
     heart_ypos = ((yy + (7 * scale)) + ((mpos * 30) * scale))
-    draw_sprite_ext(spr_heart, 0, heart_xpos, heart_ypos, (scale / 2), (scale / 2), 0, c_white, ((fademax - fade) / fademax))
+    draw_sprite_ext(spr_heart_launcher, 0, heart_xpos, heart_ypos, (scale / 2), (scale / 2), 0, c_white, ((fademax - fade) / fademax))
     max_options = 7
     for (i = 0; i < max_options; i++)
     {
@@ -452,7 +468,7 @@ else if (con == "gameloadConfirm")
         draw_text_transformed((160 * scale), (((-fade) * scale) + (218 * scale)), quit, scale, scale, 0)
         draw_set_halign(fa_left)
     }
-    if (gml_Script_button1_p() && timer > 12)
+    if (button1_p() && timer > 12)
     {
         timer = 0
         select_noise = 1
@@ -461,7 +477,7 @@ else if (con == "gameloadConfirm")
         else
             con = "chapterselect"
     }
-    if (gml_Script_button2_p() && timer > 12)
+    if (button2_p() && timer > 12)
     {
         timer = 0
         select_noise = 1
@@ -492,6 +508,7 @@ if (con == "gameload")
         chaptertoload_temp = chaptertoload
         chaptertoload = 0
         alarm[2] = 60
+        alarm[3] = 50
     }
     draw_sprite_ext(spr_aftereffect, 0, (room_width / 2), yy, xscale, yscale, 0, c_white, fadeout)
     fadeout = lerp(fadeout, 0, 0.125)

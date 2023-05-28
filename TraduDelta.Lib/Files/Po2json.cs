@@ -13,7 +13,7 @@ public class Po2json : IConverter<Po, Texts>
         {
             t.Keys.Add(entry.Context.Replace("<EMPTY>", string.Empty));
             t.Values.Add(entry.Original.Replace("<CONTROL>", "\u0016").Replace("\n", "&").Replace("<F>", "\f")
-                .Replace("<EMPTY>", string.Empty));
+                .Replace("<EMPTY>", string.Empty).Replace("\\\\", "\\").Replace("\\\"", "\"").Replace('\f', 'ç'));
             if (!entry.Translated.Equals(string.Empty)) t.TranslatedValues.Add(entry.Context, entry.Translated);
         }
 

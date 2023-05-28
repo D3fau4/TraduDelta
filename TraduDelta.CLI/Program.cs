@@ -11,12 +11,10 @@ app.Configure(config =>
     config.PropagateExceptions();
     config.ValidateExamples();
 #endif
-    config.AddExample("mergepo");
-    config.AddCommand<MergePo>("mergepo")
-        .WithDescription("Merge all po to one.");
-
     config.AddCommand<ApplyMods>("apply")
         .WithDescription("Aplica los mods para la traducción");
+    config.AddCommand<convert>("convert")
+        .WithDescription("Convierte el texto de po a json y de json a po");
 });
 
 return app.Run(args);

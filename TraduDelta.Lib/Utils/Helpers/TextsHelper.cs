@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Newtonsoft.Json;
 using TraduDelta.Lib.Files;
 using UndertaleModLib;
 using Yarhl.FileSystem;
@@ -31,7 +32,11 @@ public class Po2JsonHelper : IHelper
 {
     public void Process(string s1)
     {
-        throw new NotImplementedException();
+        var po = NodeFactory.FromFile(s1).TransformWith(new Binary2Po());
+        var des_json = po.TransformWith(new Po2json()).GetFormatAs<Texts>();
+
+        if (des_json.TranslatedValues != null)
+            File.WriteAllText(Path.GetFileName(s1).Replace(".po", ".json"), JsonConvert.SerializeObject(des_json.TranslatedValues).Replace("\\\\", "\\"));
     }
 }
 

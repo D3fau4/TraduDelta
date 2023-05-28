@@ -3,7 +3,7 @@
 :[0]
 b [7]
 
-> gml_Script_scr_change_language (locals=0, argc=0)
+> gml_Script_scr_change_language (locals=1, argc=0)
 :[1]
 pushglb.v global.lang
 push.s "en"@9324

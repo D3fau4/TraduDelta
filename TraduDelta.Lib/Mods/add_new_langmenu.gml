@@ -1,5 +1,5 @@
 ﻿scr_84_set_draw_font_ch1("main")
-if (BGMADE == 1)
+if (BGMADE == true)
 {
     ANIM_SINER += 1
     ANIM_SINER_B += 1
@@ -17,8 +17,8 @@ if (BGMADE == 1)
             __WAVEMAG = 0
         else
             __WAVEMAG = (BGMAGNITUDE - __WAVEMINUS)
-        gml_Script_draw_background_part_ext_ch1(IMAGE_MENU_ch1, 0, i, __WAVEWIDTH, 1, (sin(((i / 8) + (BG_SINER / 30))) * __WAVEMAG), ((-10 + i) - (BG_ALPHA * 20)), 1, 1, image_blend, (BG_ALPHA * 0.8))
-        gml_Script_draw_background_part_ext_ch1(IMAGE_MENU_ch1, 0, i, __WAVEWIDTH, 1, ((-sin(((i / 8) + (BG_SINER / 30)))) * __WAVEMAG), ((-10 + i) - (BG_ALPHA * 20)), 1, 1, image_blend, (BG_ALPHA * 0.8))
+        draw_background_part_ext_ch1(IMAGE_MENU_ch1, 0, i, __WAVEWIDTH, 1, (sin(((i / 8) + (BG_SINER / 30))) * __WAVEMAG), ((-10 + i) - (BG_ALPHA * 20)), 1, 1, image_blend, (BG_ALPHA * 0.8))
+        draw_background_part_ext_ch1(IMAGE_MENU_ch1, 0, i, __WAVEWIDTH, 1, ((-(sin(((i / 8) + (BG_SINER / 30))))) * __WAVEMAG), ((-10 + i) - (BG_ALPHA * 20)), 1, 1, image_blend, (BG_ALPHA * 0.8))
     }
     T_SINER_ADD = ((sin((ANIM_SINER_B / 10)) * 0.6) - 0.25)
     if (T_SINER_ADD >= 0)
@@ -74,15 +74,15 @@ for (i = 0; i < 3; i += 1)
     if (CONT_THIS < 4)
     {
         if (FILE[i] == 0)
-            gml_Script_scr_84_set_draw_font_ch1("main")
+            scr_84_set_draw_font_ch1("main")
         else if (INITLANG[i] == 0)
             draw_set_font(fnt_main)
         else if (INITLANG[i] == 1)
             draw_set_font(fnt_ja_main)
-        gml_Script_draw_text_shadow_ch1((BOX_X1 + 25), (BOX_Y1 + 5), NAME[i])
-        gml_Script_scr_84_set_draw_font_ch1("main")
+        draw_text_shadow_ch1((BOX_X1 + 25), (BOX_Y1 + 5), NAME[i])
+        scr_84_set_draw_font_ch1("main")
         draw_set_halign(fa_right)
-        gml_Script_draw_text_shadow_ch1((BOX_X1 + 180), (BOX_Y1 + 5), TIME_STRING[i])
+        draw_text_shadow_ch1((BOX_X1 + 180), (BOX_Y1 + 5), TIME_STRING[i])
         draw_set_halign(fa_left)
     }
     if (CONT_THIS >= 1)
@@ -92,31 +92,31 @@ for (i = 0; i < 3; i += 1)
             if (MENU_NO == 1)
             {
                 SELTEXT_C = " "
-                SELTEXT_A = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_116_0")
-                SELTEXT_B = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_116_1")
+                SELTEXT_A = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_116_0") // CONTINUE
+                SELTEXT_B = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_116_1") // BACK
                 if (FILE[MENUCOORD[0]] == 0)
                 {
-                    SELTEXT_A = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_117_0")
-                    SELTEXT_B = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_117_1")
+                    SELTEXT_A = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_117_0") // BEGIN
+                    SELTEXT_B = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_117_1") // BACK
                 }
             }
             if (MENU_NO == 4)
             {
-                SELTEXT_A = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_119_0")
-                SELTEXT_B = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_119_1")
-                SELTEXT_C = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_119_2")
+                SELTEXT_A = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_119_0") // OVERWRITE
+                SELTEXT_B = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_119_1") // DO NOT
+                SELTEXT_C = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_119_2") // IT WILL BE SUBSUMED.
             }
             if (MENU_NO == 6)
             {
-                SELTEXT_A = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_120_0")
-                SELTEXT_B = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_120_1")
-                SELTEXT_C = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_120_2")
+                SELTEXT_A = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_120_0") // YES
+                SELTEXT_B = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_120_1") // NO
+                SELTEXT_C = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_120_2") // TRULY ERASE IT?
             }
             if (MENU_NO == 7)
             {
-                SELTEXT_A = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_121_0")
-                SELTEXT_B = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_121_1")
-                SELTEXT_C = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_121_2")
+                SELTEXT_A = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_121_0") // ERASE
+                SELTEXT_B = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_121_1") // DO NOT
+                SELTEXT_C = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_121_2") // THEN IT WILL BE DESTROYED.
             }
         }
         else
@@ -124,37 +124,37 @@ for (i = 0; i < 3; i += 1)
             if (MENU_NO == 1)
             {
                 SELTEXT_C = " "
-                SELTEXT_A = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_128_0")
-                SELTEXT_B = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_128_1")
+                SELTEXT_A = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_128_0") // Continue
+                SELTEXT_B = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_128_1") // Back
                 if (FILE[MENUCOORD[0]] == 0)
                 {
-                    SELTEXT_A = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_129_0")
-                    SELTEXT_B = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_129_1")
+                    SELTEXT_A = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_129_0") // Start
+                    SELTEXT_B = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_129_1") // Back
                 }
             }
             if (MENU_NO == 4)
             {
-                SELTEXT_A = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_131_0")
-                SELTEXT_B = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_131_1")
-                SELTEXT_C = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_131_2")
+                SELTEXT_A = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_131_0") // Yes
+                SELTEXT_B = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_131_1") // No
+                SELTEXT_C = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_131_2") // Copy over this file?
             }
             if (MENU_NO == 6)
             {
-                SELTEXT_A = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_132_0")
-                SELTEXT_B = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_132_1")
-                SELTEXT_C = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_132_2")
+                SELTEXT_A = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_132_0") // Yes
+                SELTEXT_B = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_132_1") // No
+                SELTEXT_C = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_132_2") // Erase this file?
             }
             if (MENU_NO == 7)
             {
-                SELTEXT_A = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_133_0")
-                SELTEXT_B = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_133_1")
-                SELTEXT_C = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_133_2")
+                SELTEXT_A = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_133_0") // Yes!
+                SELTEXT_B = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_133_1") // No!
+                SELTEXT_C = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_133_2") // Really erase it?
             }
         }
         draw_set_color(COL_B)
         if (MENU_NO == 7)
             draw_set_color(c_red)
-        gml_Script_draw_text_shadow_ch1((BOX_X1 + 25), (BOX_Y1 + 5), SELTEXT_C)
+        draw_text_shadow_ch1((BOX_X1 + 25), (BOX_Y1 + 5), SELTEXT_C)
         draw_set_color(COL_A)
         if (MENUCOORD[MENU_NO] == 0)
         {
@@ -162,7 +162,7 @@ for (i = 0; i < 3; i += 1)
             HEARTX = 75
             HEARTY = (81 + ((YL + YS) * MENUCOORD[PREV_MENU]))
         }
-        gml_Script_draw_text_shadow_ch1((BOX_X1 + 35), (BOX_Y1 + 22), SELTEXT_A)
+        draw_text_shadow_ch1((BOX_X1 + 35), (BOX_Y1 + 22), SELTEXT_A)
         draw_set_color(COL_A)
         if (MENUCOORD[MENU_NO] == 1)
         {
@@ -170,10 +170,10 @@ for (i = 0; i < 3; i += 1)
             HEARTX = 165
             HEARTY = (81 + ((YL + YS) * MENUCOORD[PREV_MENU]))
         }
-        gml_Script_draw_text_shadow_ch1((BOX_X1 + 125), (BOX_Y1 + 22), SELTEXT_B)
+        draw_text_shadow_ch1((BOX_X1 + 125), (BOX_Y1 + 22), SELTEXT_B)
     }
     else
-        gml_Script_draw_text_shadow_ch1((BOX_X1 + 25), (BOX_Y1 + 22), PLACE[i])
+        draw_text_shadow_ch1((BOX_X1 + 25), (BOX_Y1 + 22), PLACE[i])
 }
 if (MENU_NO >= 0)
 {
@@ -207,18 +207,18 @@ if (MENU_NO >= 0)
     }
     if (MENU_NO >= 2)
     {
-        CANCELTEXT = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_189_0")
+        CANCELTEXT = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_189_0") // CANCEL
         if (TYPE == 1)
-            CANCELTEXT = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_190_0")
+            CANCELTEXT = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_190_0") // Cancel
         draw_set_color(COL_A)
         if (MENUCOORD[PREV_MENU] == 3)
             draw_set_color(COL_B)
-        gml_Script_draw_text_shadow_ch1(80, 190, CANCELTEXT)
+        draw_text_shadow_ch1(80, 190, CANCELTEXT)
     }
     if (MENU_NO == 0 || MENU_NO == 1)
     {
-        COPYTEXT = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_199_0")
-        ERASETEXT = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_200_0")
+        COPYTEXT = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_199_0") // COPY
+        ERASETEXT = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_200_0") // ERASE
         CHSELECTTEXT = (TYPE == 1 ? "Chapter Select" : "CHAPTER SELECT")
         if (global.lang == "ja")
         {
@@ -242,25 +242,25 @@ if (MENU_NO >= 0)
         }
         if (TYPE == 1)
         {
-            COPYTEXT = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_201_0")
-            ERASETEXT = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_201_1")
+            COPYTEXT = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_201_0") // Copy
+            ERASETEXT = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_201_1") // Erase
         }
         draw_set_color(COL_A)
         if (MENUCOORD[0] == 3)
             draw_set_color(COL_B)
-        gml_Script_draw_text_shadow_ch1(54, 190, COPYTEXT)
+        draw_text_shadow_ch1(54, 190, COPYTEXT)
         draw_set_color(COL_A)
         if (MENUCOORD[0] == 4)
             draw_set_color(COL_B)
-        gml_Script_draw_text_shadow_ch1(140, 190, ERASETEXT)
+        draw_text_shadow_ch1(140, 190, ERASETEXT)
         draw_set_color(COL_A)
         if (MENUCOORD[0] == 5)
             draw_set_color(COL_B)
-        gml_Script_draw_text_shadow_ch1(204, 190, CHSELECTTEXT)
+        draw_text_shadow_ch1(204, 190, CHSELECTTEXT)
         draw_set_color(COL_A)
         if (MENUCOORD[0] == 6)
             draw_set_color(COL_B)
-        lang_offset = 0
+        var lang_offset = 0
         if (global.lang == "{LENGUAGE}")
         {
             lang_offset -= 2
@@ -268,15 +268,15 @@ if (MENU_NO >= 0)
         }
         else
             draw_set_font(fnt_main)
-        gml_Script_draw_text_shadow_ch1((140 + lang_offset), 210, LANGUAGETEXT)
-        gml_Script_scr_84_set_draw_font_ch1("main")
+        draw_text_shadow_ch1((140 + lang_offset), 210, LANGUAGETEXT)
+        scr_84_set_draw_font_ch1("main")
     }
     draw_set_font(fnt_main)
     if (TYPE == 1)
     {
         draw_set_alpha(0.4)
         draw_set_color(c_white)
-        draw_text_transformed(195, 230, (("DELTARUNE " + version_text) + "(C) Toby Fox 2018-2021 "), 0.5, 0.5, 0)
+        draw_text_transformed(195, 230, (("DELTARUNE " + version_text) + "(C) Toby Fox 2018-2022 "), 0.5, 0.5, 0)
     }
     else
     {
@@ -284,7 +284,7 @@ if (MENU_NO >= 0)
         draw_text_transformed(248, 230, version_text, 0.5, 0.5, 0)
         draw_set_color(c_white)
     }
-    gml_Script_scr_84_set_draw_font_ch1("main")
+    scr_84_set_draw_font_ch1("main")
     draw_set_alpha(1)
     if (MESSAGETIMER <= 0)
     {
@@ -293,30 +293,30 @@ if (MENU_NO >= 0)
             if (MENU_NO == 0 || MENU_NO == 1)
                 TEMPCOMMENT = " "
             if (MENU_NO == 2)
-                TEMPCOMMENT = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_216_0")
+                TEMPCOMMENT = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_216_0") // CHOOSE THE ONE TO COPY.
             if (MENU_NO == 3)
-                TEMPCOMMENT = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_217_0")
+                TEMPCOMMENT = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_217_0") // CHOOSE THE TARGET FOR THE REFLECTION.
             if (MENU_NO == 4)
-                TEMPCOMMENT = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_218_0")
+                TEMPCOMMENT = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_218_0") // IT WILL BE SUBSUMED.
             if (MENU_NO == 5 || MENU_NO == 6 || MENU_NO == 7)
-                TEMPCOMMENT = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_219_0")
+                TEMPCOMMENT = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_219_0") // SELECT THE ONE TO ERASE.
         }
         if (TYPE == 1)
         {
             if (MENU_NO == 0 || MENU_NO == 1)
-                TEMPCOMMENT = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_223_0")
+                TEMPCOMMENT = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_223_0") // Please select a file.
             if (MENU_NO == 2)
-                TEMPCOMMENT = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_224_0")
+                TEMPCOMMENT = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_224_0") // Choose a file to copy.
             if (MENU_NO == 3)
-                TEMPCOMMENT = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_225_0")
+                TEMPCOMMENT = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_225_0") // Choose a file to copy to.
             if (MENU_NO == 4)
-                TEMPCOMMENT = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_226_0")
+                TEMPCOMMENT = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_226_0") // The file will be overwritten.
             if (MENU_NO == 5 || MENU_NO == 6 || MENU_NO == 7)
-                TEMPCOMMENT = gml_Script_scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_227_0")
+                TEMPCOMMENT = scr_84_get_lang_string_ch1("DEVICE_MENU_slash_Draw_0_gml_227_0") // Choose a file to erase.
         }
     }
     draw_set_color(COL_B)
-    gml_Script_draw_text_shadow_ch1(40, 30, TEMPCOMMENT)
+    draw_text_shadow_ch1(40, 30, TEMPCOMMENT)
     MESSAGETIMER -= 1
 }
 if (abs((HEARTX - HEARTXCUR)) <= 2)
@@ -336,5 +336,6 @@ gml_Script_draw_text_shadow_ch1((gml_Script___view_get(0, 0) + 8), (gml_Script__
 }else {
 gml_Script_draw_text_shadow_ch1((gml_Script___view_get(0, 0) + 8), (gml_Script___view_get(1, 0) + 4), "CHAPTER 1")
 }
+draw_text_shadow_ch1((__view_get((0 << 0), 0) + 8), (__view_get((1 << 0), 0) + 4), "CHAPTER 1")
 draw_set_color(c_white)
-gml_Script_scr_84_set_draw_font_ch1("main")
+scr_84_set_draw_font_ch1("main")
